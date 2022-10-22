@@ -1,0 +1,38 @@
+﻿using Microsoft.CodeAnalysis;
+using System;
+
+namespace {{RootNamespace}}
+{
+    /// <summary>
+    /// Do not implement this class instead implement IncrementalGenerator
+    /// otherise yours source generator wont work
+    /// </summary>
+    public abstract class IncrementalGenerator : IIncrementalGenerator
+    {
+        static IncrementalGenerator()
+        {
+            AssemblyResolver.Initialize();
+        }
+
+        protected IncrementalGenerator()
+        {
+            WriteLine($"Hello World from {GetType().FullName}");
+        }
+
+        /// <summary>
+        /// Writes a sequence of text to the output window in the 'Source Generator' section
+        /// </summary>
+        protected void Write(string message)
+            => OutputChannel.Instance.Log(message);
+
+        /// <summary>
+        /// Writes a line of text the output window in the 'Source Generator' section
+        /// </summary>
+        protected void WriteLine(string message)
+         => OutputChannel.Instance.Log($"{message}{Environment.NewLine}");
+
+
+        /// <inheritdoc cref="IIncrementalGenerator"/>
+        public abstract void Initialize(IncrementalGeneratorInitializationContext context);
+    }
+}
