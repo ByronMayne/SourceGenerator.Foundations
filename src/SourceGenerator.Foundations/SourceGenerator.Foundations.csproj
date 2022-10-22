@@ -4,6 +4,16 @@
 		<Nullable>enable</Nullable>
 		<LangVersion>9.0</LangVersion>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<Title>Source Generator Foundations</Title>
+		<Authors>Byron Mayne</Authors>
+		<Description>A Source Generator for Source Generators to smooth out the bumps in development. A foucs on removing the boilerplate and improving the debugging experince.</Description>
+		<PackageProjectUrl></PackageProjectUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<RepositoryUrl>https://github.com/ByronMayne/SourceGenerator.Foudations</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageTags>source;generator;csharp</PackageTags>
+		<PackageOutputPath>$(OutputPath)\nuget</PackageOutputPath>
 	</PropertyGroup>
 	<ItemGroup>
 	  <EmbeddedResource Include="Templates\**\*.hbs" />
@@ -18,5 +28,11 @@
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="Properties\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Include="..\README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
 	</ItemGroup>
 </Project>
