@@ -30,4 +30,6 @@ With this library we leverage the existing Output window and create an entry for
 ![output](./img/OutputWindow.png)
 
 
-# How it works.
+# How it works
+
+SourceGenerator.Foundations is a source generator for source generators. It embed addtional code to provide all the features above. W
