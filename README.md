@@ -46,4 +46,4 @@ This will popup the following window and you have to select your visual studio i
 
 # How it works
 
-SourceGenerator.Foundations is a source generator for source generators. It embed addtional code to provide all the features above. W
+SourceGenerator.Foundations is a source generator for source generators. It embed addtional code to provide all the features above. 
