@@ -13,19 +13,12 @@
 		<RepositoryUrl>https://github.com/ByronMayne/SourceGenerator.Foudations</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageTags>source;generator;csharp</PackageTags>
-		<PackageOutputPath>$(OutputPath)\nuget</PackageOutputPath>
+		<PackageOutputPath></PackageOutputPath>
 	</PropertyGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="Templates\**\*.hbs" />
-	</ItemGroup>
-	<ItemGroup>
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.0.1" PrivateAssets="all" />
 		<PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="all" />
-	</ItemGroup>
-	<ItemGroup>
-		<Folder Include="Properties\" />
-	</ItemGroup>
-	<ItemGroup>
 		<None Include="..\..\README.md">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>

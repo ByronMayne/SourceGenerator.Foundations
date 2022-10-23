@@ -1,38 +1,78 @@
 ﻿using Microsoft.CodeAnalysis;
 using System;
+using {{RootNamespace}}.Interop;
 
 namespace {{RootNamespace}}
 {
     /// <summary>
-    /// Do not implement this class instead implement IncrementalGenerator
-    /// otherise yours source generator wont work
+    /// Used as a base class for creating your own source generator. This class provides some helper
+    /// methods and impoved debugging expereince 
     /// </summary>
     public abstract class IncrementalGenerator : IIncrementalGenerator
     {
+        /// <summary>
+        /// Gets the output channel that is used to log information to Visual Studios output 
+        /// window.
+        /// </summary>
+        public OutputChannel OutputChannel { get;}
+
         static IncrementalGenerator()
         {
             AssemblyResolver.Initialize();
         }
 
-        protected IncrementalGenerator()
+        /// <summary>
+        /// Gets the name of the source generator which is used for logging
+        /// </summary>
+        public string GeneratorName { get; }
+
+        /// <summary>
+        /// Initializes a new instance of the incremental generator with an optional name
+        /// </summary>
+        protected IncrementalGenerator(string? name = null)
         {
-            WriteLine($"Hello World from {GetType().FullName}");
+           GeneratorName = name == null ? GetType().Name : name;
+           OutputChannel = new OutputChannel(GeneratorName);
         }
 
         /// <summary>
         /// Writes a sequence of text to the output window in the 'Source Generator' section
         /// </summary>
         protected void Write(string message)
-            => OutputChannel.Instance.Log(message);
+            => OutputChannel.Write(message);
 
         /// <summary>
         /// Writes a line of text the output window in the 'Source Generator' section
         /// </summary>
         protected void WriteLine(string message)
-         => OutputChannel.Instance.Log($"{message}{Environment.NewLine}");
+         => OutputChannel.WriteLine(message);
 
+        /// <summary>
+        /// Attaches the debugger automtically if you are running from Visual Studio. You have the option
+        /// to stop or just continue
+        /// </summary>
+        protected void AttachDebugger()
+        {
+            VisualStudioEnv.AttachDebugger();
+        }
 
         /// <inheritdoc cref="IIncrementalGenerator"/>
-        public abstract void Initialize(IncrementalGeneratorInitializationContext context);
+        void IIncrementalGenerator.Initialize(IncrementalGeneratorInitializationContext context)
+        {
+            try 
+            {
+                OnInitialize(context);
+            }
+            catch(Exception exception)
+            {
+                WriteLine("Error! An unhandle exception was thrown while running the source generator.");
+                WriteLine(exception.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Implement to initalize the incremental source generator 
+        /// </summary> 
+        protected abstract void OnInitialize(IncrementalGeneratorInitializationContext context);
     }
 }

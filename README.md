@@ -30,6 +30,20 @@ With this library we leverage the existing Output window and create an entry for
 ![output](./img/OutputWindow.png)
 
 
+## Debugging 
+
+To be able to debug a source generators one of the suggested methods is to add the following.
+
+```cs
+static CustomSourceGenerator()
+{
+    Debugger.Launch();
+}
+```
+This will popup the following window and you have to select your visual studio instance. Instaed with foundations you can just call a single method and break points work from that point on.
+
+![AutoAttach](./img/DebuggerAttach.gif)
+
 # How it works
 
 SourceGenerator.Foundations is a source generator for source generators. It embed addtional code to provide all the features above. W

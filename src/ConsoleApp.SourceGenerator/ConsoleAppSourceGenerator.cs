@@ -9,15 +9,18 @@ namespace ConsoleApp.SourceGenerator
     {
         public class Payload
         {
-            public string Name { get; set; }
-            public string Version { get; set; }
+            public string? Name { get; set; }
+            public string? Version { get; set; }
         }
 
         public ConsoleAppSourceGenerator() : base()
         {
+            AttachDebugger();
+            OutputChannel.Clear();   
         }
 
-        public override void Initialize(IncrementalGeneratorInitializationContext context)
+
+        protected override void OnInitialize(IncrementalGeneratorInitializationContext context)
         {
             Payload payload = new Payload()
             {

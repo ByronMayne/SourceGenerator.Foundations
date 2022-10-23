@@ -33,7 +33,7 @@ namespace {{RootNamespace}}
         /// Attempts to resolve any assembly by looking for dependencies that are embedded directly
         /// in this dll.
         /// </summary>
-        private static Assembly OnResolveAssembly(object sender, ResolveEventArgs args)
+        private static Assembly? OnResolveAssembly(object sender, ResolveEventArgs args)
         {
             AssemblyName lookupAssembly = new AssemblyName(args.Name);
 

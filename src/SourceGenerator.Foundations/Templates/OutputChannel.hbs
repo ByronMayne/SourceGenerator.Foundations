@@ -8,76 +8,72 @@ using {{RootNamespace}}.Interop;
 
 namespace {{RootNamespace}}
 {
-    internal class OutputChannel
+    public class OutputChannel
     {
-        private static readonly string s_outputPaneName;
-        private static OutputChannel? s_instance;
-        private readonly OutputWindowPane? m_outputPane;
-
-        /// <summary>
-        /// Gets the instance of the output helper
-        /// </summary>
-        public static OutputChannel Instance
-        {
-            get
-            {
-                if (s_instance == null)
-                {
-                    s_instance = Create();
-                }
-                return s_instance!;
-            }
-        }
+        private static readonly OutputWindow? s_outputWindow;
+        private OutputWindowPane? m_outputPane;
 
         static OutputChannel()
         {
-            Type type = typeof(OutputChannel);
-            Assembly assembly = type.Assembly;
-            AssemblyName assemblyName = assembly.GetName();
-            s_outputPaneName = assemblyName.Name;
+            DTE? dte = VisualStudioEnv.GetDTE();
+            if (dte != null)
+            {
+                Window window = dte.Windows.Item(Constants.vsWindowKindOutput);
+                s_outputWindow = window.Object as OutputWindow;
+            }
         }
 
-        public void Log(string message)
+        /// <summary>
+        /// Initializes a new instance of an output channel with the
+        /// Visual Studio output window. 
+        /// </summary>
+        internal OutputChannel(string channelName)
         {
+            if (s_outputWindow != null)
+            {
+                foreach (OutputWindowPane pane in s_outputWindow.OutputWindowPanes)
+                {
+                    if (Equals(pane.Name, channelName))
+                    {
+                        m_outputPane = pane;
+                        break;
+                    }
+                }
+                m_outputPane ??= s_outputWindow.OutputWindowPanes.Add(channelName);
+            }
+        }
+
+       /// <summary>
+       /// Clears the output window of all entries
+       /// </summary>
+       public void Clear()
+       {
+            if (m_outputPane != null)
+            {
+                m_outputPane.Clear();
+            }
+       }
+
+       /// <summary>
+       /// Writes an entry to the output window if it has been initialized
+       /// </summary>
+       public void Write(string message)
+       {
             if (m_outputPane != null)
             {
                 m_outputPane.OutputString(message);
             }
         }
 
-        private OutputChannel(OutputWindowPane? windowPane)
-        {
-            m_outputPane = windowPane;
-        }
-
-        private static OutputChannel? Create()
-        {
-            DTE? dte = VisualStudioEnv.GetDTE();
-            if (dte == null)
+       /// <summary>
+       /// Writes an entry to the output window if it has been initialized
+       /// </summary>
+       public void WriteLine(string message)
+       {
+            if (m_outputPane != null)
             {
-                return null;
+                m_outputPane.OutputString($"{message}{System.Environment.NewLine}");
             }
-
-            Window window = dte.Windows.Item(Constants.vsWindowKindOutput);
-            OutputWindowPane? windowPane = null;
-
-            if (window.Object is OutputWindow outputWindow)
-            {
-                foreach (OutputWindowPane pane in outputWindow.OutputWindowPanes)
-                {
-                    if (Equals(pane.Name, s_outputPaneName))
-                    {
-                        windowPane = pane;
-                        break;
-                    }
-                }
-                windowPane ??= outputWindow.OutputWindowPanes.Add(s_outputPaneName);
-            }
-            if (windowPane != null)
-            {
-                windowPane.Clear();
-            }
-            return new OutputChannel(windowPane);
         }
     }
 }
