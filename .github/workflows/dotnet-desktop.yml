@@ -55,7 +55,7 @@ jobs:
     runs-on: windows-latest
 
     env:
-      Solution_Name: src/IntroSourceGenerators.sln
+      Solution_Name: src/SourceGenerator.Foundations.sln
     steps:
     - name: Checkout
       uses: actions/checkout@v3
