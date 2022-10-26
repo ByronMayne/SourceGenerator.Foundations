@@ -22,7 +22,7 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet $env:SOLUTION_PATH restore
     - name: Build
       run: dotnet $env:SOLUTION_PATH build --no-restore
     - name: Test
