@@ -6,7 +6,7 @@ namespace {{RootNamespace}}
 {
     /// <summary>
     /// Used as a base class for creating your own source generator. This class provides some helper
-    /// methods and impoved debugging expereince 
+    /// methods and impoved debugging expereince.
     /// </summary>
     public abstract class IncrementalGenerator : IIncrementalGenerator
     {
@@ -33,6 +33,7 @@ namespace {{RootNamespace}}
         {
            GeneratorName = name == null ? GetType().Name : name;
            OutputChannel = new OutputChannel(GeneratorName);
+           OutputChannel.Clear(); 
         }
 
         /// <summary>

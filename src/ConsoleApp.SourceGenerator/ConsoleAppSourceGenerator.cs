@@ -15,8 +15,7 @@ namespace ConsoleApp.SourceGenerator
 
         public ConsoleAppSourceGenerator() : base()
         {
-            AttachDebugger();
-            OutputChannel.Clear();   
+           //AttachDebugger();
         }
 
 

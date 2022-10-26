@@ -1,10 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -31,7 +28,7 @@ namespace SourceGenerator.Foundations
                 ["RootNamesapce"] = "SourceGenerator.Foundations"
             };
 
-            if(analyzerConfigOptions.GlobalOptions.TryGetValue("build_property.RootNamespace", out string? rootNamespace))
+            if (analyzerConfigOptions.GlobalOptions.TryGetValue("build_property.RootNamespace", out string? rootNamespace))
             {
                 variables["RootNamespace"] = rootNamespace;
             }
@@ -52,10 +49,10 @@ namespace SourceGenerator.Foundations
                 hintName = Path.ChangeExtension(hintName, ".cs");
 
                 using (Stream stream = assembly.GetManifestResourceStream(resourceName))
-                using(StreamReader reader = new StreamReader(stream))
+                using (StreamReader reader = new StreamReader(stream))
                 {
                     string source = reader.ReadToEnd();
-                    foreach(var pair in variables)
+                    foreach (var pair in variables)
                     {
                         source = source.Replace("{{" + pair.Key + "}}", pair.Value);
                     }

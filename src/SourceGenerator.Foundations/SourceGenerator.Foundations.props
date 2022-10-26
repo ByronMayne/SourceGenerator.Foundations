@@ -5,14 +5,7 @@
 		<PackageReference Include="Handlebars.Net" Version="2.1.0" PrivateAssets="All" GeneratePathProperty="true" />
 		<PackageReference Include="Microsoft.VisualStudio.Interop" Version="17.3.32804.24" GeneratePathProperty="true" PrivateAssets="all" />
 		<PackageReference Include="System.Management" Version="6.0.0" GeneratePathProperty="true" />
-		<ProjectReference Include="$(MSBuildThisFileDirectory)SourceGenerator.Foundations.csproj">
-			<OutputItemType>Analyzer</OutputItemType>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-		</ProjectReference>
 	</ItemGroup>
-
-	
 	<Target Name="EmbedDependencies" BeforeTargets="BeforeBuild">
 		<ItemGroup>
 			<EmbeddedResource Include="@(ResolvedCompileFileDefinitionsToAdd)"/>
