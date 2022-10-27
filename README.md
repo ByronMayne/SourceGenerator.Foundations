@@ -1,3 +1,5 @@
+![Nuget](https://img.shields.io/nuget/v/SourceGenerator.Foundations) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ByronMayne/SourceGenerator.Foudations/.NET)
+
 # SourceGenerator.Foudations
 
 Source Generators are awesome but working with them can be a bit painful. This library is designed to try to smooth out some of the following bumps.
