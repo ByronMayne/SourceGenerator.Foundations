@@ -2,10 +2,35 @@
 
 # SourceGenerator.Foudations
 
-Source Generators are awesome but working with them can be a bit painful. This library is designed to try to smooth out some of the following bumps.
+Source Generators are awesome but working with them can be a bit painful. This library is designed to try to smooth out some bumps. To get started using the library just add a nuget reference. Once that is done you will have access to new types contained within your assembly.
 
+## Quick Start
 
-## Nuget Nightmares
+To get started all you need to do is add the NuGet package reference. You may or may not have to restart Visual Studio for the new types to show up. Then implement the base class `IncrementalGenerator`. 
+
+```cs
+namespace Example
+{
+    // IncrementalGenerator, is a generated type from `SourceGenerator.Foundations'
+    public class ExampleSourceGenerator : IncrementalGenerator 
+    {
+       protected override void OnInitialize(IncrementalGeneratorInitializationContext context)
+       {
+            // Attaches Visaul Studio debugger without prompt 
+            AttachDebugger();
+
+            // Writes output to Visual Studios output window
+            WriteLine("Hello World");
+       }
+    }
+}
+```
+
+## What is inside?
+
+There is a series of features this library hopes to provide.
+
+### Nuget Nightmares
 
 Source generators run in a unique place and their references don't act the same. If you have a source generator that attempts to reference a NuGet package it will fail to be found at runtime. The reason is the source generators need to have their dll's alongside the running process but that also means that the project the generator is running aginst will to. If you look online the best option is to do this:
 
@@ -24,7 +49,7 @@ This works well but requires a lot of boilerplate. Even worse is this is just fo
 
 *Source.Generator foundations automates this all for you. Just add your NuGet references and nothing else*
 
-## Logging 
+### Logging 
 Source generator run in the background and it can be very hard to debug. If you want to make a log you have to write the files to disk and open to read them. 
 
 With this library we leverage the existing Output window and create an entry for each source generator. This is all done by using some Visaul Studio api.
@@ -32,7 +57,7 @@ With this library we leverage the existing Output window and create an entry for
 ![output](./img/OutputWindow.png)
 
 
-## Debugging 
+### Debugging 
 
 To be able to debug a source generators one of the suggested methods is to add the following.
 
@@ -48,4 +73,4 @@ This will popup the following window and you have to select your visual studio i
 
 # How it works
 
-SourceGenerator.Foundations is a source generator for source generators. It embed addtional code to provide all the features above. 
+SourceGenerator.Foundations is a source generator for source generators. It embedds additional addtional classes into your project to provide all the features above. 
