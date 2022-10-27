@@ -6,11 +6,16 @@
 		<IsRoslynComponent>true</IsRoslynComponent>
 		<Platforms>AnyCPU;x64</Platforms>
 		<AssemblySearchPath_UseOutDir>true</AssemblySearchPath_UseOutDir>
+		<SGFProjectName>SourceGenerator.Foundations</SGFProjectName>
+		<SGFDirectory>..\$(SGFProjectName)\</SGFDirectory>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.0.1" PrivateAssets="all" />
 		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3" PrivateAssets="all" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-		<PackageReference Include="SourceGenerator.Foundations" Version="0.1.0" />
 	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="$(SGFDirectory)$(SGFProjectName).csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+	</ItemGroup>
+	<Import Project="$(SGFDirectory)$(SGFProjectName).props"/>
 </Project>

@@ -1,0 +1,32 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: .NET
+env:
+ SOLUTION_PATH: ./src/SourceGenerator.Foundations.sln
+on:
+  push:
+    branches: [ "master", "develop" ]
+  pull_request:
+    branches: [ "master", "develop" ]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+       ref: ${{ github.head_ref }}   # checkout the correct branch name
+       fetch-depth: 0                # fetch the whole repo history
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 6.0.x
+    - name: Restore dependencies
+      run: dotnet restore $env:SOLUTION_PATH
+    - name: Build
+      run: dotnet build $env:SOLUTION_PATH --no-restore
+    - name: Test
+      run: dotnet test $env:SOLUTION_PATH --no-build --verbosity normal
