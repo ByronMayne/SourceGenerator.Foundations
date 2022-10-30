@@ -1,16 +1,27 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using HandlebarsDotNet;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
 
-namespace SourceGenerator.Foundations
+namespace SGF
 {
     [Generator]
     public class FoundationsSourceGenerator : IIncrementalGenerator
     {
+        private static readonly IHandlebars s_handlebars;
+        static FoundationsSourceGenerator()
+        {
+            HandlebarsConfiguration configuration = new HandlebarsConfiguration()
+            { };
+
+            s_handlebars = Handlebars.Create(configuration);
+        }
+
         public void Initialize(IncrementalGeneratorInitializationContext context)
         {
             context.RegisterSourceOutput(context
@@ -27,6 +38,8 @@ namespace SourceGenerator.Foundations
             {
                 ["RootNamesapce"] = "SourceGenerator.Foundations"
             };
+
+            Debugger.Launch();
 
             if (analyzerConfigOptions.GlobalOptions.TryGetValue("build_property.RootNamespace", out string? rootNamespace))
             {
@@ -45,18 +58,16 @@ namespace SourceGenerator.Foundations
                 {
                     continue;
                 }
+
                 string hintName = resourceName.Replace($"{assemblyName.Name}.", "");
                 hintName = Path.ChangeExtension(hintName, ".cs");
-
                 using (Stream stream = assembly.GetManifestResourceStream(resourceName))
                 using (StreamReader reader = new StreamReader(stream))
                 {
-                    string source = reader.ReadToEnd();
-                    foreach (var pair in variables)
-                    {
-                        source = source.Replace("{{" + pair.Key + "}}", pair.Value);
-                    }
-                    SourceText sourceText = SourceText.From(source, Encoding.UTF8);
+                    string templates = reader.ReadToEnd();
+                    var compiledTemplate = s_handlebars.Compile(templates);
+                    string renderedTemplate = compiledTemplate(variables);
+                    SourceText sourceText = SourceText.From(renderedTemplate, Encoding.UTF8);
                     context.AddSource(hintName, sourceText);
                 }
             }

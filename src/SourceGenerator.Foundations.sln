@@ -9,6 +9,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SourceGenerator.Foundations
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp.SourceGenerator", "ConsoleApp.SourceGenerator\ConsoleApp.SourceGenerator.csproj", "{CD9B09FE-85C3-4295-BD88-D2192200943A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SourceGenerator.Foundations.Contracts", "SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj", "{E6A4D948-7741-4A56-92A4-C8B800CC7DDE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SourceGenerator.Foundations.Windows", "SourceGenerator.Foundations.Windows\SourceGenerator.Foundations.Windows.csproj", "{380588C0-0D48-49C9-AC2F-0A319F3FA28B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{CD9B09FE-85C3-4295-BD88-D2192200943A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD9B09FE-85C3-4295-BD88-D2192200943A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD9B09FE-85C3-4295-BD88-D2192200943A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6A4D948-7741-4A56-92A4-C8B800CC7DDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6A4D948-7741-4A56-92A4-C8B800CC7DDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6A4D948-7741-4A56-92A4-C8B800CC7DDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6A4D948-7741-4A56-92A4-C8B800CC7DDE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{380588C0-0D48-49C9-AC2F-0A319F3FA28B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{380588C0-0D48-49C9-AC2F-0A319F3FA28B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{380588C0-0D48-49C9-AC2F-0A319F3FA28B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{380588C0-0D48-49C9-AC2F-0A319F3FA28B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -14,16 +14,16 @@
 		<RepositoryUrl>https://github.com/ByronMayne/SourceGenerator.Foudations</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageTags>source;generator;csharp</PackageTags>
+		<RootNamespace>SGF</RootNamespace>
 		<TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);Nuget_AppendContent</TargetsForTfmSpecificContentInPackage>
 	</PropertyGroup>
-
 	<ItemGroup>
 		<None Include="$(OutputPath)$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 	</ItemGroup>
-
 	<ItemGroup>
-		<None Update="$(AssemblyName).props" PackagePath="build"/>
-		<EmbeddedResource Include="Templates\**\*.hbs"/>
+		<None Update="$(AssemblyName).props" PackagePath="build" />
+		<EmbeddedResource Include="Templates\**\*.hbs" />
+		<PackageReference Include="Handlebars.Net.Helpers" Version="2.3.5" />
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.0.1" PrivateAssets="all" />
 		<PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="all" />
 		<None Include="..\..\README.md">
@@ -31,7 +31,6 @@
 			<PackagePath>\</PackagePath>
 		</None>
 	</ItemGroup>
-
 	<Target Name="Nuget_AppendContent">
 		<ItemGroup>
 			<TfmSpecificPackageFile Include="$(AssemblyName).props">

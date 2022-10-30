@@ -1,6 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
 using Newtonsoft.Json;
-using System.Diagnostics;
 
 namespace ConsoleApp.SourceGenerator
 {
