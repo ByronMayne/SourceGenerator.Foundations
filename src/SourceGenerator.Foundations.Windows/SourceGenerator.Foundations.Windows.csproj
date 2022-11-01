@@ -1,12 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
 	<PropertyGroup>
 		<Nullable>enable</Nullable>
 		<LangVersion>10</LangVersion>
 		<RootNamespace>SGF</RootNamespace>
 		<TargetFramework>netstandard2.0</TargetFramework>
 	</PropertyGroup>
-
 	<ItemGroup>
 	  <ProjectReference Include="..\SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj" />
 		<PackageReference Include="envdte" Version="17.3.32804.24" />

@@ -1,5 +1,6 @@
 ﻿using SGF.Contracts;
-using System;
+using SGF.Diagnostics;
+using SGF.Interop.VisualStudio;
 
 namespace SGF
 {
@@ -11,13 +12,14 @@ namespace SGF
         /// <inheritdoc cref="IDevelopmentEnviroment"/>
         public void AttachDebugger(int processId)
         {
-            throw new NotImplementedException();
+            VisualStudioInterop.AttachDebugger();
         }
 
         /// <inheritdoc cref="IDevelopmentEnviroment"/>
-        public void WriteOutput(string message)
+        public ILogger GetLogger(string context)
         {
-            throw new NotImplementedException();
+            VisualStudioLogger logger = new VisualStudioLogger(context);
+            return logger;
         }
     }
 }
