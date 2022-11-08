@@ -5,7 +5,8 @@
 		<LangVersion>9.0</LangVersion>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 		<IncludeBuildOutput>false</IncludeBuildOutput>
-		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<IsRoslynComponent>true</IsRoslynComponent>
+		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
 		<Title>Source Generator Foundations</Title>
 		<Authors>Byron Mayne</Authors>
 		<Description>A Source Generator for Source Generators to smooth out the bumps in development. A foucs on removing the boilerplate and improving the debugging experince.</Description>
@@ -15,6 +16,7 @@
 		<RepositoryType>git</RepositoryType>
 		<PackageTags>source;generator;csharp</PackageTags>
 		<RootNamespace>SGF</RootNamespace>
+		<NoWarn>$(NoWarn);NU5128</NoWarn>
 		<TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);Nuget_AppendContent</TargetsForTfmSpecificContentInPackage>
 	</PropertyGroup>
 	<ItemGroup>
@@ -31,11 +33,19 @@
 			<PackagePath>\</PackagePath>
 		</None>
 	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj" />
+	</ItemGroup>
 	<Target Name="Nuget_AppendContent">
 		<ItemGroup>
 			<TfmSpecificPackageFile Include="$(AssemblyName).props">
 				<PackagePath>build/$(AssemblyName).props</PackagePath>
 			</TfmSpecificPackageFile>
+		</ItemGroup>
+	</Target>
+	<Target Name="EmbedDependencies" BeforeTargets="ResolvePackageDependenciesForBuild">
+		<ItemGroup>
+			<EmbeddedResource Include="@(ResolvedCompileFileDefinitionsToAdd)" />
 		</ItemGroup>
 	</Target>
 </Project>

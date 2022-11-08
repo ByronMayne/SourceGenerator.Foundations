@@ -1,8 +1,11 @@
-﻿using Microsoft.CodeAnalysis;
-using System;
-using {{RootNamespace}}.Interop;
+﻿#nullable enable
 
-namespace {{RootNamespace}}
+using System;
+using System.Diagnostics;
+using Microsoft.CodeAnalysis;
+using SGF.Diagnostics;
+
+namespace SGF
 {
     /// <summary>
     /// Used as a base class for creating your own source generator. This class provides some helper
@@ -11,10 +14,10 @@ namespace {{RootNamespace}}
     public abstract class IncrementalGenerator : IIncrementalGenerator
     {
         /// <summary>
-        /// Gets the output channel that is used to log information to Visual Studios output 
-        /// window.
+        /// Gets the log that can allow you to output information to your
+        /// IDE of choice
         /// </summary>
-        public OutputChannel OutputChannel { get;}
+        public ILogger Log { get; }
 
         static IncrementalGenerator()
         {
@@ -31,22 +34,9 @@ namespace {{RootNamespace}}
         /// </summary>
         protected IncrementalGenerator(string? name = null)
         {
-           GeneratorName = name == null ? GetType().Name : name;
-           OutputChannel = new OutputChannel(GeneratorName);
-           OutputChannel.Clear(); 
+            GeneratorName = name == null ? GetType().Name : name;
+            Log = DevelopmentEnviroment.GetLogger(GeneratorName);
         }
-
-        /// <summary>
-        /// Writes a sequence of text to the output window in the 'Source Generator' section
-        /// </summary>
-        protected void Write(string message)
-            => OutputChannel.Write(message);
-
-        /// <summary>
-        /// Writes a line of text the output window in the 'Source Generator' section
-        /// </summary>
-        protected void WriteLine(string message)
-         => OutputChannel.WriteLine(message);
 
         /// <summary>
         /// Attaches the debugger automtically if you are running from Visual Studio. You have the option
@@ -54,26 +44,26 @@ namespace {{RootNamespace}}
         /// </summary>
         protected void AttachDebugger()
         {
-            VisualStudioEnv.AttachDebugger();
+            Process process = Process.GetCurrentProcess();
+            DevelopmentEnviroment.AttachDebugger(process.Id);
         }
 
-        /// <inheritdoc cref="IIncrementalGenerator"/>
+        /// <inheritdoc cref = "IIncrementalGenerator" />
         void IIncrementalGenerator.Initialize(IncrementalGeneratorInitializationContext context)
         {
-            try 
+            try
             {
                 OnInitialize(context);
             }
-            catch(Exception exception)
+            catch (Exception exception)
             {
-                WriteLine("Error! An unhandle exception was thrown while running the source generator.");
-                WriteLine(exception.ToString());
+                Log.LogError(exception, "Error! An unhandle exception was thrown while running the source generator.");
             }
         }
 
         /// <summary>
-        /// Implement to initalize the incremental source generator 
-        /// </summary> 
+        /// Implement to initalize the incremental source generator
+        /// </ summary >
         protected abstract void OnInitialize(IncrementalGeneratorInitializationContext context);
     }
 }

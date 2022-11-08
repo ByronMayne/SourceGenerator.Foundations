@@ -1,9 +1,10 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 
-namespace {{RootNamespace}}
+namespace SGF
 {
     public static class AssemblyResolver
     {
@@ -16,18 +17,11 @@ namespace {{RootNamespace}}
             AppDomain.CurrentDomain.AssemblyResolve += OnResolveAssembly;
         }
 
-        public static void Initialize()
-        {
-        }
-
         /// <summary>
-        /// Adds a new 
+        ///  Initializes the assembly resolver 
         /// </summary>
-        /// <param name="assembly"></param>
-        public static void AddType<T>()
-        {
-            s_assemblies.Add(typeof(T).Assembly);
-        }
+        public static void Initialize()
+        {}
 
         /// <summary>
         /// Attempts to resolve any assembly by looking for dependencies that are embedded directly
@@ -52,12 +46,12 @@ namespace {{RootNamespace}}
 
                         if (resolvedAssembly != null)
                         {
+                            s_assemblies.Add(resolvedAssembly);
                             return resolvedAssembly;
                         }
                     }
                 }
             }
-
             return null;
         }
     }
