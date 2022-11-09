@@ -33,7 +33,10 @@
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
-	  <ProjectReference Include="..\SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj" />
+		<ProjectReference Include="..\SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj" />
+		<ProjectReference Include="..\Plugins\*\*.csproj" ReferenceOutputAssembly="false">
+			<Private>True</Private>
+		</ProjectReference>
 	</ItemGroup>
 	<Target Name="Nuget_AppendContent">
 		<ItemGroup>
@@ -44,6 +47,13 @@
 	</Target>
 	<Target Name="EmbedDependencies" AfterTargets="ResolveAssemblyReferences">
 		<ItemGroup>
+			<!-- == Plugin Embedding == -->
+			<PluginProjects Include="..\Plugins\*\*.csproj"/>
+			<PluginTargetPath Include="@(PluginProjects->'%(RootDir)%(Directory)bin\$(Configuration)\$(TargetFramework)\%(FileName).dll')"/>
+			<EmbeddedResource Include="@(PluginTargetPath)">
+				<LogicalName>SGF.Assembly::%(FileName)%(Extension)</LogicalName>
+			</EmbeddedResource>
+			<!-- Static Output -->
 			<EmbeddedResource Include="@(EmbededScript)">
 				<LogicalName>SGF.Script::%(FileName)%(Extension)</LogicalName>
 			</EmbeddedResource>
@@ -51,6 +61,7 @@
 				<LogicalName>SGF.Assembly::%(FileName)%(Extension)</LogicalName>
 			</EmbeddedResource>
 		</ItemGroup>
+		<Message Importance="high" Text="Paths: @(PluginTargetPath)"/>
 	</Target>
 	<!--<Target Name="EmbedDependencies" BeforeTargets="ResolvePackageDependenciesForBuild">
 		<ItemGroup>
