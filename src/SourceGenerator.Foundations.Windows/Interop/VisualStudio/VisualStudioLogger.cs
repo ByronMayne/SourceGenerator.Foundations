@@ -1,6 +1,6 @@
 ﻿using EnvDTE;
-using SGF.Diagnostics;
 using SGF.Interop.VisualStudio;
+using SGF.Logging;
 using System;
 
 namespace SGF

@@ -1,4 +1,4 @@
-﻿namespace SGF.Diagnostics
+﻿namespace SGF.Logging
 {
     /// <summary>
     /// Defines the different logging levels that can be produced 

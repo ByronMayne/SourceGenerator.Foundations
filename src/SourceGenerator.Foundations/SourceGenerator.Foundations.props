@@ -1,8 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Project>
-	<Target Name="EmbedDependencies" BeforeTargets="ResolvePackageDependenciesForBuild">
+	<Target Name="EmbedDependencies" AfterTargets="ResolveAssemblyReferences">
 		<ItemGroup>
-			<EmbeddedResource Include="@(ResolvedCompileFileDefinitionsToAdd)"/>
+			<EmbeddedResource Include="@(ReferencePath)">
+				<LogicalName>SGF.Assembly::%(FileName)%(Extension)</LogicalName>
+			</EmbeddedResource>
 		</ItemGroup>
 	</Target>
 </Project>

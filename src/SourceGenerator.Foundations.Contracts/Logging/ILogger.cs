@@ -1,8 +1,7 @@
 ﻿using System;
 
-namespace SGF.Diagnostics
+namespace SGF.Logging
 {
-
     /// <summary>
     /// Interface used for logging information out from a process 
     /// </summary>

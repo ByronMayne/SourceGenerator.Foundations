@@ -20,20 +20,19 @@
 		<TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);Nuget_AppendContent</TargetsForTfmSpecificContentInPackage>
 	</PropertyGroup>
 	<ItemGroup>
-		<None Include="$(OutputPath)$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-	</ItemGroup>
-	<ItemGroup>
 		<None Update="$(AssemblyName).props" PackagePath="build" />
-		<EmbeddedResource Include="Templates\**\*.hbs" />
+		<None Include="$(OutputPath)$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 		<PackageReference Include="Handlebars.Net.Helpers" Version="2.3.5" />
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.0.1" PrivateAssets="all" />
 		<PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="all" />
+		<EmbededScript Include="AssemblyResolver.cs" />
+		<EmbededScript Include="IncrementalGenerator.cs" />
+		<EmbededScript Include="Configuration\ResourceConfiguration.cs" />
+		<EmbededScript Include="Runtime\ModuleInitializerAttribute.cs" />
 		<None Include="..\..\README.md">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
-	</ItemGroup>
-	<ItemGroup>
 	  <ProjectReference Include="..\SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj" />
 	</ItemGroup>
 	<Target Name="Nuget_AppendContent">
@@ -43,9 +42,19 @@
 			</TfmSpecificPackageFile>
 		</ItemGroup>
 	</Target>
-	<Target Name="EmbedDependencies" BeforeTargets="ResolvePackageDependenciesForBuild">
+	<Target Name="EmbedDependencies" AfterTargets="ResolveAssemblyReferences">
+		<ItemGroup>
+			<EmbeddedResource Include="@(EmbededScript)">
+				<LogicalName>SGF.Script::%(FileName)%(Extension)</LogicalName>
+			</EmbeddedResource>
+			<EmbeddedResource Include="@(ReferencePath)">
+				<LogicalName>SGF.Assembly::%(FileName)%(Extension)</LogicalName>
+			</EmbeddedResource>
+		</ItemGroup>
+	</Target>
+	<!--<Target Name="EmbedDependencies" BeforeTargets="ResolvePackageDependenciesForBuild">
 		<ItemGroup>
 			<EmbeddedResource Include="@(ResolvedCompileFileDefinitionsToAdd)" />
 		</ItemGroup>
-	</Target>
+	</Target>-->
 </Project>

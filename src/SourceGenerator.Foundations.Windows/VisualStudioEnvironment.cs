@@ -1,6 +1,6 @@
 ﻿using SGF.Contracts;
-using SGF.Diagnostics;
 using SGF.Interop.VisualStudio;
+using SGF.Logging;
 
 namespace SGF
 {
@@ -10,9 +10,10 @@ namespace SGF
     internal class VisualStudioEnvironment : IDevelopmentEnviroment
     {
         /// <inheritdoc cref="IDevelopmentEnviroment"/>
-        public void AttachDebugger(int processId)
+        public bool AttachDebugger(int processId)
         {
             VisualStudioInterop.AttachDebugger();
+            return true;
         }
 
         /// <inheritdoc cref="IDevelopmentEnviroment"/>

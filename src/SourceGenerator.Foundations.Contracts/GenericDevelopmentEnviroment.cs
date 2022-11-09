@@ -1,22 +1,32 @@
 ﻿using SGF.Contracts;
-using SGF.Diagnostics;
+using SGF.Logging;
+using SGF.Logging.Archives;
 using System.Diagnostics;
 
-namespace SGF.NoOp
+namespace SGF
 {
     /// <summary>
     /// A <see cref="IDevelopmentEnviroment"/> that does not do anything
     /// </summary>
     internal class GenericDevelopmentEnviroment : IDevelopmentEnviroment
     {
-        /// <inheritdoc cref="IDevelopmentEnviroment"/>
-        public void AttachDebugger(int processId)
+        private readonly ILogArchive m_archive;
+
+        public GenericDevelopmentEnviroment(string assemblyName)
         {
-            Debugger.Launch();
+            m_archive = new LogFileArchive(assemblyName);
+        }
+
+        /// <inheritdoc cref="IDevelopmentEnviroment"/>
+        public bool AttachDebugger(int processId)
+        {
+            return Debugger.Launch();
         }
 
         /// <inheritdoc cref="IDevelopmentEnviroment"/>
         public ILogger GetLogger(string context)
-            => new FileLogger(context);
+        {
+            return new Logger(context, m_archive);
+        }
     }
 }

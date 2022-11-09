@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SGF.Diagnostics
+namespace SGF.Logging
 {
     /// <summary>
     /// Contains all the extension methods for working with a log

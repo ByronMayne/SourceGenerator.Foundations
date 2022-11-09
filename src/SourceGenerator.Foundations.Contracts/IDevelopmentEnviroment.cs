@@ -1,4 +1,4 @@
-﻿using SGF.Diagnostics;
+﻿using SGF.Logging;
 
 namespace SGF.Contracts
 {
@@ -10,7 +10,7 @@ namespace SGF.Contracts
         /// <summary>
         /// Attaches the debugger to the given process Id
         /// </summary>
-        void AttachDebugger(int processId);
+        bool AttachDebugger(int processId);
 
         /// <summary>
         /// Gets or creates a new logger used to output information from the source generator 

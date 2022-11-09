@@ -1,8 +1,8 @@
 ﻿using SGF.Contracts;
-using SGF.Diagnostics;
-using SGF.NoOp;
+using SGF.Logging;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace SGF
 {
@@ -20,8 +20,10 @@ namespace SGF
 
         static DevelopmentEnviroment()
         {
+            Assembly entryAssembly = Assembly.GetCallingAssembly();
+            AssemblyName assemblyName = entryAssembly.GetName();
             s_loggers = new Dictionary<string, ILogger>();
-            Instance = new GenericDevelopmentEnviroment();
+            Instance = new GenericDevelopmentEnviroment(assemblyName.Name);
             AppDomain.CurrentDomain.UnhandledException += OnExceptionThrown;
         }
 
