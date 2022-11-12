@@ -1,6 +1,7 @@
-﻿using SGF.Logging;
+﻿using Serilog.Core;
+using System.Collections.Generic;
 
-namespace SGF.Contracts
+namespace SGF
 {
     /// <summary>
     /// Abstracts for development environments supported by the platform
@@ -13,9 +14,9 @@ namespace SGF.Contracts
         bool AttachDebugger(int processId);
 
         /// <summary>
-        /// Gets or creates a new logger used to output information from the source generator 
+        /// Gets the list of sinks used for logging output
         /// </summary>
-        /// <param name="context">A string context that will be used to label the logger</param>
-        ILogger GetLogger(string context);
+        /// <returns></returns>
+        public IEnumerable<ILogEventSink> GetLogSinks();
     }
 }

@@ -5,4 +5,8 @@
 		<RootNamespace>SGF</RootNamespace>
 		<TargetFramework>netstandard2.0</TargetFramework>
 	</PropertyGroup>
+	<ItemGroup>
+	  <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+	</ItemGroup>
+	<Import Project="..\SourceGenerator.Foundations\SourceGenerator.Foundations.props" />
 </Project>

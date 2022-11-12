@@ -1,9 +1,8 @@
 ﻿#nullable enable
-
+using Microsoft.CodeAnalysis;
+using Serilog;
 using System;
 using System.Diagnostics;
-using Microsoft.CodeAnalysis;
-using SGF.Logging;
 
 namespace SGF
 {
@@ -17,20 +16,15 @@ namespace SGF
         /// Gets the log that can allow you to output information to your
         /// IDE of choice
         /// </summary>
-        public ILogger Log { get; }
-
-        /// <summary>
-        /// Gets the name of the source generator which is used for logging
-        /// </summary>
-        public string GeneratorName { get; }
+        public ILogger Logger { get; }
 
         /// <summary>
         /// Initializes a new instance of the incremental generator with an optional name
         /// </summary>
         protected IncrementalGenerator(string? name = null)
         {
-            GeneratorName = name == null ? GetType().Name : name;
-            Log = DevelopmentEnviroment.GetLogger(GeneratorName);
+            Logger = DevelopmentEnviroment.Logger.ForContext(GetType());
+            Logger.Information("Initalizing {GeneratorName}", name ?? GetType().Name);
         }
 
         /// <summary>
@@ -40,7 +34,7 @@ namespace SGF
         protected void AttachDebugger()
         {
             Process process = Process.GetCurrentProcess();
-            DevelopmentEnviroment.AttachDebugger(process.Id);
+            _ = DevelopmentEnviroment.AttachDebugger(process.Id);
         }
 
         /// <inheritdoc cref = "IIncrementalGenerator" />
@@ -52,7 +46,7 @@ namespace SGF
             }
             catch (Exception exception)
             {
-                Log.LogError(exception, "Error! An unhandle exception was thrown while running the source generator.");
+                Logger.Error(exception, "Error! An unhandle exception was thrown while running the source generator.");
             }
         }
 

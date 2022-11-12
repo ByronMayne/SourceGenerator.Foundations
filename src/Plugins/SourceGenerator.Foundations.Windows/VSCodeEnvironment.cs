@@ -1,7 +1,6 @@
-﻿using SGF.Contracts;
-using SGF.Interop.VisualStudio;
-using SGF.Logging;
+﻿using Serilog.Core;
 using System;
+using System.Collections.Generic;
 
 namespace SGF
 {
@@ -17,9 +16,9 @@ namespace SGF
         }
 
         /// <inheritdoc cref="IDevelopmentEnviroment"/>
-        public ILogger GetLogger(string context)
+        public IEnumerable<ILogEventSink> GetLogSinks()
         {
-            throw new NotImplementedException();
+            return Array.Empty<ILogEventSink>();
         }
     }
 }

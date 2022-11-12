@@ -14,7 +14,6 @@
   <ItemGroup>
 	  <ProjectReference Include="..\ConsoleApp.SourceGenerator\ConsoleApp.SourceGenerator.csproj">
 		  <OutputItemType>Analyzer</OutputItemType>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
 		  <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
 	  </ProjectReference>
   </ItemGroup>

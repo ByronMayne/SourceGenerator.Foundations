@@ -1,8 +1,7 @@
-﻿using SGF.Contracts;
-using SGF.Logging;
+﻿using Serilog;
+using SGF.Sinks;
 using System;
-using System.Collections.Generic;
-using System.Reflection;
+using System.IO;
 
 namespace SGF
 {
@@ -11,41 +10,51 @@ namespace SGF
     /// </summary>
     public static class DevelopmentEnviroment
     {
-        private static readonly Dictionary<string, ILogger> s_loggers;
+        private static readonly LogEventSinkAggregate m_sinkAggregate;
 
         /// <summary>
         /// Gets the currently active development enviroment
         /// </summary>
         public static IDevelopmentEnviroment Instance { get; }
 
+        /// <summary>
+        /// Gets the temp directory where generators can store data
+        /// </summary>
+        public static string TempDirectory { get; }
+
+        /// <summary>
+        /// Gets the logger that was created
+        /// </summary>
+        public static ILogger Logger { get; }
+
         static DevelopmentEnviroment()
         {
-            Assembly entryAssembly = Assembly.GetCallingAssembly();
-            AssemblyName assemblyName = entryAssembly.GetName();
-            s_loggers = new Dictionary<string, ILogger>();
-            Instance = new GenericDevelopmentEnviroment(assemblyName.Name);
+            m_sinkAggregate = new LogEventSinkAggregate();
+
+            TempDirectory = Path.Combine(Path.GetTempPath(), "SourceGenerator.Foundations");
+
+            if(!Directory.Exists(TempDirectory))
+            {
+                Directory.CreateDirectory(TempDirectory);
+            }
+
+            string logPath = Path.Combine(TempDirectory, "SourceGenerator.Foundations.log");
+
+            Logger = new LoggerConfiguration()
+                .WriteTo.File(logPath, retainedFileCountLimit: 1, buffered: false)
+                .WriteTo.Sink<LogEventSinkAggregate>()
+                .CreateLogger();
+
+            Instance = new GenericDevelopmentEnviroment();
             AppDomain.CurrentDomain.UnhandledException += OnExceptionThrown;
         }
 
         /// <summary>
         /// Attaches the debugger to the given process Id
         /// </summary>
-        public static void AttachDebugger(int processId)
-            => Instance.AttachDebugger(processId);
-
-        /// <summary>
-        /// Gets or creates a new logger used to output information from the source generator 
-        /// </summary>
-        /// <param name="context">A string context that will be used to label the logger</param>
-        public static ILogger GetLogger(string context)
+        public static bool AttachDebugger(int processId)
         {
-            if (s_loggers.TryGetValue(context, out ILogger? logger))
-            {
-                return logger;
-            }
-            logger = Instance.GetLogger(context);
-            s_loggers[context] = logger;
-            return logger;
+            return Instance.AttachDebugger(processId);
         }
 
         /// <summary>
@@ -54,10 +63,7 @@ namespace SGF
         /// </summary>
         private static void OnExceptionThrown(object sender, UnhandledExceptionEventArgs e)
         {
-            foreach(ILogger logger in s_loggers.Values)
-            {
-                logger.LogError((Exception)e.ExceptionObject, "Unhandle exception was thrown in the app domain");
-            }
+            Logger.Error(e.ExceptionObject as Exception, "An unhandled exception was thrown by sender {Sender}", sender);
         }
     }
 }

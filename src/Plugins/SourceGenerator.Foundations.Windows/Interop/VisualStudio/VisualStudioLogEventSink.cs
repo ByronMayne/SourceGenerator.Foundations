@@ -1,16 +1,17 @@
 ﻿using EnvDTE;
-using SGF.Interop.VisualStudio;
-using SGF.Logging;
+using Serilog.Core;
+using Serilog.Events;
 using System;
+using Constants = EnvDTE.Constants;
 
-namespace SGF
+namespace SGF.Interop.VisualStudio
 {
-    public class VisualStudioLogger : ILogger
+    public class VisualStudioLogEventSink : ILogEventSink
     {
         private static readonly OutputWindow? s_outputWindow;
-        private OutputWindowPane? m_outputPane;
+        private readonly OutputWindowPane? m_outputPane;
 
-        static VisualStudioLogger()
+        static VisualStudioLogEventSink()
         {
             DTE? dte = VisualStudioInterop.GetDTE();
             if (dte != null)
@@ -24,19 +25,19 @@ namespace SGF
         /// Initializes a new instance of an output channel with the
         /// Visual Studio output window. 
         /// </summary>
-        internal VisualStudioLogger(string context)
+        internal VisualStudioLogEventSink()
         {
             if (s_outputWindow != null)
             {
                 foreach (OutputWindowPane pane in s_outputWindow.OutputWindowPanes)
                 {
-                    if (Equals(pane.Name, context))
+                    if (Equals(pane.Name, "Source Generator"))
                     {
                         m_outputPane = pane;
                         break;
                     }
                 }
-                m_outputPane ??= s_outputWindow.OutputWindowPanes.Add(context);
+                m_outputPane ??= s_outputWindow.OutputWindowPanes.Add("Source Generator");
             }
         }
 
@@ -51,16 +52,14 @@ namespace SGF
             }
         }
 
-        /// <inheritdoc cref="ILogger"/>
-        public void Log(LogLevel logLevel, Exception? exception, string messageTemplate, object[] arguments)
+        public void Emit(LogEvent logEvent)
         {
-            if(m_outputPane == null)
+            if (m_outputPane == null)
             {
                 return;
             }
 
-            string renderedMessage = string.Format(messageTemplate, arguments);
-            m_outputPane.OutputString($"{renderedMessage}{Environment.NewLine}");
+            m_outputPane.OutputString(logEvent.RenderMessage());
         }
 
         /// <summary>
@@ -81,7 +80,7 @@ namespace SGF
         {
             if (m_outputPane != null)
             {
-                m_outputPane.OutputString($"{message}{System.Environment.NewLine}");
+                m_outputPane.OutputString($"{message}{Environment.NewLine}");
             }
         }
     }

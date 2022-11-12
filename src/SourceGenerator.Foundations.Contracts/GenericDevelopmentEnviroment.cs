@@ -1,6 +1,6 @@
-﻿using SGF.Contracts;
-using SGF.Logging;
-using SGF.Logging.Archives;
+﻿using Serilog.Core;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace SGF
@@ -10,23 +10,12 @@ namespace SGF
     /// </summary>
     internal class GenericDevelopmentEnviroment : IDevelopmentEnviroment
     {
-        private readonly ILogArchive m_archive;
-
-        public GenericDevelopmentEnviroment(string assemblyName)
-        {
-            m_archive = new LogFileArchive(assemblyName);
-        }
-
         /// <inheritdoc cref="IDevelopmentEnviroment"/>
         public bool AttachDebugger(int processId)
-        {
-            return Debugger.Launch();
-        }
+            => Debugger.Launch();
 
         /// <inheritdoc cref="IDevelopmentEnviroment"/>
-        public ILogger GetLogger(string context)
-        {
-            return new Logger(context, m_archive);
-        }
+        public IEnumerable<ILogEventSink> GetLogSinks()
+            => Array.Empty<ILogEventSink>();
     }
 }

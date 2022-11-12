@@ -1,9 +1,36 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Project>
-	<Target Name="EmbedDependencies" AfterTargets="ResolveAssemblyReferences">
+	<Target Name="SGF_EmbedDependencies" AfterTargets="ResolveAssemblyReferences">
+		<PropertyGroup>
+			<SGF_IsMainAssembly>False</SGF_IsMainAssembly>
+			<SGF_IsMainAssembly Condition="'$(AssemblyName)' == 'SourceGenerator.Foundations'">True</SGF_IsMainAssembly>
+		</PropertyGroup>
+		
+		<!-- Shared References -->
 		<ItemGroup>
-			<EmbeddedResource Include="@(ReferencePath)">
+			<PackageReference Include="Serilog" Version="2.12.0" />
+		</ItemGroup>
+		
+		<!-- Embedded Assemblies -->
+		<ItemGroup>
+			<!-- Include all the referenced assemblies -->
+			<SGF_EmbeddedAssembly Include="@(ReferencePath->'%(RootDir)%(Directory)%(Filename)%(Extension)')"/>
+			<!-- Assemblies To Ingore -->
+			<SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.*.dll')"/>
+			<SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.dll')"/>
+			<SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)Microsoft.*.dll')"/>
+			<SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)mscorlib.dll')"/>
+			<!-- Only the foundations library should have embedded plugins -->
+			<SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)SourceGenerator.Foundations.*.dll')" Condition="!$(SGF_IsMainAssembly)"/>
+			<!-- Embed them as resources -->
+			<EmbeddedResource Include="@(SGF_EmbeddedAssembly)">
 				<LogicalName>SGF.Assembly::%(FileName)%(Extension)</LogicalName>
+			</EmbeddedResource>
+		</ItemGroup>
+		<!-- Embeded Scripts -->
+		<ItemGroup>
+			<EmbeddedResource Include="@(SGF_EmbeddedScript)">
+				<LogicalName>SGF.Script::%(RecursiveDir)%(FileName)%(Extension)</LogicalName>
 			</EmbeddedResource>
 		</ItemGroup>
 	</Target>
