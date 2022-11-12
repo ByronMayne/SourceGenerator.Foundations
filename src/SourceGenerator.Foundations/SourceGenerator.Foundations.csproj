@@ -28,7 +28,6 @@
 		<SGF_EmbeddedScript Include="IncrementalGenerator.cs" />
 		<SGF_EmbeddedScript Include="Configuration\ResourceConfiguration.cs" />
 		<SGF_EmbeddedScript Include="Runtime\ModuleInitializerAttribute.cs" />
-		<SGF_EmbeddedScript Include="Generators\ScriptInjectorGenerator.cs" />
 		<None Include="..\..\README.md">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>

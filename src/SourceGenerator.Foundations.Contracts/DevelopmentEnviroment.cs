@@ -1,4 +1,5 @@
 ﻿using Serilog;
+using Serilog.Core;
 using SGF.Sinks;
 using System;
 using System.IO;
@@ -22,11 +23,6 @@ namespace SGF
         /// </summary>
         public static string TempDirectory { get; }
 
-        /// <summary>
-        /// Gets the logger that was created
-        /// </summary>
-        public static ILogger Logger { get; }
-
         static DevelopmentEnviroment()
         {
             m_sinkAggregate = new LogEventSinkAggregate();
@@ -40,7 +36,7 @@ namespace SGF
 
             string logPath = Path.Combine(TempDirectory, "SourceGenerator.Foundations.log");
 
-            Logger = new LoggerConfiguration()
+            Log.Logger = new LoggerConfiguration()
                 .WriteTo.File(logPath, retainedFileCountLimit: 1, buffered: false)
                 .WriteTo.Sink<LogEventSinkAggregate>()
                 .CreateLogger();
@@ -63,7 +59,7 @@ namespace SGF
         /// </summary>
         private static void OnExceptionThrown(object sender, UnhandledExceptionEventArgs e)
         {
-            Logger.Error(e.ExceptionObject as Exception, "An unhandled exception was thrown by sender {Sender}", sender);
+            Log.Error(e.ExceptionObject as Exception, "An unhandled exception was thrown by sender {Sender}", sender);
         }
     }
 }

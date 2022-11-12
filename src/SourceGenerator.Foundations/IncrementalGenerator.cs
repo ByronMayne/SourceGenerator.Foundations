@@ -21,10 +21,10 @@ namespace SGF
         /// <summary>
         /// Initializes a new instance of the incremental generator with an optional name
         /// </summary>
-        protected IncrementalGenerator(string? name = null)
+        protected IncrementalGenerator()
         {
-            Logger = DevelopmentEnviroment.Logger.ForContext(GetType());
-            Logger.Information("Initalizing {GeneratorName}", name ?? GetType().Name);
+            Logger = Log.ForContext(GetType());
+            Logger.Information("Initalizing Generator");
         }
 
         /// <summary>

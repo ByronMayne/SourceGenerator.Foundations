@@ -19,24 +19,24 @@ namespace SGF.Reflection
             Warning
         }
 
-        private static readonly bool s_loadedContractsAssembly;
+        private static bool s_loadedContractsAssembly;
         private static readonly ISet<Assembly> s_assemblies;
         private static readonly AssemblyName s_contractsAssemblyName;
 
         static AssemblyResolver()
         {
+            s_contractsAssemblyName = new AssemblyName("SourceGenerator.Foundations.Contracts");
             s_assemblies = new HashSet<Assembly>
             {
                 typeof(AssemblyResolver).Assembly
             };
-            AppDomain.CurrentDomain.AssemblyResolve += OnResolveAssembly;
-            s_contractsAssemblyName = new AssemblyName("SourceGenerator.Foundations.Contracts");
-            s_loadedContractsAssembly = ResolveAssembly(s_contractsAssemblyName) != null;
         }
 
         [ModuleInitializer]
         internal static void InitializeResolver()
         {
+            AppDomain.CurrentDomain.AssemblyResolve += OnResolveAssembly;
+            s_loadedContractsAssembly = ResolveAssembly(s_contractsAssemblyName) != null;
 
             //OperatingSystem osVersion = Environment.OSVersion;
 
@@ -126,42 +126,47 @@ namespace SGF.Reflection
         /// </summary>
         private static void Log(Exception? exception, LogLevel level, string message, params object?[]? parameters)
         {
-            /// <summary>
-            /// This indirection might seem a bit weird but it's because we want to log output from the assembly resolver
-            /// however since the logging library is defined within `SourceGenerator.Foundations.Contracts` if that assembly
-            /// fails to load we will create a stake overflow since calling to the logger will try to load the assembly again. 
-            /// We issoloate the logging in this function so the runtime does not attempt to load it directrly 
-            /// </summary>
-            static void LogInternal(Exception? exception, LogLevel level, string message, object?[]? parameters)
-            {
-                switch (level)
-                {
-                    case LogLevel.Info:
-                        DevelopmentEnviroment.Logger.Information(exception, message, parameters);
-                        break;
-                    case LogLevel.Warning:
-                        DevelopmentEnviroment.Logger.Warning(exception, message, parameters);
-                        break;
-                    case LogLevel.Error:
-                        DevelopmentEnviroment.Logger.Error(exception, message, parameters);
-                        break;
-                }
-            }
-
             if (s_loadedContractsAssembly)
             {
-                LogInternal(exception, LogLevel.Info, message, parameters);
+                SafeLog(exception, level, message, parameters);
             }
             else
             {
                 string logPath = Path.Combine(Path.GetTempPath(), "SourceGenerator.Foundations");
+                string exceptionMessage = exception == null
+                    ? ""
+                    : $"\n {exception}";
+
                 File.AppendAllLines(logPath,
                     new string[]
                     {
-                        message,
+                        $"{DateTime.Now:hh:mm:ss} [{level}] {message} {exceptionMessage}",
                         exception?.ToString() ??"",
                     });
             }
         }
+
+        /// <summary>
+        /// This indirection might seem a bit weird but it's because we want to log output from the assembly resolver
+        /// however since the logging library is defined within `SourceGenerator.Foundations.Contracts` if that assembly
+        /// fails to load we will create a stake overflow since calling to the logger will try to load the assembly again. 
+        /// We issoloate the logging in this function so the runtime does not attempt to load it directrly 
+        /// </summary>
+        static void SafeLog(Exception? exception, LogLevel level, string message, object?[]? parameters)
+        {
+            switch (level)
+            {
+                case LogLevel.Info:
+                    Serilog.Log.Information(exception, message, parameters);
+                    break;
+                case LogLevel.Warning:
+                    Serilog.Log.Warning(exception, message, parameters);
+                    break;
+                case LogLevel.Error:
+                    Serilog.Log.Error(exception, message, parameters);
+                    break;
+            }
+        }
+
     }
 }
