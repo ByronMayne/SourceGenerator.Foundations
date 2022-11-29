@@ -1,31 +1,35 @@
 ﻿#nullable enable
-using Serilog;
 using SGF.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace SGF.Reflection
 {
     internal static class AssemblyResolver
     {
-        private enum LogLevel
-        {
-            Info,
-            Error,
-            Warning
-        }
-
-        private static bool s_loadedContractsAssembly;
+        private static readonly string s_logFilePath;
         private static readonly ISet<Assembly> s_assemblies;
-        private static readonly AssemblyName s_contractsAssemblyName;
 
         static AssemblyResolver()
         {
-            s_contractsAssemblyName = new AssemblyName("SourceGenerator.Foundations.Contracts");
+            Type resolverType = typeof(AssemblyResolver);
+            Assembly hostAssembly = resolverType.Assembly;
+            AssemblyName hostAssemblyName = hostAssembly.GetName();
+            string logDirectory = Path.Combine(Path.GetTempPath(), "SourceGenerator.Foundations");
+            if (!Directory.Exists(logDirectory))
+            {
+                Directory.CreateDirectory(logDirectory);
+            }
+            s_logFilePath = Path.Combine(logDirectory, $"{hostAssemblyName.Name}.asm.log");
+
+
+            AppDomain.CurrentDomain.AssemblyResolve += OnResolveAssembly;
             s_assemblies = new HashSet<Assembly>
             {
                 typeof(AssemblyResolver).Assembly
@@ -35,35 +39,62 @@ namespace SGF.Reflection
         [ModuleInitializer]
         internal static void InitializeResolver()
         {
-            AppDomain.CurrentDomain.AssemblyResolve += OnResolveAssembly;
-            s_loadedContractsAssembly = ResolveAssembly(s_contractsAssemblyName) != null;
+            // .cctor is invoked before getting here
+            try
+            {
+                ResolveAssembly(new AssemblyName("SourceGenerator.Foundations"));
+                ResolveAssembly(new AssemblyName("SourceGenerator.Foundations.Contracts"));
+                LoadDevelopmentEnvironment();
+            }
+            catch (Exception exception)
+            {
+                Debugger.Launch();
+            }
+        }
 
-            //OperatingSystem osVersion = Environment.OSVersion;
+        /// <summary>
+        ///  This has to be broken into it's own function can can't be under the Initialize resolver because
+        ///  referencing the interface will fail.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static void LoadDevelopmentEnvironment()
+        {
+            string? platformAssemblyName = null;
 
-            //switch (osVersion.Platform)
-            //{
-            //    case PlatformID.Win32NT:
-            //        break;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                platformAssemblyName = "SourceGenerator.Foundations.Windows";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                platformAssemblyName = "SourceGenerator.Foundations.Linux";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                platformAssemblyName = "SourceGenerator.Foundations.Linux";
+            }
 
-            //    case PlatformID.Unix:
+            if (platformAssemblyName != null)
+            {
+                Log($"Loading platform assembly {platformAssemblyName}");
+                Assembly? platformAssembly = ResolveAssembly(new AssemblyName(platformAssemblyName));
 
-            //        break;
-            //}
+                if (platformAssembly != null)
+                {
+                    Type? devEnvType = platformAssembly.GetTypes()
+                        .Where(typeof(IDevelopmentEnviroment).IsAssignableFrom)
+                        .Where(t => !t.IsAbstract)
+                        .FirstOrDefault();
 
-            //// if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            // {
-            //     //ResolveAssembly("SourceGenerator.Foundations.Windows");
-            // }
-            // //else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            // {
-            //     // TODO: Linux support
-            //     // ResolveAssembly("SourceGenerator.Foundations.Linux");
-            // }
-            // //else if(RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            // {
-            //     // TODO: OSX support
-            //     // ResolveAssembly("SourceGenerator.Foundations.OSX");
-            // }
+                    if (devEnvType != null)
+                    {
+                        IDevelopmentEnviroment environment = (IDevelopmentEnviroment)Activator.CreateInstance(devEnvType);
+                        DevelopmentEnviroment.SetEnvironment(environment);
+                    }
+
+                    Log($"Successfully loaded platform assembly {platformAssemblyName}");
+                }
+            }
         }
 
         /// <summary>
@@ -76,11 +107,17 @@ namespace SGF.Reflection
             return ResolveAssembly(assemblyName);
         }
 
-
-
         private static Assembly? ResolveAssembly(AssemblyName assemblyName)
         {
             string resourceName = $"{ResourceConfiguration.AssemblyResourcePrefix}{assemblyName.Name}.dll";
+
+            foreach (Assembly loadedAssembly in s_assemblies)
+            {
+                if (string.Equals(loadedAssembly.GetName().Name, assemblyName.Name))
+                {
+                    return loadedAssembly;
+                }
+            }
 
             foreach (Assembly assembly in s_assemblies)
             {
@@ -100,73 +137,33 @@ namespace SGF.Reflection
                             {
                                 s_assemblies.Add(resolvedAssembly);
                             }
-
+                            Log($"Loaded embedded assembly {assemblyName} from within {assembly.GetName().Name}");
                             return resolvedAssembly;
                         }
                     }
                     catch (Exception exception)
                     {
-                        if (assemblyName != s_contractsAssemblyName)
-                        {
-                            // This is redirected to a metho so that it does not attempt to
-                            // load the assembly if it has failed.
-                            Log(exception, LogLevel.Error, "Failed to load assembly {Assembly} due to exception", assemblyName);
-                        }
+                        // This is redirected to a metho so that it does not attempt to
+                        // load the assembly if it has failed.
+                        Log($"Failed to load assembly {assemblyName} due to exception. \n{exception}");
                         return null;
                     }
                 }
             }
+            Log($"Failed to resolve assembly {assemblyName.FullName}");
             return null;
         }
-
-
 
         /// <summary>
         /// Wrapper around the logging implemention to handle the case where loading the contracts library can actually fail
         /// </summary>
-        private static void Log(Exception? exception, LogLevel level, string message, params object?[]? parameters)
+        private static void Log(string message)
         {
-            if (s_loadedContractsAssembly)
-            {
-                SafeLog(exception, level, message, parameters);
-            }
-            else
-            {
-                string logPath = Path.Combine(Path.GetTempPath(), "SourceGenerator.Foundations");
-                string exceptionMessage = exception == null
-                    ? ""
-                    : $"\n {exception}";
-
-                File.AppendAllLines(logPath,
-                    new string[]
-                    {
-                        $"{DateTime.Now:hh:mm:ss} [{level}] {message} {exceptionMessage}",
-                        exception?.ToString() ??"",
-                    });
-            }
+            File.AppendAllLines(s_logFilePath,
+                new string[]
+                {
+                     $"{DateTime.Now:hh:mm:ss} {message}",
+                });
         }
-
-        /// <summary>
-        /// This indirection might seem a bit weird but it's because we want to log output from the assembly resolver
-        /// however since the logging library is defined within `SourceGenerator.Foundations.Contracts` if that assembly
-        /// fails to load we will create a stake overflow since calling to the logger will try to load the assembly again. 
-        /// We issoloate the logging in this function so the runtime does not attempt to load it directrly 
-        /// </summary>
-        static void SafeLog(Exception? exception, LogLevel level, string message, object?[]? parameters)
-        {
-            switch (level)
-            {
-                case LogLevel.Info:
-                    Serilog.Log.Information(exception, message, parameters);
-                    break;
-                case LogLevel.Warning:
-                    Serilog.Log.Warning(exception, message, parameters);
-                    break;
-                case LogLevel.Error:
-                    Serilog.Log.Error(exception, message, parameters);
-                    break;
-            }
-        }
-
     }
 }

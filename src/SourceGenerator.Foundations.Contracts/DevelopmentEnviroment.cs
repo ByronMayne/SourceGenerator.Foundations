@@ -3,6 +3,7 @@ using Serilog.Core;
 using SGF.Sinks;
 using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace SGF
 {
@@ -16,7 +17,7 @@ namespace SGF
         /// <summary>
         /// Gets the currently active development enviroment
         /// </summary>
-        public static IDevelopmentEnviroment Instance { get; }
+        public static IDevelopmentEnviroment Instance { get; private set; }
 
         /// <summary>
         /// Gets the temp directory where generators can store data
@@ -28,8 +29,14 @@ namespace SGF
             m_sinkAggregate = new LogEventSinkAggregate();
 
             TempDirectory = Path.Combine(Path.GetTempPath(), "SourceGenerator.Foundations");
+            Instance = new GenericDevelopmentEnviroment();
+            AppDomain.CurrentDomain.UnhandledException += OnExceptionThrown;
+        }
 
-            if(!Directory.Exists(TempDirectory))
+        [ModuleInitializer]
+        internal static void Initialize()
+        {
+            if (!Directory.Exists(TempDirectory))
             {
                 Directory.CreateDirectory(TempDirectory);
             }
@@ -37,12 +44,10 @@ namespace SGF
             string logPath = Path.Combine(TempDirectory, "SourceGenerator.Foundations.log");
 
             Log.Logger = new LoggerConfiguration()
-                .WriteTo.File(logPath, retainedFileCountLimit: 1, buffered: false)
-                .WriteTo.Sink<LogEventSinkAggregate>()
+                .Enrich.FromLogContext()
+                .WriteTo.File(logPath, shared: true, retainedFileCountLimit: 1, buffered: false)
+                .WriteTo.Sink(m_sinkAggregate)
                 .CreateLogger();
-
-            Instance = new GenericDevelopmentEnviroment();
-            AppDomain.CurrentDomain.UnhandledException += OnExceptionThrown;
         }
 
         /// <summary>
@@ -60,6 +65,17 @@ namespace SGF
         private static void OnExceptionThrown(object sender, UnhandledExceptionEventArgs e)
         {
             Log.Error(e.ExceptionObject as Exception, "An unhandled exception was thrown by sender {Sender}", sender);
+        }
+
+        /// <summary>
+        /// Sets the active development environment  
+        /// </summary>
+        /// <typeparam name="T">The type of development environment</typeparam>
+        public static void SetEnvironment(IDevelopmentEnviroment developmentEnviroment)
+        {
+            Log.Information("Changing Development Enviroment to {Type}", developmentEnviroment.GetType().FullName);
+            Instance = developmentEnviroment;
+            m_sinkAggregate.AddRange(developmentEnviroment.GetLogSinks());
         }
     }
 }

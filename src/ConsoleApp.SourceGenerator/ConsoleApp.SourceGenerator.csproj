@@ -12,7 +12,7 @@
 		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3" PrivateAssets="all" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 		<ProjectReference Include="..\SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj" />
-		<ProjectReference Include="..\SourceGenerator.Foundations\SourceGenerator.Foundations.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+		<ProjectReference Include="..\SourceGenerator.Foundations\SourceGenerator.Foundations.csproj" OutputItemType="Analyzer" />
 	</ItemGroup>
 	<Import Project="..\SourceGenerator.Foundations\SourceGenerator.Foundations.props" />
 </Project>

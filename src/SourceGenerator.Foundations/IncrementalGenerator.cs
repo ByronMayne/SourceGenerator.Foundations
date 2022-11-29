@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis;
 using Serilog;
 using System;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace SGF
 {
@@ -13,6 +14,11 @@ namespace SGF
     public abstract class IncrementalGenerator : IIncrementalGenerator
     {
         /// <summary>
+        /// Gets the name of the generator used for logging
+        /// </summary>
+        public string Name { get; }
+
+        /// <summary>
         /// Gets the log that can allow you to output information to your
         /// IDE of choice
         /// </summary>
@@ -21,10 +27,17 @@ namespace SGF
         /// <summary>
         /// Initializes a new instance of the incremental generator with an optional name
         /// </summary>
-        protected IncrementalGenerator()
+        protected IncrementalGenerator(string? name = "")
         {
-            Logger = Log.ForContext(GetType());
-            Logger.Information("Initalizing Generator");
+            Type type = GetType();
+            Logger = Log.Logger.ForContext(type);
+
+            if (string.IsNullOrEmpty(name))
+            {
+                name = type.Name;
+            }
+            Name = name!;
+            Logger.Information("Initalizing Generator {Name}", Name);
         }
 
         /// <summary>

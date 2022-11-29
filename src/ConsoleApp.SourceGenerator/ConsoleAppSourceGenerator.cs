@@ -15,6 +15,8 @@ namespace ConsoleApp.SourceGenerator
 
         protected override void OnInitialize(IncrementalGeneratorInitializationContext context)
         {
+            AttachDebugger();
+
             Payload payload = new Payload()
             {
                 Name = "Newtonsoft.Json",

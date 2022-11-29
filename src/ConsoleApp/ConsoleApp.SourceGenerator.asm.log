@@ -1,0 +1,5 @@
+08:24:14 [Info] Failed to resolve assembly SourceGenerator.Foundations.Contracts 
+08:24:16 [Info] Loaded embedded assembly Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10 from within ConsoleApp.SourceGenerator 
+08:24:17 [Info] Loaded embedded assembly Serilog.Sinks.File, Version=5.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10 from within ConsoleApp.SourceGenerator 
+08:25:23 [Info] Loading platform assembly SourceGenerator.Foundations.Windows 
+08:25:24 [Info] Failed to resolve assembly SourceGenerator.Foundations.Windows 

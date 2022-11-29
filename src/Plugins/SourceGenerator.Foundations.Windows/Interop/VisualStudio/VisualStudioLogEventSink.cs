@@ -1,15 +1,21 @@
 ﻿using EnvDTE;
+using Serilog;
 using Serilog.Core;
 using Serilog.Events;
+using Serilog.Formatting.Display;
 using System;
+using System.IO;
 using Constants = EnvDTE.Constants;
 
 namespace SGF.Interop.VisualStudio
 {
     public class VisualStudioLogEventSink : ILogEventSink
     {
+        private static readonly string s_outputWindowName;
+        private static readonly string s_messageTemplate;
         private static readonly OutputWindow? s_outputWindow;
         private readonly OutputWindowPane? m_outputPane;
+        private readonly MessageTemplateTextFormatter m_templateFormatter;
 
         static VisualStudioLogEventSink()
         {
@@ -19,6 +25,8 @@ namespace SGF.Interop.VisualStudio
                 Window window = dte.Windows.Item(Constants.vsWindowKindOutput);
                 s_outputWindow = window.Object as OutputWindow;
             }
+            s_outputWindowName = "SGF: Generator Output";
+            s_messageTemplate = "{Timestamp:HH:mm:ss.fff} [{Level:u3}] {Message:lj}{NewLine}{Exception}";
         }
 
         /// <summary>
@@ -27,17 +35,19 @@ namespace SGF.Interop.VisualStudio
         /// </summary>
         internal VisualStudioLogEventSink()
         {
+            m_templateFormatter = new MessageTemplateTextFormatter(s_messageTemplate, null);
+
             if (s_outputWindow != null)
             {
                 foreach (OutputWindowPane pane in s_outputWindow.OutputWindowPanes)
                 {
-                    if (Equals(pane.Name, "Source Generator"))
+                    if (Equals(pane.Name, s_outputWindowName))
                     {
                         m_outputPane = pane;
                         break;
                     }
                 }
-                m_outputPane ??= s_outputWindow.OutputWindowPanes.Add("Source Generator");
+                m_outputPane ??= s_outputWindow.OutputWindowPanes.Add(s_outputWindowName);
             }
         }
 
@@ -58,8 +68,12 @@ namespace SGF.Interop.VisualStudio
             {
                 return;
             }
-
-            m_outputPane.OutputString(logEvent.RenderMessage());
+            
+            using (StringWriter stringWriter = new StringWriter())
+            {
+                m_templateFormatter.Format(logEvent, stringWriter);
+                Write(stringWriter.ToString());
+            }
         }
 
         /// <summary>

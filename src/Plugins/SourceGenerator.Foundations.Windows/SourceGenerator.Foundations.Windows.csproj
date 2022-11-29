@@ -13,4 +13,5 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\..\SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj" />
 	</ItemGroup>
+	<Import Project=".\..\..\SourceGenerator.Foundations\SourceGenerator.Foundations.props" />
 </Project>
