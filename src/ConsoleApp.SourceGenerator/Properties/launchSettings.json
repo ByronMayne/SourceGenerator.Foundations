@@ -3,6 +3,6 @@
     "ConsoleApp Target": {
       "commandName": "DebugRoslynComponent",
       "targetProject": "..\\ConsoleApp\\ConsoleApp.csproj"
-    },
+    }
   }
 }

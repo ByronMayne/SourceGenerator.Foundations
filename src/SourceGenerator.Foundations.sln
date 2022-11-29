@@ -9,6 +9,18 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SourceGenerator.Foundations
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp.SourceGenerator", "ConsoleApp.SourceGenerator\ConsoleApp.SourceGenerator.csproj", "{CD9B09FE-85C3-4295-BD88-D2192200943A}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SourceGenerator.Foundations.Contracts", "SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj", "{E6A4D948-7741-4A56-92A4-C8B800CC7DDE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9DE06F12-24AF-41EF-8214-F015EEF952BB}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		Directory.Build.props = Directory.Build.props
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{A651676B-FBDB-4710-B010-D05AF3A56084}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SourceGenerator.Foundations.Windows", "Plugins\SourceGenerator.Foundations.Windows\SourceGenerator.Foundations.Windows.csproj", "{DC8C5A1A-6269-4BA7-852A-D21CB0B2B5A0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,9 +39,20 @@ Global
 		{CD9B09FE-85C3-4295-BD88-D2192200943A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD9B09FE-85C3-4295-BD88-D2192200943A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD9B09FE-85C3-4295-BD88-D2192200943A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6A4D948-7741-4A56-92A4-C8B800CC7DDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6A4D948-7741-4A56-92A4-C8B800CC7DDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6A4D948-7741-4A56-92A4-C8B800CC7DDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6A4D948-7741-4A56-92A4-C8B800CC7DDE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC8C5A1A-6269-4BA7-852A-D21CB0B2B5A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC8C5A1A-6269-4BA7-852A-D21CB0B2B5A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC8C5A1A-6269-4BA7-852A-D21CB0B2B5A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC8C5A1A-6269-4BA7-852A-D21CB0B2B5A0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{DC8C5A1A-6269-4BA7-852A-D21CB0B2B5A0} = {A651676B-FBDB-4710-B010-D05AF3A56084}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EDB10920-970A-43F9-A2B3-7F1270DD477B}

@@ -1,14 +1,37 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Project>
-	<ItemGroup>
-		<PackageReference Include="envdte" Version="17.3.32804.24" />
-		<PackageReference Include="Handlebars.Net" Version="2.1.0" PrivateAssets="All" GeneratePathProperty="true" />
-		<PackageReference Include="Microsoft.VisualStudio.Interop" Version="17.3.32804.24" GeneratePathProperty="true" PrivateAssets="all" />
-		<PackageReference Include="System.Management" Version="6.0.0" GeneratePathProperty="true" />
-	</ItemGroup>
-	<Target Name="EmbedDependencies" BeforeTargets="BeforeBuild">
+	<Target Name="SGF_EmbedDependencies" AfterTargets="ResolveAssemblyReferences">
+		<PropertyGroup>
+			<SGF_IsMainAssembly>False</SGF_IsMainAssembly>
+			<SGF_IsMainAssembly Condition="'$(AssemblyName)' == 'SourceGenerator.Foundations'">True</SGF_IsMainAssembly>
+		</PropertyGroup>
+		
+		<!-- Shared References -->
 		<ItemGroup>
-			<EmbeddedResource Include="@(ResolvedCompileFileDefinitionsToAdd)"/>
+			<PackageReference Include="Serilog" Version="2.12.0" />
+		</ItemGroup>
+		
+		<!-- Embedded Assemblies -->
+		<ItemGroup>
+			<!-- Include all the referenced assemblies -->
+			<SGF_EmbeddedAssembly Include="@(ReferencePath->'%(RootDir)%(Directory)%(Filename)%(Extension)')"/>
+			<!-- Assemblies To Ingore -->
+			<SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.*.dll')"/>
+			<SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.dll')"/>
+			<SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)mscorlib.dll')"/>
+			<SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)netstandard.dll')"/>
+			<!-- Only the foundations library should have embedded plugins -->
+			<SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)SourceGenerator.Foundations.*.dll')" Condition="!$(SGF_IsMainAssembly)"/>
+			<!-- Embed them as resources -->
+			<EmbeddedResource Include="@(SGF_EmbeddedAssembly)">
+				<LogicalName>SGF.Assembly::%(FileName)%(Extension)</LogicalName>
+			</EmbeddedResource>
+		</ItemGroup>
+		<!-- Embeded Scripts -->
+		<ItemGroup>
+			<EmbeddedResource Include="@(SGF_EmbeddedScript)">
+				<LogicalName>SGF.Script::%(RecursiveDir)%(FileName)%(Extension)</LogicalName>
+			</EmbeddedResource>
 		</ItemGroup>
 	</Target>
 </Project>
