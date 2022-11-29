@@ -11,8 +11,11 @@ namespace SGF
     internal class GenericDevelopmentEnviroment : IDevelopmentEnviroment
     {
         /// <inheritdoc cref="IDevelopmentEnviroment"/>
-        public bool AttachDebugger(int processId)
-            => Debugger.Launch();
+        public bool AttachDebugger(bool _)
+        {
+            // Debugger.Launch applies a breakpoint, so we ignore the value
+            return Debugger.Launch();
+        }
 
         /// <inheritdoc cref="IDevelopmentEnviroment"/>
         public IEnumerable<ILogEventSink> GetLogSinks()

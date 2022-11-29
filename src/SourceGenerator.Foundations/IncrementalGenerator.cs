@@ -11,7 +11,7 @@ namespace SGF
     /// Used as a base class for creating your own source generator. This class provides some helper
     /// methods and impoved debugging expereince.
     /// </summary>
-    public abstract class IncrementalGenerator : IIncrementalGenerator
+    internal abstract class IncrementalGenerator : IIncrementalGenerator
     {
         /// <summary>
         /// Gets the name of the generator used for logging
@@ -44,10 +44,11 @@ namespace SGF
         /// Attaches the debugger automtically if you are running from Visual Studio. You have the option
         /// to stop or just continue
         /// </summary>
-        protected void AttachDebugger()
+        [DebuggerStepThrough]
+        protected void AttachDebugger(bool breakHere = true)
         {
-            Process process = Process.GetCurrentProcess();
-            _ = DevelopmentEnviroment.AttachDebugger(process.Id);
+            _ = DevelopmentEnviroment.AttachDebugger(breakHere);
+   
         }
 
         /// <inheritdoc cref = "IIncrementalGenerator" />

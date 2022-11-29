@@ -1,18 +1,19 @@
-﻿using EnvDTE;
+﻿
 using Serilog.Core;
 using SGF.Interop.VisualStudio;
 using System.Collections.Generic;
+using Debugger = System.Diagnostics.Debugger;
 
 namespace SGF
 {
     internal class WindowsDevelopmentEnvironment : IDevelopmentEnviroment
     {
         /// <inheritdoc cref="IDevelopmentEnviroment"/>
-        public bool AttachDebugger(int processId)
+        public bool AttachDebugger(bool @break)
         {
             if (VisualStudioInterop.HasEnvironment)
             {
-                VisualStudioInterop.AttachDebugger();
+                VisualStudioInterop.AttachDebugger(@break);
                 return true;
             }
             // TODO: VSCode
