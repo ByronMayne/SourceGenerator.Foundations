@@ -4,6 +4,8 @@
 		<PropertyGroup>
 			<SGF_IsMainAssembly>False</SGF_IsMainAssembly>
 			<SGF_IsMainAssembly Condition="'$(AssemblyName)' == 'SourceGenerator.Foundations'">True</SGF_IsMainAssembly>
+			<SGF_IsNugetPackage>False</SGF_IsNugetPackage>
+			<SGF_IsNugetPackage Condition="Exists('$(MSBuildThisFileDirectory)..\$(MSBuildThisFileName).nuspec')">True</SGF_IsNugetPackage>
 		</PropertyGroup>
 		
 		<!-- Shared References -->
