@@ -5,6 +5,7 @@
 		<LangVersion>9.0</LangVersion>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 		<IncludeBuildOutput>false</IncludeBuildOutput>
+		<IsRoslynComponent>true</IsRoslynComponent>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Title>Source Generator Foundations</Title>
 		<Authors>Byron Mayne</Authors>
@@ -14,29 +15,48 @@
 		<RepositoryUrl>https://github.com/ByronMayne/SourceGenerator.Foudations</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageTags>source;generator;csharp</PackageTags>
+		<RootNamespace>SGF</RootNamespace>
+		<NoWarn>$(NoWarn);NU5128</NoWarn>
 		<TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);Nuget_AppendContent</TargetsForTfmSpecificContentInPackage>
 	</PropertyGroup>
-
 	<ItemGroup>
+		<None Update="$(AssemblyName).props" PackagePath="build" />
 		<None Include="$(OutputPath)$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<None Update="$(AssemblyName).props" PackagePath="build"/>
-		<EmbeddedResource Include="Templates\**\*.hbs"/>
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.0.1" PrivateAssets="all" />
-		<PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="all" />
+		<PluginProject Include="..\Plugins\*\*.csproj" />
+		<PluginTarget Include="@(PluginProject->'%(RootDir)%(Directory)bin\$(Configuration)\$(TargetFramework)\%(FileName).dll')" />
+		<SGF_EmbeddedScript Include="Reflection\AssemblyResolver.cs" />
+		<SGF_EmbeddedScript Include="IncrementalGenerator.cs" />
+		<SGF_EmbeddedScript Include="Configuration\ResourceConfiguration.cs" />
 		<None Include="..\..\README.md">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
+		<ProjectReference Include="..\Plugins\*\*.csproj" ReferenceOutputAssembly="false">
+			<Private>True</Private>
+		</ProjectReference>
 	</ItemGroup>
-
+	<ItemGroup>
+		<ProjectReference Include="..\SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj" 
+						  PrivateAssets="all"/>
+	</ItemGroup>
+	<!-- Appends custom files to the nuget package -->
 	<Target Name="Nuget_AppendContent">
 		<ItemGroup>
 			<TfmSpecificPackageFile Include="$(AssemblyName).props">
 				<PackagePath>build/$(AssemblyName).props</PackagePath>
 			</TfmSpecificPackageFile>
+			<TfmSpecificPackageFile Include="$(MSBuildThisFileDirectory)bin\$(Configuration)\$(TargetFramework)\SourceGenerator.Foundations.Contracts.dll">
+				<PackagePath>lib\$(TargetFramework)</PackagePath>
+			</TfmSpecificPackageFile>
 		</ItemGroup>
 	</Target>
+	<!-- Marks DLLs from plugins as embedded assemblies-->
+	<Target Name="SGF_EmbedPlugins" BeforeTargets="SGF_EmbedDependencies">
+		<Message Importance="high" Text="=== @(PluginTarget)" />
+		<ItemGroup>
+			<SGF_EmbeddedAssembly Include="@(PluginTarget)" />
+		</ItemGroup>
+	</Target>
+	<Import Project="$(MSBuildThisFileDirectory)$(AssemblyName).props" />
 </Project>

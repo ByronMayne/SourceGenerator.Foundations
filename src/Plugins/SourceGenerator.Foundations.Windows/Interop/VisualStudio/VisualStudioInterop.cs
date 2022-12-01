@@ -6,11 +6,13 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using DProcess = System.Diagnostics.Process;
-using {{RootNamespace}}.Diagnostics;
+using SGF.Diagnostics;
+using System.Diagnostics;
+using Process = EnvDTE.Process;
 
-namespace {{RootNamespace}}.Interop
+namespace SGF.Interop.VisualStudio
 {
-    internal class VisualStudioEnv
+    internal class VisualStudioInterop
     {
         [DllImport("ole32.dll")]
         private static extern int CreateBindCtx(int reserved, out IBindCtx ppbc);
@@ -19,7 +21,7 @@ namespace {{RootNamespace}}.Interop
         private static extern int GetRunningObjectTable(int reserved, out IRunningObjectTable prot);
 
 
-        static VisualStudioEnv()
+        static VisualStudioInterop()
         {
             DProcess currentProcess = DProcess.GetCurrentProcess();
             DProcess? parentDebugProcess = currentProcess.GetParent();
@@ -80,17 +82,22 @@ namespace {{RootNamespace}}.Interop
         /// <summary>
         /// Attaches Visual Studio debugger to the current active process
         /// </summary>
-        public static void AttachDebugger()
+        [DebuggerStepThrough]
+        public static void AttachDebugger(bool @break)
         {
             DProcess currentProcess = DProcess.GetCurrentProcess();
             int currentProcessId = currentProcess.Id;
             MessageFilter.Register();
-			Process? dteProcess = GetProcess(currentProcessId);
+            Process? dteProcess = GetProcess(currentProcessId);
             if (dteProcess == null)
             {
-			    throw new Exception("Unable to find DTE local process to attach too");
-			}
-			dteProcess.Attach();
+                throw new Exception("Unable to find DTE local process to attach too");
+            }
+            dteProcess.Attach();
+            if(@break)
+            {
+                dteProcess.Break();
+            }
         }
 
         /// <summary>
@@ -99,17 +106,17 @@ namespace {{RootNamespace}}.Interop
 		/// <param name="processId">The id of the process that you want the local DTE process for </param>
 		/// <returns>The DTE wrapper</returns>
 		private static Process? GetProcess(int processId)
-		{
-			DTE? dte = VisualStudioEnv.GetDTE();
+        {
+            DTE? dte = GetDTE();
 
-			if (dte != null)
-			{
-				IEnumerable<Process> localProcesses = dte.Debugger.LocalProcesses.OfType<Process>();
-				return localProcesses.FirstOrDefault(x => x.ProcessID == processId);
-			}
-			return null;
-		}
-        
+            if (dte != null)
+            {
+                IEnumerable<Process> localProcesses = dte.Debugger.LocalProcesses.OfType<Process>();
+                return localProcesses.FirstOrDefault(x => x.ProcessID == processId);
+            }
+            return null;
+        }
+
         /// <summary>
         /// Gets the instance of DTE for the current instance of Visual Studio. This code is a bit ugly 
         /// but makes sure that we are attaching this instance of VS and not other one running on the users machine.
