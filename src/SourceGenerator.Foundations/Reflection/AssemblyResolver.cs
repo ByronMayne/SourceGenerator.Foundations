@@ -46,7 +46,7 @@ namespace SGF.Reflection
                 ResolveAssembly(new AssemblyName("SourceGenerator.Foundations.Contracts"));
                 LoadDevelopmentEnvironment();
             }
-            catch (Exception exception)
+            catch
             {
                 Debugger.Launch();
             }

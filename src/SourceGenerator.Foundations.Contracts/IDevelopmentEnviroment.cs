@@ -11,7 +11,7 @@ namespace SGF
         /// <summary>
         /// Attaches the debugger to the given process Id
         /// </summary>
-        bool AttachDebugger(int processId);
+        bool AttachDebugger(bool @break);
 
         /// <summary>
         /// Gets the list of sinks used for logging output

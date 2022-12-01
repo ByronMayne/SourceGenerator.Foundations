@@ -7,6 +7,8 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using DProcess = System.Diagnostics.Process;
 using SGF.Diagnostics;
+using System.Diagnostics;
+using Process = EnvDTE.Process;
 
 namespace SGF.Interop.VisualStudio
 {
@@ -80,7 +82,8 @@ namespace SGF.Interop.VisualStudio
         /// <summary>
         /// Attaches Visual Studio debugger to the current active process
         /// </summary>
-        public static void AttachDebugger()
+        [DebuggerStepThrough]
+        public static void AttachDebugger(bool @break)
         {
             DProcess currentProcess = DProcess.GetCurrentProcess();
             int currentProcessId = currentProcess.Id;
@@ -91,6 +94,10 @@ namespace SGF.Interop.VisualStudio
                 throw new Exception("Unable to find DTE local process to attach too");
             }
             dteProcess.Attach();
+            if(@break)
+            {
+                dteProcess.Break();
+            }
         }
 
         /// <summary>

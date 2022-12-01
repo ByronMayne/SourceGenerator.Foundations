@@ -86,16 +86,5 @@ namespace SGF.Interop.VisualStudio
                 m_outputPane.OutputString(message);
             }
         }
-
-        /// <summary>
-        /// Writes an entry to the output window if it has been initialized
-        /// </summary>
-        public void WriteLine(string message)
-        {
-            if (m_outputPane != null)
-            {
-                m_outputPane.OutputString($"{message}{Environment.NewLine}");
-            }
-        }
     }
 }

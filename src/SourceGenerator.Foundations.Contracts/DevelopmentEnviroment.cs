@@ -2,6 +2,7 @@
 using Serilog.Core;
 using SGF.Sinks;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 
@@ -53,9 +54,10 @@ namespace SGF
         /// <summary>
         /// Attaches the debugger to the given process Id
         /// </summary>
-        public static bool AttachDebugger(int processId)
+        [DebuggerStepThrough]
+        public static bool AttachDebugger(bool @break)
         {
-            return Instance.AttachDebugger(processId);
+            return Instance.AttachDebugger(@break);
         }
 
         /// <summary>
