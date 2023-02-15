@@ -6,9 +6,9 @@
 		<TargetFramework>netstandard2.0</TargetFramework>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="envdte" Version="17.3.32804.24" />
-		<PackageReference Include="Microsoft.VisualStudio.Interop" Version="17.3.32804.24" GeneratePathProperty="true" PrivateAssets="all" />
-		<PackageReference Include="System.Management" Version="6.0.0" GeneratePathProperty="true" />
+		<PackageReference Include="envdte" Version="17.4.33103.184" />
+		<PackageReference Include="Microsoft.VisualStudio.Interop" Version="17.4.33103.184" GeneratePathProperty="true" PrivateAssets="all" />
+		<PackageReference Include="System.Management" Version="7.0.0" GeneratePathProperty="true" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\..\SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj" />

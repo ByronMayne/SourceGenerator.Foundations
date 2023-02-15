@@ -2,6 +2,8 @@
 using SGF.Sinks;
 using System;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 
 namespace SGF
 {
@@ -47,7 +49,16 @@ namespace SGF
 
             Instance = new GenericDevelopmentEnviroment();
             AppDomain.CurrentDomain.UnhandledException += OnExceptionThrown;
+
+            Assembly assembly = Assembly.Load(new AssemblyName("SourceGenerator.Foundations.Windows"));
+            Type type = assembly.GetType("SGF.VisualStudioEnvironment");
+
+            if(type != null)
+            {
+                Instance = (IDevelopmentEnviroment)Activator.CreateInstance(type, true);
+            }
         }
+
 
         /// <summary>
         /// Attaches the debugger to the given process Id

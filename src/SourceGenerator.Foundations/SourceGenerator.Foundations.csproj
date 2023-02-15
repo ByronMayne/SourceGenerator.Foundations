@@ -6,7 +6,7 @@
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 		<IncludeBuildOutput>false</IncludeBuildOutput>
 		<IsRoslynComponent>true</IsRoslynComponent>
-		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<Title>Source Generator Foundations</Title>
 		<Authors>Byron Mayne</Authors>
 		<Description>A Source Generator for Source Generators to smooth out the bumps in development. A foucs on removing the boilerplate and improving the debugging experince.</Description>
@@ -22,13 +22,16 @@
 	<ItemGroup>
 		<None Update="$(AssemblyName).props" PackagePath="build" />
 		<None Include="$(OutputPath)$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.0.1" PrivateAssets="all" />
-		<PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="all" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.3.1" PrivateAssets="all" />
+		<!-- Private="False" for the following to stop it from be compied to the output directory and picked up by the assembly resolver -->
+		<ProjectReference Include="..\SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj" Private="False"/>
 		<SGF_EmbeddedScript Include="Reflection\AssemblyResolver.cs" />
 		<SGF_EmbeddedScript Include="IncrementalGenerator.cs" />
 		<SGF_EmbeddedScript Include="Configuration\ResourceConfiguration.cs" />
 		<SGF_EmbeddedScript Include="Runtime\ModuleInitializerAttribute.cs" />
 		<SGF_EmbeddedScript Include="Generators\ScriptInjectorGenerator.cs" />
+		<!-- Include Plugins -->
+		<SGF_EmbeddedAssembly Include="..\Plugins\SourceGenerator.Foundations.Windows\bin\$(Configuration)\$(TargetFramework)\SourceGenerator.Foundations.Windows.dll" />
 		<None Include="..\..\README.md">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
@@ -36,9 +39,7 @@
 		<ProjectReference Include="..\Plugins\*\*.csproj" ReferenceOutputAssembly="false">
 			<Private>True</Private>
 		</ProjectReference>
-	</ItemGroup>
-	<ItemGroup>
-	  <ProjectReference Include="..\SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj" />
+
 	</ItemGroup>
 	<Target Name="Nuget_AppendContent">
 		<ItemGroup>

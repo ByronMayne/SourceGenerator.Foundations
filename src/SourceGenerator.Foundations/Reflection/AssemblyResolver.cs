@@ -29,42 +29,20 @@ namespace SGF.Reflection
             {
                 typeof(AssemblyResolver).Assembly
             };
-            AppDomain.CurrentDomain.AssemblyResolve += OnResolveAssembly;
+   
             s_contractsAssemblyName = new AssemblyName("SourceGenerator.Foundations.Contracts");
             s_loadedContractsAssembly = ResolveAssembly(s_contractsAssemblyName) != null;
         }
 
         [ModuleInitializer]
-        internal static void InitializeResolver()
+        internal static void Initialize()
         {
-
-            //OperatingSystem osVersion = Environment.OSVersion;
-
-            //switch (osVersion.Platform)
-            //{
-            //    case PlatformID.Win32NT:
-            //        break;
-
-            //    case PlatformID.Unix:
-
-            //        break;
-            //}
-
-            //// if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            // {
-            //     //ResolveAssembly("SourceGenerator.Foundations.Windows");
-            // }
-            // //else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            // {
-            //     // TODO: Linux support
-            //     // ResolveAssembly("SourceGenerator.Foundations.Linux");
-            // }
-            // //else if(RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            // {
-            //     // TODO: OSX support
-            //     // ResolveAssembly("SourceGenerator.Foundations.OSX");
-            // }
+            AppDomain.CurrentDomain.AssemblyResolve += OnResolveAssembly;
+            AppDomain.CurrentDomain.AssemblyLoad += OnAssemblyLoaded;
         }
+
+        private static void OnAssemblyLoaded(object sender, AssemblyLoadEventArgs args)
+            => s_assemblies.Add(args.LoadedAssembly);
 
         /// <summary>
         /// Attempts to resolve any assembly by looking for dependencies that are embedded directly
@@ -76,10 +54,16 @@ namespace SGF.Reflection
             return ResolveAssembly(assemblyName);
         }
 
-
-
         private static Assembly? ResolveAssembly(AssemblyName assemblyName)
         {
+            foreach(Assembly assembly in s_assemblies)
+            {
+                if(AssemblyName.ReferenceMatchesDefinition(assemblyName, assembly.GetName()))
+                {
+                    return assembly;
+                }
+            }
+
             string resourceName = $"{ResourceConfiguration.AssemblyResourcePrefix}{assemblyName.Name}.dll";
 
             foreach (Assembly assembly in s_assemblies)
@@ -92,7 +76,7 @@ namespace SGF.Reflection
                     _ = stream.Read(data, 0, data.Length);
                     try
                     {
-                        Assembly resolvedAssembly = Assembly.Load(data);
+                        Assembly resolvedAssembly = AppDomain.CurrentDomain.Load(data);
 
                         if (resolvedAssembly != null)
                         {

@@ -1,6 +1,7 @@
 ﻿using SGF;
 using Microsoft.CodeAnalysis;
-using System.Diagnostics;
+using Serilog;
+using Newtonsoft.Json;
 
 namespace ConsoleApp.SourceGenerator
 {
