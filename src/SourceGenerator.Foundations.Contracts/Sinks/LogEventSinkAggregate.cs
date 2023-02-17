@@ -1,9 +1,6 @@
-﻿using Serilog;
-using Serilog.Core;
+﻿using Serilog.Core;
 using Serilog.Events;
-using System;
 using System.Collections.Generic;
-using System.Reflection;
 
 namespace SGF.Sinks
 {
@@ -27,6 +24,22 @@ namespace SGF.Sinks
         public void Add(ILogEventSink sink)
         {
             m_sinks.Add(sink);
+        }
+
+        public void Add(IEnumerable<ILogEventSink> skins)
+        {
+            foreach (ILogEventSink sink in skins)
+            {
+                m_sinks.Add(sink);
+            }
+        }
+
+        public void Add(params ILogEventSink[] skins)
+        {
+            foreach (ILogEventSink sink in skins)
+            {
+                m_sinks.Add(sink);
+            }
         }
 
         /// <inheritdoc cref="ILogEventSink"/>

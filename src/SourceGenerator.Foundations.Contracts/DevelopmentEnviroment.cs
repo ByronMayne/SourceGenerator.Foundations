@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace SGF
 {
@@ -35,7 +36,7 @@ namespace SGF
 
             TempDirectory = Path.Combine(Path.GetTempPath(), "SourceGenerator.Foundations");
 
-            if(!Directory.Exists(TempDirectory))
+            if (!Directory.Exists(TempDirectory))
             {
                 Directory.CreateDirectory(TempDirectory);
             }
@@ -44,18 +45,28 @@ namespace SGF
 
             Logger = new LoggerConfiguration()
                 .WriteTo.File(logPath, retainedFileCountLimit: 1, buffered: false)
-                .WriteTo.Sink<LogEventSinkAggregate>()
+                .WriteTo.Sink(m_sinkAggregate)
                 .CreateLogger();
 
             Instance = new GenericDevelopmentEnviroment();
             AppDomain.CurrentDomain.UnhandledException += OnExceptionThrown;
 
-            Assembly assembly = Assembly.Load(new AssemblyName("SourceGenerator.Foundations.Windows"));
-            Type type = assembly.GetType("SGF.VisualStudioEnvironment");
+            Type? developmentEnvironment = null;
 
-            if(type != null)
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                Instance = (IDevelopmentEnviroment)Activator.CreateInstance(type, true);
+                Assembly windowsEnvironmentAssembly = Assembly.Load(new AssemblyName("SourceGenerator.Foundations.Windows"));
+
+                if (!string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("VisualStudioVersion")))
+                {
+                    developmentEnvironment = windowsEnvironmentAssembly.GetType("SGF.VisualStudioEnvironment");
+                }
+            }
+      
+            if (developmentEnvironment != null)
+            {
+                Instance = (IDevelopmentEnviroment)Activator.CreateInstance(developmentEnvironment, true);
+                m_sinkAggregate.Add(Instance.GetLogSinks());
             }
         }
 

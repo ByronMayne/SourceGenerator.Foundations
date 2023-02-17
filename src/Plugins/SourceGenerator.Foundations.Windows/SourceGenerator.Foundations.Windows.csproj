@@ -11,6 +11,7 @@
 		<PackageReference Include="System.Management" Version="7.0.0" GeneratePathProperty="true" />
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\..\SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj" />
+		<ProjectReference Include="..\..\SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj" />
 	</ItemGroup>
+	<Import Project="$(MSBuildThisFileDirectory)..\..\SourceGenerator.Foundations\SourceGenerator.Foundations.props" />
 </Project>

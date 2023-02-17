@@ -23,15 +23,37 @@
 		<None Update="$(AssemblyName).props" PackagePath="build" />
 		<None Include="$(OutputPath)$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.3.1" PrivateAssets="all" />
-		<!-- Private="False" for the following to stop it from be compied to the output directory and picked up by the assembly resolver -->
-		<ProjectReference Include="..\SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj" Private="False"/>
+		<SGF_DevelopmentPlugin Include="SourceGenerator.Foundations.Windows"/>
+
+		<!--=================================================================
+			SourceGenerator.Foundations.* aka Developement assemblies
+			=================================================================-->
+		<SGF_EnvironmentAssembly Include="@(SGF_DevelopmentPlugin->'..\Plugins\%(Identity)\bin\$(Configuration)\$(TargetFramework)\%(Identity).dll')"
+								 Pack="True"
+								 PackagePath="environments"
+								 PrivateAssets="All"/>
+	
+		<!--=================================================================
+			SourceGenerator.Foundations.Contracts Attributes
+			Private: Don't copy to output directory 
+			PrivateAssets: Don't add depedency to generated NuGet package
+			Pack: Add dll to nuget package 
+			PackagePath: Add to the dll to the generated nuget package 
+			=================================================================-->
+		<ProjectReference Include="..\SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj" 
+						  Pack="True"
+						  PackagePath="lib\netstandard2.0"
+						  Private="False" 
+						  PrivateAssets="All"/>
+	
+		
 		<SGF_EmbeddedScript Include="Reflection\AssemblyResolver.cs" />
 		<SGF_EmbeddedScript Include="IncrementalGenerator.cs" />
 		<SGF_EmbeddedScript Include="Configuration\ResourceConfiguration.cs" />
 		<SGF_EmbeddedScript Include="Runtime\ModuleInitializerAttribute.cs" />
 		<SGF_EmbeddedScript Include="Generators\ScriptInjectorGenerator.cs" />
 		<!-- Include Plugins -->
-		<SGF_EmbeddedAssembly Include="..\Plugins\SourceGenerator.Foundations.Windows\bin\$(Configuration)\$(TargetFramework)\SourceGenerator.Foundations.Windows.dll" />
+		<SGF_EmbeddedAssembly Include="@(SGF_EnvironmentAssembly)" />
 		<None Include="..\..\README.md">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
@@ -41,12 +63,20 @@
 		</ProjectReference>
 
 	</ItemGroup>
+	<Target Name="Log" AfterTargets="Build">
+		<Message Importance="high" Text="=== @(_SGF_EnvironmentAssemblyPaths)"/>
+	</Target>
 	<Target Name="Nuget_AppendContent">
 		<ItemGroup>
 			<TfmSpecificPackageFile Include="$(AssemblyName).props">
 				<PackagePath>build/$(AssemblyName).props</PackagePath>
 			</TfmSpecificPackageFile>
+			<!--<TfmSpecificPackageFile Include="$(OutputPath)$(AssemblyName).???">
+				<PackagePath>lib\netstandard2.0</PackagePath>
+			</TfmSpecificPackageFile>-->
 		</ItemGroup>
 	</Target>
+
+	
 	<Import Project="$(MSBuildThisFileDirectory)$(AssemblyName).props" />
 </Project>

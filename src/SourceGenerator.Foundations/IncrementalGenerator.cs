@@ -10,7 +10,7 @@ namespace SGF
     /// Used as a base class for creating your own source generator. This class provides some helper
     /// methods and impoved debugging expereince.
     /// </summary>
-    public abstract class IncrementalGenerator : IIncrementalGenerator
+    internal abstract class IncrementalGenerator : IIncrementalGenerator
     {
         /// <summary>
         /// Gets the log that can allow you to output information to your
