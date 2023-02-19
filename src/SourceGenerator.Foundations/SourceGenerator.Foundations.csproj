@@ -46,7 +46,6 @@
 						  Private="False" 
 						  PrivateAssets="All"/>
 	
-		
 		<SGF_EmbeddedScript Include="Reflection\AssemblyResolver.cs" />
 		<SGF_EmbeddedScript Include="IncrementalGenerator.cs" />
 		<SGF_EmbeddedScript Include="Configuration\ResourceConfiguration.cs" />
@@ -61,11 +60,7 @@
 		<ProjectReference Include="..\Plugins\*\*.csproj" ReferenceOutputAssembly="false">
 			<Private>True</Private>
 		</ProjectReference>
-
 	</ItemGroup>
-	<Target Name="Log" AfterTargets="Build">
-		<Message Importance="high" Text="=== @(_SGF_EnvironmentAssemblyPaths)"/>
-	</Target>
 	<Target Name="Nuget_AppendContent">
 		<ItemGroup>
 			<TfmSpecificPackageFile Include="$(AssemblyName).props">
@@ -76,7 +71,5 @@
 			</TfmSpecificPackageFile>-->
 		</ItemGroup>
 	</Target>
-
-	
 	<Import Project="$(MSBuildThisFileDirectory)$(AssemblyName).props" />
 </Project>
