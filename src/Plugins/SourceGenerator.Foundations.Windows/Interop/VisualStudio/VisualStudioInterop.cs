@@ -6,7 +6,9 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using DProcess = System.Diagnostics.Process;
+using DteProcess = EnvDTE.Process;
 using SGF.Diagnostics;
+using System.Diagnostics;
 
 namespace SGF.Interop.VisualStudio
 {
@@ -31,8 +33,13 @@ namespace SGF.Interop.VisualStudio
 
             ProcessId = parentDebugProcess.Id;
 
+            Trace.WriteLine($"ParentProcessName: {parentDebugProcess.ProcessName}", "VSInterop");
+            Trace.WriteLine($"ParentProcessId: {parentDebugProcess.ProcessName}", "VSInterop");
             switch (parentDebugProcess.ProcessName)
             {
+                case "devenv":
+                    // Already have this process 
+                    break;
                 case "MSBuild":
                     // If it's msbuild we want to stup up
                     parentDebugProcess = parentDebugProcess.GetParent();
@@ -85,7 +92,7 @@ namespace SGF.Interop.VisualStudio
             DProcess currentProcess = DProcess.GetCurrentProcess();
             int currentProcessId = currentProcess.Id;
             MessageFilter.Register();
-            Process? dteProcess = GetProcess(currentProcessId);
+            DteProcess? dteProcess = GetProcess(currentProcessId);
             if (dteProcess == null)
             {
                 throw new Exception("Unable to find DTE local process to attach too");
@@ -98,13 +105,13 @@ namespace SGF.Interop.VisualStudio
 		/// </summary>
 		/// <param name="processId">The id of the process that you want the local DTE process for </param>
 		/// <returns>The DTE wrapper</returns>
-		private static Process? GetProcess(int processId)
+		private static DteProcess? GetProcess(int processId)
         {
             DTE? dte = GetDTE();
 
             if (dte != null)
             {
-                IEnumerable<Process> localProcesses = dte.Debugger.LocalProcesses.OfType<Process>();
+                IEnumerable<DteProcess> localProcesses = dte.Debugger.LocalProcesses.OfType<DteProcess>();
                 return localProcesses.FirstOrDefault(x => x.ProcessID == processId);
             }
             return null;

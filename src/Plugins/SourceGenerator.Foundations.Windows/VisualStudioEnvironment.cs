@@ -1,6 +1,7 @@
 ﻿using Serilog.Core;
 using SGF.Interop.VisualStudio;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace SGF
 {

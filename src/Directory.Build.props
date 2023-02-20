@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project>
+    <!-- Source Link -->
+    <PropertyGroup>
+        <IncludeSymbols>true</IncludeSymbols>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    </PropertyGroup>
+</Project>

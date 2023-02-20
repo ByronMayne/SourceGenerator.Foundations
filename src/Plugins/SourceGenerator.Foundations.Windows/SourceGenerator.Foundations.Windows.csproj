@@ -7,6 +7,10 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="envdte" Version="17.4.33103.184" />
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
 		<PackageReference Include="Microsoft.VisualStudio.Interop" Version="17.4.33103.184" GeneratePathProperty="true" PrivateAssets="all" />
 		<PackageReference Include="System.Management" Version="7.0.0" GeneratePathProperty="true" />
 	</ItemGroup>

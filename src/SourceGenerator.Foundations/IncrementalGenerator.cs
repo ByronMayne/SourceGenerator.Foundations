@@ -1,5 +1,4 @@
-﻿#nullable enable
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Serilog;
 using System;
 using System.Diagnostics;

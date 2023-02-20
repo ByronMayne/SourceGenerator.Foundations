@@ -18,20 +18,22 @@
 		<RootNamespace>SGF</RootNamespace>
 		<NoWarn>$(NoWarn);NU5128</NoWarn>
 		<TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);Nuget_AppendContent</TargetsForTfmSpecificContentInPackage>
+		<NoWarn>$(NoWarn);NU5100</NoWarn>
 	</PropertyGroup>
 	<ItemGroup>
 		<None Update="$(AssemblyName).props" PackagePath="build" />
 		<None Include="$(OutputPath)$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.3.1" PrivateAssets="all" />
-		<SGF_DevelopmentPlugin Include="SourceGenerator.Foundations.Windows"/>
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<SGF_DevelopmentPlugin Include="SourceGenerator.Foundations.Windows" />
 
 		<!--=================================================================
 			SourceGenerator.Foundations.* aka Developement assemblies
 			=================================================================-->
-		<SGF_EnvironmentAssembly Include="@(SGF_DevelopmentPlugin->'..\Plugins\%(Identity)\bin\$(Configuration)\$(TargetFramework)\%(Identity).dll')"
-								 Pack="True"
-								 PackagePath="environments"
-								 PrivateAssets="All"/>
+		<SGF_EnvironmentAssembly Include="@(SGF_DevelopmentPlugin->'..\Plugins\%(Identity)\bin\$(Configuration)\$(TargetFramework)\%(Identity).dll')" Pack="True" PackagePath="environments" PrivateAssets="All" />
 	
 		<!--=================================================================
 			SourceGenerator.Foundations.Contracts Attributes
@@ -40,11 +42,7 @@
 			Pack: Add dll to nuget package 
 			PackagePath: Add to the dll to the generated nuget package 
 			=================================================================-->
-		<ProjectReference Include="..\SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj" 
-						  Pack="True"
-						  PackagePath="lib\netstandard2.0"
-						  Private="False" 
-						  PrivateAssets="All"/>
+		<ProjectReference Include="..\SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj" Pack="True" PackagePath="lib\netstandard2.0" Private="False" PrivateAssets="All" />
 	
 		<SGF_EmbeddedScript Include="Reflection\AssemblyResolver.cs" />
 		<SGF_EmbeddedScript Include="IncrementalGenerator.cs" />
@@ -57,9 +55,13 @@
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
-		<ProjectReference Include="..\Plugins\*\*.csproj" ReferenceOutputAssembly="false">
-			<Private>True</Private>
+		<ProjectReference Include="..\Plugins\SourceGenerator.Foundations.Windows\SourceGenerator.Foundations.Windows.csproj">
+		  <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+		  <Private>True</Private>
 		</ProjectReference>
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Analyzer\" />
 	</ItemGroup>
 	<Target Name="Nuget_AppendContent">
 		<ItemGroup>
