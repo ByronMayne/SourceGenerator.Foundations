@@ -42,7 +42,7 @@
 			Pack: Add dll to nuget package 
 			PackagePath: Add to the dll to the generated nuget package 
 			=================================================================-->
-		<ProjectReference Include="..\SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj" Pack="True" PackagePath="lib\netstandard2.0" Private="False" PrivateAssets="All" />
+		<ProjectReference Include="..\SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj" Pack="True" PackagePath="lib/netstandard2.0" Private="False" PrivateAssets="All" />
 	
 		<SGF_EmbeddedScript Include="Reflection\AssemblyResolver.cs" />
 		<SGF_EmbeddedScript Include="IncrementalGenerator.cs" />
@@ -53,7 +53,7 @@
 		<SGF_EmbeddedAssembly Include="@(SGF_EnvironmentAssembly)" />
 		<None Include="..\..\README.md">
 			<Pack>True</Pack>
-			<PackagePath>\</PackagePath>
+			<PackagePath>/</PackagePath>
 		</None>
 		<ProjectReference Include="..\Plugins\SourceGenerator.Foundations.Windows\SourceGenerator.Foundations.Windows.csproj">
 		  <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
@@ -65,7 +65,7 @@
 	</ItemGroup>
 	<Target Name="Nuget_AppendContent">
 		<ItemGroup>
-			<TfmSpecificPackageFile Include="$(AssemblyName).props">
+			<TfmSpecificPackageFile Include="$(MSBuildThisFileDirectory)$(AssemblyName).props">
 				<PackagePath>build/$(AssemblyName).props</PackagePath>
 			</TfmSpecificPackageFile>
 			<!--<TfmSpecificPackageFile Include="$(OutputPath)$(AssemblyName).???">
