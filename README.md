@@ -91,6 +91,21 @@ This will popup the following window and you have to select your visual studio i
 
 ![AutoAttach](./img/DebuggerAttach.gif)
 
+
+## Helpers 
+
+Included in the project is a series of helper classes to help you while working on your generator.
+
+### SGFPath 
+
+* Contains methods for normalizing paths which does the following 
+  * `files/../cats` -> `/cats`
+  * [Windows] `files\cats/dogs` -> `\\files\\cats\\dogs` 
+  * [Linux|Mac] `files\cats/dogs` -> `/files/cats/dogs` 
+* Combing paths without having to worry about leading or trailing slashes.
+
 # How it works
 
 SourceGenerator.Foundations is a source generator for source generators. It embedds additional addtional classes into your project to provide all the features above. 
+
+
