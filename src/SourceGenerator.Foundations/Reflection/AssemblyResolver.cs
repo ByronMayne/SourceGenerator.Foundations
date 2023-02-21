@@ -20,16 +20,16 @@ namespace SGF.Reflection
         }
 
         private static readonly bool s_loadedContractsAssembly;
-        private static readonly ISet<Assembly> s_assemblies;
+        private static readonly IList<Assembly> s_assemblies;
         private static readonly AssemblyName s_contractsAssemblyName;
 
         static AssemblyResolver()
         {
-            s_assemblies = new HashSet<Assembly>
+            s_assemblies = new List<Assembly>
             {
                 typeof(AssemblyResolver).Assembly
             };
-   
+
             s_contractsAssemblyName = new AssemblyName("SourceGenerator.Foundations.Contracts");
             s_loadedContractsAssembly = ResolveAssembly(s_contractsAssemblyName) != null;
         }
@@ -42,7 +42,12 @@ namespace SGF.Reflection
         }
 
         private static void OnAssemblyLoaded(object sender, AssemblyLoadEventArgs args)
-            => s_assemblies.Add(args.LoadedAssembly);
+        {
+            if (!s_assemblies.Contains(args.LoadedAssembly))
+            {
+                s_assemblies.Add(args.LoadedAssembly);
+            }
+        }
 
         /// <summary>
         /// Attempts to resolve any assembly by looking for dependencies that are embedded directly
@@ -56,9 +61,9 @@ namespace SGF.Reflection
 
         private static Assembly? ResolveAssembly(AssemblyName assemblyName)
         {
-            foreach(Assembly assembly in s_assemblies)
+            foreach (Assembly assembly in s_assemblies)
             {
-                if(AssemblyName.ReferenceMatchesDefinition(assemblyName, assembly.GetName()))
+                if (AssemblyName.ReferenceMatchesDefinition(assemblyName, assembly.GetName()))
                 {
                     return assembly;
                 }
@@ -66,8 +71,16 @@ namespace SGF.Reflection
 
             string resourceName = $"{ResourceConfiguration.AssemblyResourcePrefix}{assemblyName.Name}.dll";
 
-            foreach (Assembly assembly in s_assemblies)
+            for (int i = 0; i < s_assemblies.Count; i++)
             {
+                Assembly assembly = s_assemblies[i];
+
+                if (assembly.IsDynamic)
+                {
+                    // Dynamic assemblies don't have reosurces and throw exceptions if you try to access them.
+                    continue;
+                }
+
                 ManifestResourceInfo resourceInfo = assembly.GetManifestResourceInfo(resourceName);
                 if (resourceInfo != null)
                 {
