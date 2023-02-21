@@ -83,7 +83,7 @@ namespace SGF.IO
         /// <param name="path">The path you want to normalize</param>
         /// <param name="separator">The optional separator you want to use</param>
         /// <returns></returns>
-        public static string Normalize(string path, char? separator = null)
+        public static string? Normalize(string path, char? separator = null)
         {
             if (string.IsNullOrEmpty(path)) return string.Empty;
 
@@ -167,19 +167,19 @@ namespace SGF.IO
 
             if (separator is null)
             {
-                separator = GetSeparator(left);
+                separator = GetSeparator(left!);
             }
             else
             {
-                return Join(left, right, separator.Value);
+                return Join(left!, right!, separator.Value);
             }
 
             if (HasWinRoot(left))
             {
-                return Join(left, right, WINDOWS_SEPARATOR);
+                return Join(left!, right!, WINDOWS_SEPARATOR);
             }
 
-            return HasLinuxRoot(left) ? Join(left, right, LINUX_SEPARATOR) : Join(left, right, separator.Value);
+            return HasLinuxRoot(left) ? Join(left!, right!, LINUX_SEPARATOR) : Join(left!, right!, separator.Value);
         }
 
         /// <summary>
