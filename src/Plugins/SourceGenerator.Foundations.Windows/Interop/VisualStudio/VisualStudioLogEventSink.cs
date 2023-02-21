@@ -10,8 +10,10 @@ namespace SGF.Interop.VisualStudio
 {
     public class VisualStudioLogEventSink : ILogEventSink
     {
-        const string DefaultOutputTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}";
+        const string outputPanelName = "Source Generators";
+        const string DefaultOutputTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] {SourceContext} | {Message:lj}{NewLine}{Exception}";
 
+        private static readonly DTE? s_dte;
         private static readonly OutputWindow? s_outputWindow;
         private readonly bool m_outputInitialized;
         private readonly OutputWindowPane? m_outputPane;
@@ -19,10 +21,10 @@ namespace SGF.Interop.VisualStudio
 
         static VisualStudioLogEventSink()
         {
-            DTE? dte = VisualStudioInterop.GetDTE();
-            if (dte != null)
+            s_dte = VisualStudioInterop.GetDTE();
+            if (s_dte != null)
             {
-                Window window = dte.Windows.Item(Constants.vsWindowKindOutput);
+                Window window = s_dte.Windows.Item(Constants.vsWindowKindOutput);
                 s_outputWindow = window.Object as OutputWindow;
             }
         }
@@ -41,13 +43,13 @@ namespace SGF.Interop.VisualStudio
             {
                 foreach (OutputWindowPane pane in s_outputWindow.OutputWindowPanes)
                 {
-                    if (Equals(pane.Name, "Source Generator"))
+                    if (Equals(pane.Name, outputPanelName) && pane.DTE == s_dte)
                     {
                         m_outputPane = pane;
                         break;
                     }
                 }
-                m_outputPane ??= s_outputWindow.OutputWindowPanes.Add("Source Generator");
+                m_outputPane ??= s_outputWindow.OutputWindowPanes.Add(outputPanelName);
                 m_outputInitialized = m_outputPane != null;
             }
             m_outputPane?.Activate();
