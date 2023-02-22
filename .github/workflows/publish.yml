@@ -5,7 +5,7 @@ on:
     tags:
       -'v*'
 env:
-  SOLUTION_PATH: src/SourceGenerator.Foundations.sln
+  SOLUTION_PATH: .\src\SourceGenerator.Foundations.sln
 jobs:
   publish:
     name: build, pack & publish
