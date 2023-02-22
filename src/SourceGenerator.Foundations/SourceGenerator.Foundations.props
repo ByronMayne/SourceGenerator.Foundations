@@ -5,8 +5,8 @@
 			<IsRoslynComponent>true</IsRoslynComponent>
 			<IsInNugetPackage>false</IsInNugetPackage>
 			<IsInNugetPackage Condition="Exists('$(MSBuildThisFileDirectory)..\.nupkg.metadata')">true</IsInNugetPackage>
-			<SGF_NuGetEnvironmentsDir>$(MSBuildThisFileDirectory)..\environments\*.*</SGF_NuGetEnvironmentsDir>
-			<SGF_NetGetNetStandardDir>$(MSBuildThisFileDirectory)..\lib\netstandard2.0\*.*</SGF_NetGetNetStandardDir>
+			<SGF_NuGetEnvironmentsDir>$(MSBuildThisFileDirectory)..\environments\</SGF_NuGetEnvironmentsDir>
+			<SGF_NetGetNetStandardDir>$(MSBuildThisFileDirectory)..\lib\netstandard2.0\</SGF_NetGetNetStandardDir>
 			<SGF_IsMainAssembly>false</SGF_IsMainAssembly>
 			<SGF_IsMainAssembly Condition="'$(MSBuildProjectName)' == 'SourceGenerator.Foundations'">True</SGF_IsMainAssembly>
 		</PropertyGroup>
@@ -18,8 +18,8 @@
 		
 		<!-- When running as NuGet package, copy all dlls in the lib folder -->
 		<ItemGroup Condition="$(IsInNugetPackage)">
-			<SGF_EmbeddedAssembly Include="$(SGF_NetGetNetStandardDir)"/>
-			<SGF_EmbeddedAssembly Include="$(SGF_NuGetEnvironmentsDir)"/>
+			<SGF_EmbeddedAssembly Include="$(SGF_NetGetNetStandardDir)*.*"/>
+			<SGF_EmbeddedAssembly Include="$(SGF_NuGetEnvironmentsDir)*.*"/>
 		</ItemGroup>
 
 		<!-- Embedded Assemblies -->

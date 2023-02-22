@@ -7,6 +7,7 @@
 		<IncludeBuildOutput>false</IncludeBuildOutput>
 		<IsRoslynComponent>true</IsRoslynComponent>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<IncludeSymbols>false</IncludeSymbols>
 		<Title>Source Generator Foundations</Title>
 		<Authors>Byron Mayne</Authors>
 		<Description>A Source Generator for Source Generators to smooth out the bumps in development. A foucs on removing the boilerplate and improving the debugging experince.</Description>
