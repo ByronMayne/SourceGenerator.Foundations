@@ -5,7 +5,7 @@ on:
     tags:
       -'v*'
 env:
-  PROJECT_PATH: $env:GITHUB_WORKSPACE/src/SourceGenerator.Foundations/SourceGenerator.Foundations.csproj
+  PROJECT_PATH: /src/SourceGenerator.Foundations/SourceGenerator.Foundations.csproj
 jobs:
   publish:
     name: build, pack & publish
