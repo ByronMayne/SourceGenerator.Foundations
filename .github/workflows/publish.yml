@@ -38,8 +38,6 @@ jobs:
       - name: publish on version change
         id: publish_nuget
         uses: brandedoutcast/publish-nuget@v2
-        on:
-        tags: ['v[0-9].[0-9]+.[0-9]+']  
         with:
           # Filepath of the project to be packaged, relative to root of repository
           PROJECT_FILE_PATH: src/SourceGenerator.Foundations/SourceGenerator.Foundations.csproj
