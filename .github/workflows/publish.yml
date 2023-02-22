@@ -1,8 +1,9 @@
 name: publish to nuget
 on:
-  release:
-    branches: 
-      - master
+  workflow_dispatch:
+  push:
+    tags:
+      -'V*'
 jobs:
   publish:
     name: build, pack & publish
@@ -20,23 +21,25 @@ jobs:
       # Restore
       - name: Restore dependencies
         run: dotnet restore $env:SOLUTION_PATH
-      # Git Version
-      - name: Git Version
-        id: version
-        uses: codacy/git-version@2.7.1
-      - name: Use the version
-        run: |
-          echo ${{ steps.version.outputs.version }}
       # Build
       - name: Build
         run: dotnet build $env:SOLUTION_PATH --no-restore
       # Test
       - name: Test
         run: dotnet test $env:SOLUTION_PATH --no-build --verbosity normal
+      # Create Github Release
+      - name: Create a Release
+        uses: elgohr/Github-Release-Action@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        with:
+          title: MyReleaseMessage
       # Publish
       - name: publish on version change
         id: publish_nuget
         uses: brandedoutcast/publish-nuget@v2
+        on:
+        tags: ['v[0-9].[0-9]+.[0-9]+']  
         with:
           # Filepath of the project to be packaged, relative to root of repository
           PROJECT_FILE_PATH: src/SourceGenerator.Foundations/SourceGenerator.Foundations.csproj
