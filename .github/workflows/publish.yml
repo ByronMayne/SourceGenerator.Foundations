@@ -5,11 +5,11 @@ on:
     tags:
       -'v*'
 env:
-  PROJECT_PATH: $GITHUB_WORKSPACE/src/SourceGenerator.Foundations/SourceGenerator.Foundations.csproj
+  PROJECT_PATH: $env:GITHUB_WORKSPACE/src/SourceGenerator.Foundations/SourceGenerator.Foundations.csproj
 jobs:
   publish:
     name: build, pack & publish
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       # CheckOut 
       - uses: actions/checkout@v3
@@ -22,13 +22,13 @@ jobs:
           dotnet-version: 6.0.x
       # Restore
       - name: Restore dependencies
-        run: dotnet restore $PROJECT_PATH
+        run: dotnet restore $env:PROJECT_PATH
       # Build
       - name: Build
-        run: dotnet build $PROJECT_PATH --no-restore
+        run: dotnet build $env:PROJECT_PATH --no-restore
       # Test
       - name: Test
-        run: dotnet test $PROJECT_PATH --no-build --verbosity normal
+        run: dotnet test $env:PROJECT_PATH --no-build --verbosity normal
       # Create Github Release
       - name: Create a Release
         uses: elgohr/Github-Release-Action@v4
@@ -42,7 +42,7 @@ jobs:
         uses: brandedoutcast/publish-nuget@v2
         with:
           # Filepath of the project to be packaged, relative to root of repository
-          PROJECT_FILE_PATH: $PROJECT_PATH 
+          PROJECT_FILE_PATH: $env:PROJECT_PATH 
 
           # Platform target to compile (default is empty/AnyCPU)
           BUILD_PLATFORM: x64
