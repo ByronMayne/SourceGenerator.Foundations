@@ -5,10 +5,10 @@ on:
     tags:
       -'v*'
 env:
-  PROJECT_PATH: /src/SourceGenerator.Foundations/SourceGenerator.Foundations.csproj
+  SOLUTION_PATH: ./src/SourceGenerator.Foundations.sln
 jobs:
   publish:
-    name: build, pack & publish
+    name: build, bundle & publish
     runs-on: windows-latest
     steps:
       # CheckOut 
@@ -22,13 +22,13 @@ jobs:
           dotnet-version: 6.0.x
       # Restore
       - name: Restore dependencies
-        run: dotnet restore $env:PROJECT_PATH
+        run: dotnet restore $env:SOLUTION_PATH
       # Build
       - name: Build
-        run: dotnet build $env:PROJECT_PATH --no-restore
+        run: dotnet build $env:SOLUTION_PATH --no-restore
       # Test
       - name: Test
-        run: dotnet test $env:PROJECT_PATH --no-build --verbosity normal
+        run: dotnet test $env:SOLUTION_PATH --no-build --verbosity normal
       # Create Github Release
       - name: Create a Release
         uses: elgohr/Github-Release-Action@v4
