@@ -4,8 +4,6 @@ on:
   push:
     tags:
       -'v*'
-env:
-  SOLUTION_PATH: .\src\SourceGenerator.Foundations.sln
 jobs:
   publish:
     name: build, pack & publish
@@ -22,13 +20,13 @@ jobs:
           dotnet-version: 6.0.x
       # Restore
       - name: Restore dependencies
-        run: dotnet restore $env:SOLUTION_PATH
+        run: dotnet restore .\src\SourceGenerator.Foundations.sln
       # Build
       - name: Build
-        run: dotnet build $env:SOLUTION_PATH --no-restore
+        run: dotnet build .\src\SourceGenerator.Foundations.sln --no-restore
       # Test
       - name: Test
-        run: dotnet test $env:SOLUTION_PATH --no-build --verbosity normal
+        run: dotnet test .\src\SourceGenerator.Foundations.sln --no-build --verbosity normal
       # Create Github Release
       - name: Create a Release
         uses: elgohr/Github-Release-Action@v4
