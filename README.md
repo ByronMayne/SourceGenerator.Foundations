@@ -106,6 +106,17 @@ Included in the project is a series of helper classes to help you while working 
 
 # How it works
 
-SourceGenerator.Foundations is a source generator for source generators. It embedds additional addtional classes into your project to provide all the features above. 
+## Script Injector
+It all starts with `ScriptInjector.cs`. This is a source generator loops over the resources within the current assembly and finds all `*.cs` files whos name starts with `SGF.Script::` and copies them into the target assembly. The image below shows
+some of the scripts that are copied.
 
+![ScriptInjector](./img/ScriptInjector.jpg)
 
+If you would like a script to be copied over you can add it as a `ItemGroup` element called `SGF_EmbeddedScript` which will be embedded in your assembly and prefixed with the correct name.
+
+## Assembly Resolver
+When your source generator runs it needs to find it's dependencies and this is often what fails. When you want to provide external packages you will have to write your own resolve that is able to locate the required assemblies. So instead we have the `ScriptInjector` inject an implemention for you. This assembly resolver will loop over all the resources in the current assembly and look for all resources that start with `SGF.Assembly::`. If the assembly being requested to be loaded exists in the resources, it's extracted and loaded into the current appdomain. 
+
+![AssemblyResolver](./img/AssemblyLoading.jpg)
+
+You can embed any assemblies you want by adding them to `<SGF_EmbeddedAssembly Include="Your Assembly Path"/>`
