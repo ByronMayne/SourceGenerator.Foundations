@@ -23,6 +23,9 @@ namespace SGF
         /// </summary>
         protected IncrementalGenerator(string? name = null)
         {
+            Type type = GetType();
+            if (string.IsNullOrWhiteSpace(name)) name = type.FullName;
+
             Logger = DevelopmentEnviroment.Logger.ForContext(GetType());
             Logger.Information("Initalizing {GeneratorName}", name ?? GetType().Name);
         }
