@@ -13,7 +13,7 @@ namespace SGF
     /// </summary>
     public static class DevelopmentEnviroment
     {
-        private static readonly LogEventSinkAggregate m_sinkAggregate;
+        private static readonly LogEventSinkAggregate s_sinkAggregate;
 
         /// <summary>
         /// Gets the currently active development enviroment
@@ -32,7 +32,7 @@ namespace SGF
 
         static DevelopmentEnviroment()
         {
-            m_sinkAggregate = new LogEventSinkAggregate();
+            s_sinkAggregate = new LogEventSinkAggregate();
 
             TempDirectory = Path.Combine(Path.GetTempPath(), "SourceGenerator.Foundations");
 
@@ -44,8 +44,8 @@ namespace SGF
             string logPath = Path.Combine(TempDirectory, "SourceGenerator.Foundations.log");
 
             Logger = new LoggerConfiguration()
-                .WriteTo.File(logPath, retainedFileCountLimit: 1, buffered: false)
-                .WriteTo.Sink(m_sinkAggregate)
+                .WriteTo.File(logPath, retainedFileCountLimit: 1, buffered: false, shared: true)
+                .WriteTo.Sink(s_sinkAggregate)
                 .CreateLogger();
 
             Instance = new GenericDevelopmentEnviroment();
@@ -66,7 +66,7 @@ namespace SGF
             if (developmentEnvironment != null)
             {
                 Instance = (IDevelopmentEnviroment)Activator.CreateInstance(developmentEnvironment, true);
-                m_sinkAggregate.Add(Instance.GetLogSinks());
+                s_sinkAggregate.Add(Instance.GetLogSinks());
             }
         }
 
