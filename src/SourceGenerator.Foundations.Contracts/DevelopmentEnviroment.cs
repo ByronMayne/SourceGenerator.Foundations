@@ -1,6 +1,7 @@
 ﻿using Serilog;
 using SGF.Sinks;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -41,7 +42,9 @@ namespace SGF
                 Directory.CreateDirectory(TempDirectory);
             }
 
-            string logPath = Path.Combine(TempDirectory, "SourceGenerator.Foundations.log");
+            Process process = Process.GetCurrentProcess();
+            string logPath = Path.Combine(TempDirectory, $"SourceGenerator.Foundations_{process.Id}.log");
+
 
             Logger = new LoggerConfiguration()
                 .WriteTo.File(logPath, retainedFileCountLimit: 1, buffered: false, shared: true)
