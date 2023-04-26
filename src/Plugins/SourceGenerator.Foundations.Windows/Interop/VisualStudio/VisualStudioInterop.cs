@@ -89,6 +89,11 @@ namespace SGF.Interop.VisualStudio
         /// </summary>
         public static void AttachDebugger()
         {
+            if(System.Diagnostics.Debugger.IsAttached)
+            {
+                return;
+            }
+
             DProcess currentProcess = DProcess.GetCurrentProcess();
             int currentProcessId = currentProcess.Id;
             MessageFilter.Register();
