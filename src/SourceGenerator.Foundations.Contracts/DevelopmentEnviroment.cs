@@ -42,34 +42,37 @@ namespace SGF
                 Directory.CreateDirectory(TempDirectory);
             }
 
-            Process process = Process.GetCurrentProcess();
-            string logPath = Path.Combine(TempDirectory, $"SourceGenerator.Foundations_{process.Id}.log");
-
-
             Logger = new LoggerConfiguration()
-                .WriteTo.File(logPath, retainedFileCountLimit: 1, buffered: false, shared: true)
                 .WriteTo.Sink(s_sinkAggregate)
                 .CreateLogger();
 
             Instance = new GenericDevelopmentEnviroment();
             AppDomain.CurrentDomain.UnhandledException += OnExceptionThrown;
 
-            Type? developmentEnvironment = null;
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            try
             {
-                Assembly windowsEnvironmentAssembly = Assembly.Load(new AssemblyName("SourceGenerator.Foundations.Windows"));
 
-                if (!string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("VisualStudioVersion")))
+                Type? developmentEnvironment = null;
+
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    developmentEnvironment = windowsEnvironmentAssembly.GetType("SGF.VisualStudioEnvironment");
+                    Assembly windowsEnvironmentAssembly = Assembly.Load(new AssemblyName("SourceGenerator.Foundations.Windows"));
+
+                    if (!string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("VisualStudioVersion")))
+                    {
+                        developmentEnvironment = windowsEnvironmentAssembly.GetType("SGF.VisualStudioEnvironment");
+                    }
+                }
+
+                if (developmentEnvironment != null)
+                {
+                    Instance = (IDevelopmentEnviroment)Activator.CreateInstance(developmentEnvironment, true);
+                    s_sinkAggregate.Add(Instance.GetLogSinks());
                 }
             }
-      
-            if (developmentEnvironment != null)
+            catch
             {
-                Instance = (IDevelopmentEnviroment)Activator.CreateInstance(developmentEnvironment, true);
-                s_sinkAggregate.Add(Instance.GetLogSinks());
+                // Do nothing
             }
         }
 
