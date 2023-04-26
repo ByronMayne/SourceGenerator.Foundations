@@ -1,9 +1,7 @@
 ﻿#nullable enable
-using Serilog;
 using SGF.Configuration;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -25,7 +23,7 @@ namespace SGF.Reflection
 
         static AssemblyResolver()
         {
-            s_assemblies = new List<Assembly>
+            s_assemblies = new List<Assembly>()
             {
                 typeof(AssemblyResolver).Assembly
             };
@@ -37,8 +35,29 @@ namespace SGF.Reflection
         [ModuleInitializer]
         internal static void Initialize()
         {
-            AppDomain.CurrentDomain.AssemblyResolve += OnResolveAssembly;
-            AppDomain.CurrentDomain.AssemblyLoad += OnAssemblyLoaded;
+            // The assembly resolvers get added to multiple source generators 
+            // so what we do here is only allow the first one defined to allow 
+            // itself to be a resolver. Since this could lead to cases where two resolvers
+            // exists and provide two different instances of the same assembly.
+
+            const string RESOLVER_ATTACHED_KEY = "SGF_ASSEMBLY_RESOLVER_IS_ATTACHED";
+            AppDomain currentDomain = AppDomain.CurrentDomain;
+            object? rawValue = currentDomain.GetData(RESOLVER_ATTACHED_KEY);
+
+            if (rawValue == null || (rawValue is bool isAttached && !isAttached))
+            {
+                currentDomain.SetData(RESOLVER_ATTACHED_KEY, true);
+                currentDomain.AssemblyResolve += OnResolveAssembly;
+                currentDomain.AssemblyLoad += OnAssemblyLoaded;
+
+                foreach (Assembly assembly in currentDomain.GetAssemblies())
+                {
+                    if (!s_assemblies.Contains(assembly))
+                    {
+                        s_assemblies.Add(assembly);
+                    }
+                }
+            }
         }
 
         private static void OnAssemblyLoaded(object sender, AssemblyLoadEventArgs args)
