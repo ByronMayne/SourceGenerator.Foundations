@@ -2,7 +2,8 @@
   "profiles": {
     "ConsoleApp.SourceGenerator Target": {
       "commandName": "DebugRoslynComponent",
-      "targetProject": "..\\ConsoleApp.SourceGenerator\\ConsoleApp.SourceGenerator.csproj"
+      "targetProject": "..\\..\\src\\Sandbox\\ConsoleApp.SourceGenerator\\ConsoleApp.SourceGenerator.csproj",
+
     }
   }
 }
