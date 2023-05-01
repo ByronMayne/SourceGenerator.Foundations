@@ -17,19 +17,13 @@ namespace SGF.Reflection
             Warning
         }
 
-        private static readonly bool s_loadedContractsAssembly;
         private static readonly IList<Assembly> s_assemblies;
         private static readonly AssemblyName s_contractsAssemblyName;
 
         static AssemblyResolver()
         {
-            s_assemblies = new List<Assembly>()
-            {
-                typeof(AssemblyResolver).Assembly
-            };
-
-            s_contractsAssemblyName = new AssemblyName("SourceGenerator.Foundations.Contracts");
-            s_loadedContractsAssembly = ResolveAssembly(s_contractsAssemblyName) != null;
+            s_assemblies = new List<Assembly>();
+            s_contractsAssemblyName = new AssemblyName();
         }
 
         [ModuleInitializer]
@@ -80,8 +74,9 @@ namespace SGF.Reflection
 
         private static Assembly? ResolveAssembly(AssemblyName assemblyName)
         {
-            foreach (Assembly assembly in s_assemblies)
+            for (int i = 0; i < s_assemblies.Count; i++)
             {
+                Assembly assembly = s_assemblies[i];
                 if (AssemblyName.ReferenceMatchesDefinition(assemblyName, assembly.GetName()))
                 {
                     return assembly;
@@ -164,20 +159,7 @@ namespace SGF.Reflection
                 }
             }
 
-            if (s_loadedContractsAssembly)
-            {
-                LogInternal(exception, LogLevel.Info, message, parameters);
-            }
-            else
-            {
-                string logPath = Path.Combine(Path.GetTempPath(), "SourceGenerator.Foundations");
-                File.AppendAllLines(logPath,
-                    new string[]
-                    {
-                        message,
-                        exception?.ToString() ??"",
-                    });
-            }
+            LogInternal(exception, LogLevel.Info, message, parameters);
         }
     }
 }
