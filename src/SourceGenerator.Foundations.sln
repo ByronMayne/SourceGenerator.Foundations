@@ -11,6 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		Directory.Build.props = Directory.Build.props
+		Local.Reference.props = Local.Reference.props
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Environments", "Environments", "{A651676B-FBDB-4710-B010-D05AF3A56084}"
@@ -23,7 +24,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp", "Sandbox\Conso
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp.SourceGenerator", "Sandbox\ConsoleApp.SourceGenerator\ConsoleApp.SourceGenerator.csproj", "{051D9B35-6BD5-44D9-AFE3-C6C334BD4DE2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SourceGenerator.Foundations.Tests", "SourceGenerator.Foundations.Tests\SourceGenerator.Foundations.Tests.csproj", "{6575E432-6CC2-48B8-9848-5CD0BCCED4A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SourceGenerator.Foundations.Tests", "SourceGenerator.Foundations.Tests\SourceGenerator.Foundations.Tests.csproj", "{6575E432-6CC2-48B8-9848-5CD0BCCED4A6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
