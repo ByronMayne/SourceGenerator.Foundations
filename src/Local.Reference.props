@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- == Local Development Reference == 
+  Import this project file into a project locally on your machine to simulate the same settings as if 
+  you referenced a nuget packages. This allows you to do rapid development without having to publish
+  and clear a locally created nuget package.
+-->
+<Project>
+  <ItemGroup>
+    <ProjectReference Include="$(MSBuildThisFileDirectory)SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj" />
+    <ProjectReference Include="$(MSBuildThisFileDirectory)SourceGenerator.Foundations\SourceGenerator.Foundations.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+  </ItemGroup>
+  <Import Project="$(MSBuildThisFileDirectory)SourceGenerator.Foundations\SourceGenerator.Foundations.props" />
+</Project>
