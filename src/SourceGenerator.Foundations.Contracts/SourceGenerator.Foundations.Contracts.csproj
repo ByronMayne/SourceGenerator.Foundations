@@ -1,16 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<Nullable>enable</Nullable>
-		<LangVersion>10</LangVersion>
-		<RootNamespace>SGF</RootNamespace>
-		<TargetFramework>netstandard2.0</TargetFramework>
-	</PropertyGroup>
-	<ItemGroup>
-	  <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
-	    <PrivateAssets>all</PrivateAssets>
-	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-	  </PackageReference>
-	  <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
-	</ItemGroup>
-	<Import Project="..\SourceGenerator.Foundations\SourceGenerator.Foundations.props" />
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <LangVersion>10</LangVersion>
+    <RootNamespace>SGF</RootNamespace>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+  </ItemGroup>
+  <Target Name="SGF_AddPluginDependedencies" BeforeTargets="SGF_EmbedDependencies">
+    <ItemGroup>
+      <SGF_DevelopmentPlugin Include="SourceGenerator.Foundations.Windows" />
+      <SGF_EmbeddedAssembly Include="@(SGF_DevelopmentPlugin->'..\Plugins\%(Identity)\bin\$(Configuration)\$(TargetFramework)\%(Identity).dll')"/>
+    </ItemGroup>
+  </Target>
+  <Import Project="..\SourceGenerator.Foundations\SourceGenerator.Foundations.props" />
 </Project>

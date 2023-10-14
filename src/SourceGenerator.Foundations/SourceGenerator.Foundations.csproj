@@ -29,13 +29,12 @@
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<SGF_DevelopmentPlugin Include="SourceGenerator.Foundations.Windows" />
+
 
 		<!--=================================================================
 			SourceGenerator.Foundations.* aka Developement assemblies
 			=================================================================-->
-		<SGF_EnvironmentAssembly Include="@(SGF_DevelopmentPlugin->'..\Plugins\%(Identity)\bin\$(Configuration)\$(TargetFramework)\%(Identity).dll')" Pack="True" PackagePath="environments" PrivateAssets="All" />
-	
+
 		<!--=================================================================
 			SourceGenerator.Foundations.Contracts Attributes
 			Private: Don't copy to output directory 
@@ -50,8 +49,7 @@
 		<SGF_EmbeddedScript Include="Configuration\ResourceConfiguration.cs" />
 		<SGF_EmbeddedScript Include="Runtime\ModuleInitializerAttribute.cs" />
 		<SGF_EmbeddedScript Include="Generators\ScriptInjectorGenerator.cs" />
-		<!-- Include Plugins -->
-		<SGF_EmbeddedAssembly Include="@(SGF_EnvironmentAssembly)" />
+
 		<None Include="..\..\README.md">
 			<Pack>True</Pack>
 			<PackagePath>/</PackagePath>
