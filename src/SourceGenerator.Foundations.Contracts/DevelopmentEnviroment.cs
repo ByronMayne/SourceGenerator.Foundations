@@ -58,17 +58,21 @@ namespace SGF
             try
             {
 
+                Assembly? environmentAssembly = null;
                 Type? developmentEnvironment = null;
 
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
                     AssemblyName windowsAssemblyName = new AssemblyName($"SourceGenerator.Foundations.Windows, Version={assemblyVersion}, Culture=neutral, PublicKeyToken=null");
-                    Assembly windowsEnvironmentAssembly = Assembly.Load(windowsAssemblyName);
+                    environmentAssembly = Assembly.Load(windowsAssemblyName);
+                }
 
-                    if (!string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("VisualStudioVersion")))
-                    {
-                        developmentEnvironment = windowsEnvironmentAssembly.GetType("SGF.VisualStudioEnvironment");
-                    }
+                if(environmentAssembly != null)
+                {
+                    developmentEnvironment = environmentAssembly
+                        .GetTypes()
+                        .Where(typeof(IDevelopmentEnviroment).IsAssignableFrom)
+                        .FirstOrDefault();
                 }
 
                 if (developmentEnvironment != null)
