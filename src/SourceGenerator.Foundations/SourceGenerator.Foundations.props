@@ -5,21 +5,30 @@
 			<IsRoslynComponent>true</IsRoslynComponent>
 			<IsInNugetPackage>false</IsInNugetPackage>
 			<IsInNugetPackage Condition="Exists('$(MSBuildThisFileDirectory)..\.nupkg.metadata')">true</IsInNugetPackage>
-			<SGF_NuGetEnvironmentsDir>$(MSBuildThisFileDirectory)..\environments\</SGF_NuGetEnvironmentsDir>
+			<SGF_NugGetEmbeddedAssemblyDir>$(MSBuildThisFileDirectory)..\sgf\embedded\assemblies\</SGF_NugGetEmbeddedAssemblyDir>
+      <SGF_NugGetScriptsAssemblyDir>$(MSBuildThisFileDirectory)..\sgf\embedded\scripts\</SGF_NugGetScriptsAssemblyDir>
 			<SGF_NetGetNetStandardDir>$(MSBuildThisFileDirectory)..\lib\netstandard2.0\</SGF_NetGetNetStandardDir>
 			<SGF_IsMainAssembly>false</SGF_IsMainAssembly>
 			<SGF_IsMainAssembly Condition="'$(MSBuildProjectName)' == 'SourceGenerator.Foundations'">True</SGF_IsMainAssembly>
 		</PropertyGroup>
-		
+    
+    <!-- Exposed Compiler Flags -->
+    <ItemGroup>
+      <CompilerVisibleProperty Include="RootNamespace" />
+      <CompilerVisibleProperty Include="AssemblyName" />
+      <CompilerVisibleProperty Include="BaseOutputPath "/>
+    </ItemGroup>
+    
 		<!-- Shared References -->
 		<ItemGroup>
 			<PackageReference Include="Serilog" Version="2.12.0" />
 		</ItemGroup>
 		
-		<!-- When running as NuGet package, copy all dlls in the lib folder -->
+		<!--When inside a NuGet package copy all the sgf/embeded/scripts and sgf/embedded/assemblies if they exist -->
 		<ItemGroup Condition="$(IsInNugetPackage)">
 			<SGF_EmbeddedAssembly Include="$(SGF_NetGetNetStandardDir)*.*"/>
-			<SGF_EmbeddedAssembly Include="$(SGF_NuGetEnvironmentsDir)*.*"/>
+			<SGF_EmbeddedAssembly Include="$(SGF_NugGetEmbeddedAssemblyDir)*.*"/>
+      <SGF_EmbeddedScript Include="$(SGF_NugGetScriptsAssemblyDir)*.*"/>
 		</ItemGroup>
 
 		<!-- Embedded Assemblies -->
@@ -38,7 +47,8 @@
 				<LogicalName>SGF.Assembly::%(FileName)%(Extension)</LogicalName>
 			</EmbeddedResource>
 		</ItemGroup>
-		<!-- Embeded Scripts -->
+    
+    <!-- Embeded Scripts -->
 		<ItemGroup>
 			<EmbeddedResource Include="@(SGF_EmbeddedScript)">
 				<LogicalName>SGF.Script::%(RecursiveDir)%(FileName)%(Extension)</LogicalName>

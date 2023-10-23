@@ -13,6 +13,9 @@ namespace SGF.Generators
     [Generator]
     internal class ScriptInjectorGenerator : IncrementalGenerator
     {
+        public ScriptInjectorGenerator() : base("ScriptInjector")
+        { }
+
         protected override void OnInitialize(IncrementalGeneratorInitializationContext context)
         {
             context.RegisterSourceOutput(context
@@ -40,7 +43,6 @@ namespace SGF.Generators
                     {
                         continue;
                     }
-
                     string hintName = resourceName.Replace($"{ResourceConfiguration.ScriptPrefix}", "");
                     hintName = Path.ChangeExtension(hintName, ".generated.cs");
                     using Stream stream = assembly.GetManifestResourceStream(resourceName);

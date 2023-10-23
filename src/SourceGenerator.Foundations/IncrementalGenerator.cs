@@ -1,6 +1,7 @@
 ﻿#nullable enable
 using Microsoft.CodeAnalysis;
 using Serilog;
+using SGF.Reflection;
 using System;
 using System.Diagnostics;
 
@@ -18,14 +19,16 @@ namespace SGF
         /// </summary>
         public ILogger Logger { get; }
 
+        static IncrementalGenerator()
+        {
+            AssemblyResolver.Initialize();
+        }
+
         /// <summary>
         /// Initializes a new instance of the incremental generator with an optional name
         /// </summary>
-        protected IncrementalGenerator(string? name = null)
+        protected IncrementalGenerator(string? name)
         {
-            Type type = GetType();
-            if (string.IsNullOrWhiteSpace(name)) name = type.FullName;
-
             Logger = DevelopmentEnviroment.Logger.ForContext(GetType());
             Logger.Information("Initalizing {GeneratorName}", name ?? GetType().Name);
         }

@@ -19,11 +19,17 @@ namespace SGF.Reflection
 
         private static readonly IList<Assembly> s_assemblies;
         private static readonly AssemblyName s_contractsAssemblyName;
+        private static readonly string s_unpackDirectory;
 
         static AssemblyResolver()
         {
             s_assemblies = new List<Assembly>();
+            s_unpackDirectory = Path.Combine(Path.GetTempPath(), "SourceGenerator.Foundations", "Assemblies");
             s_contractsAssemblyName = new AssemblyName();
+            if (!Directory.Exists(s_unpackDirectory))
+            {
+                Directory.CreateDirectory(s_unpackDirectory);
+            }
         }
 
         [ModuleInitializer]
@@ -98,39 +104,24 @@ namespace SGF.Reflection
                 ManifestResourceInfo resourceInfo = assembly.GetManifestResourceInfo(resourceName);
                 if (resourceInfo != null)
                 {
-                    using Stream stream = assembly.GetManifestResourceStream(resourceName);
-                    byte[] data = new byte[stream.Length];
-                    _ = stream.Read(data, 0, data.Length);
-                    try
+                    string assemblyPath = Path.Combine(s_unpackDirectory, $"{assemblyName.Name}-{assemblyName.Version}.dll");
+
+                    if (!File.Exists(assemblyPath))
                     {
-                        Assembly resolvedAssembly = AppDomain.CurrentDomain.Load(data);
-
-                        if (resolvedAssembly != null)
+                        using (Stream resourceStream = assembly.GetManifestResourceStream(resourceName))
+                        using (FileStream fileStream = new FileStream(assemblyPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read))
                         {
-                            if (!s_assemblies.Contains(resolvedAssembly))
-                            {
-                                s_assemblies.Add(resolvedAssembly);
-                            }
-
-                            return resolvedAssembly;
+                            resourceStream.CopyTo(fileStream);
+                            fileStream.Flush();
                         }
                     }
-                    catch (Exception exception)
-                    {
-                        if (assemblyName != s_contractsAssemblyName)
-                        {
-                            // This is redirected to a metho so that it does not attempt to
-                            // load the assembly if it has failed.
-                            Log(exception, LogLevel.Error, "Failed to load assembly {Assembly} due to exception", assemblyName);
-                        }
-                        return null;
-                    }
+                    Assembly resolvedAssembly = Assembly.LoadFile(assemblyPath);
+                    s_assemblies.Add(resolvedAssembly);
+                    return resolvedAssembly;
                 }
             }
             return null;
         }
-
-
 
         /// <summary>
         /// Wrapper around the logging implemention to handle the case where loading the contracts library can actually fail

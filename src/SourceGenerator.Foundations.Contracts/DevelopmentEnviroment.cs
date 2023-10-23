@@ -46,6 +46,12 @@ namespace SGF
                 .WriteTo.Sink(s_sinkAggregate)
                 .CreateLogger();
 
+            string assemblyVersion
+                = typeof(DevelopmentEnviroment)
+                .Assembly
+                .GetName()
+                .Version.ToString();
+
             Instance = new GenericDevelopmentEnviroment();
             AppDomain.CurrentDomain.UnhandledException += OnExceptionThrown;
 
@@ -56,7 +62,8 @@ namespace SGF
 
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    Assembly windowsEnvironmentAssembly = Assembly.Load(new AssemblyName("SourceGenerator.Foundations.Windows"));
+                    AssemblyName windowsAssemblyName = new AssemblyName($"SourceGenerator.Foundations.Windows, Version={assemblyVersion}, Culture=neutral, PublicKeyToken=null");
+                    Assembly windowsEnvironmentAssembly = Assembly.Load(windowsAssemblyName);
 
                     if (!string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("VisualStudioVersion")))
                     {
@@ -75,6 +82,7 @@ namespace SGF
                 // Do nothing
             }
         }
+
 
 
         /// <summary>

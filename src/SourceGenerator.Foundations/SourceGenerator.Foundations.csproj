@@ -1,76 +1,75 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<TargetFramework>netstandard2.0</TargetFramework>
-		<Nullable>enable</Nullable>
-		<LangVersion>9.0</LangVersion>
-		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<IncludeBuildOutput>false</IncludeBuildOutput>
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <LangVersion>9.0</LangVersion>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
     <IsRoslynComponent>true</IsRoslynComponent>
-		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<IncludeSymbols>false</IncludeSymbols>
-		<Title>Source Generator Foundations</Title>
-		<Authors>Byron Mayne</Authors>
-		<Description>A Source Generator for Source Generators to smooth out the bumps in development. A foucs on removing the boilerplate and improving the debugging experince.</Description>
-		<PackageProjectUrl></PackageProjectUrl>
-		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<RepositoryUrl>https://github.com/ByronMayne/SourceGenerator.Foudations</RepositoryUrl>
-		<RepositoryType>git</RepositoryType>
-		<PackageTags>source;generator;csharp</PackageTags>
-		<RootNamespace>SGF</RootNamespace>
-		<NoWarn>$(NoWarn);NU5128</NoWarn>
-		<TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);Nuget_AppendContent</TargetsForTfmSpecificContentInPackage>
-		<NoWarn>$(NoWarn);NU5100</NoWarn>
-	</PropertyGroup>
-	<ItemGroup>
-		<None Update="$(AssemblyName).props" PackagePath="build" />
-		<None Include="$(OutputPath)$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.3.1" PrivateAssets="all" />
-		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IncludeSymbols>false</IncludeSymbols>
+    <Title>Source Generator Foundations</Title>
+    <Authors>Byron Mayne</Authors>
+    <Description>A Source Generator for Source Generators to smooth out the bumps in development. A foucs on removing the boilerplate and improving the debugging experince.</Description>
+    <PackageProjectUrl></PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/ByronMayne/SourceGenerator.Foudations</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>source;generator;csharp</PackageTags>
+    <RootNamespace>SGF</RootNamespace>
+    <NoWarn>$(NoWarn);NU5128</NoWarn>
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);Nuget_AppendContent</TargetsForTfmSpecificContentInPackage>
+    <NoWarn>$(NoWarn);NU5100</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Update="$(AssemblyName).props" PackagePath="build" />
+    <None Include="$(OutputPath)$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.3.1" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
 
 
-		<!--=================================================================
+    <!--=================================================================
 			SourceGenerator.Foundations.* aka Developement assemblies
 			=================================================================-->
 
-		<!--=================================================================
+    <!--=================================================================
 			SourceGenerator.Foundations.Contracts Attributes
 			Private: Don't copy to output directory 
 			PrivateAssets: Don't add depedency to generated NuGet package
 			Pack: Add dll to nuget package 
 			PackagePath: Add to the dll to the generated nuget package 
 			=================================================================-->
-		<ProjectReference Include="..\SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj" Pack="True" PackagePath="lib/netstandard2.0" Private="False" PrivateAssets="All" />
-	
-		<SGF_EmbeddedScript Include="Reflection\AssemblyResolver.cs" />
-		<SGF_EmbeddedScript Include="IncrementalGenerator.cs" />
-		<SGF_EmbeddedScript Include="Configuration\ResourceConfiguration.cs" />
-		<SGF_EmbeddedScript Include="Runtime\ModuleInitializerAttribute.cs" />
-		<SGF_EmbeddedScript Include="Generators\ScriptInjectorGenerator.cs" />
+    <ProjectReference Include="..\SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj" Pack="True" PackagePath="lib/netstandard2.0" Private="False" PrivateAssets="All" />
 
-		<None Include="..\..\README.md">
-			<Pack>True</Pack>
-			<PackagePath>/</PackagePath>
-		</None>
-		<ProjectReference Include="..\Plugins\SourceGenerator.Foundations.Windows\SourceGenerator.Foundations.Windows.csproj">
-		  <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-		  <Private>True</Private>
-		</ProjectReference>
-	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="Analyzer\" />
-	</ItemGroup>
-	<Target Name="Nuget_AppendContent">
-		<ItemGroup>
-			<TfmSpecificPackageFile Include="$(MSBuildThisFileDirectory)$(AssemblyName).props">
-				<PackagePath>build/$(AssemblyName).props</PackagePath>
-			</TfmSpecificPackageFile>
-			<!--<TfmSpecificPackageFile Include="$(OutputPath)$(AssemblyName).???">
+    <!-- Put all plugins under a `sgf/embedded/assemblies` folder. Every assembly in here will be auto copied forward -->
+    <ProjectReference Include="..\Plugins\SourceGenerator.Foundations.Windows\SourceGenerator.Foundations.Windows.csproj" Pack="True" PackagePath="sgf/embedded/assemblies" Private="False" PrivateAssets="All" />
+
+    <SGF_EmbeddedScript Include="Reflection\AssemblyResolver.cs" />
+    <SGF_EmbeddedScript Include="IncrementalGenerator.cs" />
+    <SGF_EmbeddedScript Include="Configuration\ResourceConfiguration.cs" />
+    <SGF_EmbeddedScript Include="Runtime\ModuleInitializerAttribute.cs" />
+    <SGF_EmbeddedScript Include="Generators\ScriptInjectorGenerator.cs" />
+
+    <None Include="..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>/</PackagePath>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Analyzer\" />
+  </ItemGroup>
+  <Target Name="Nuget_AppendContent">
+    <ItemGroup>
+      <TfmSpecificPackageFile Include="$(MSBuildThisFileDirectory)$(AssemblyName).props">
+        <PackagePath>build/$(AssemblyName).props</PackagePath>
+      </TfmSpecificPackageFile>
+      <!--<TfmSpecificPackageFile Include="$(OutputPath)$(AssemblyName).???">
 				<PackagePath>lib\netstandard2.0</PackagePath>
 			</TfmSpecificPackageFile>-->
-		</ItemGroup>
-	</Target>
-	<Import Project="$(MSBuildThisFileDirectory)$(AssemblyName).props" />
+    </ItemGroup>
+  </Target>
+  <Import Project="$(MSBuildThisFileDirectory)$(AssemblyName).props" />
 </Project>

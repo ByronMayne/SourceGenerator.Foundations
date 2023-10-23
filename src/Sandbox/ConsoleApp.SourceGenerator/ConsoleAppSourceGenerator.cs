@@ -14,6 +14,11 @@ namespace ConsoleApp.SourceGenerator
             public string? Version { get; set; }
         }
 
+        public ConsoleAppSourceGenerator() : base("ConsoleApp")
+        {
+
+        }
+
         protected override void OnInitialize(IncrementalGeneratorInitializationContext context)
         {
             Payload payload = new Payload()
