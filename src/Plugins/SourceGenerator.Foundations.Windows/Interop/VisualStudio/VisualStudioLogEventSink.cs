@@ -52,7 +52,6 @@ namespace SGF.Interop.VisualStudio
                 m_outputPane ??= s_outputWindow.OutputWindowPanes.Add(outputPanelName);
                 m_outputInitialized = m_outputPane != null;
             }
-            m_outputPane?.Activate();
         }
 
         /// <summary>
