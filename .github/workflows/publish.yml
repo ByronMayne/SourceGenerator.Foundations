@@ -26,7 +26,7 @@ jobs:
           dotnet-version: 6.0.x
       - run: dotnet tool restore 
       - run: dotnet gitversion /output buildserver
-      - run: dotnet build ${{env.SolutionPath}} -t:build -p:Version=${{env.GitVersion_AssemblySemVer}}
+      - run: dotnet build ${{env.SolutionPath}} -t:build -p:Version=${{env.GitVersion_AssemblySemVer}} --configuration ${{env.Configuration}}
       - run: dotnet test ${{env.SolutionPath}}
-      - run: dotnet build ${{env.SolutionPath}} -t:pack -p:PackageVersion=${{env.GitVersion_SemVer}}
+      - run: dotnet build ${{env.SolutionPath}} -t:pack -p:PackageVersion=${{env.GitVersion_SemVer}} --configuration ${{env.Configuration}}
       - run: dotnet nuget push ${{env.ProjectDir}}${{env.Configuration}}\*.nupkg --skip-duplicate --api-key ${{secrets.NUGET_API_KEY}}  --source https://api.nuget.org/v3/index.json
