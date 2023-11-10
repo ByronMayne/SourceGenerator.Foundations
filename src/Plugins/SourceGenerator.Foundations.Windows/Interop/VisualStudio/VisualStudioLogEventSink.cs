@@ -49,7 +49,10 @@ namespace SGF.Interop.VisualStudio
                         break;
                     }
                 }
+                // Store the currently active window, because adding a new one always draws focus, we don't want that 
+                OutputWindowPane currentActive = s_outputWindow.ActivePane;
                 m_outputPane ??= s_outputWindow.OutputWindowPanes.Add(outputPanelName);
+                currentActive.Activate(); // Set previous one to active
                 m_outputInitialized = m_outputPane != null;
             }
         }
