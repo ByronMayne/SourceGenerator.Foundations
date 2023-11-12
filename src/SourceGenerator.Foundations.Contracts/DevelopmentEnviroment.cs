@@ -1,7 +1,6 @@
 ﻿using Serilog;
 using SGF.Sinks;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -42,10 +41,14 @@ namespace SGF
                 Directory.CreateDirectory(TempDirectory);
             }
 
-            Logger = new LoggerConfiguration()
-                .WriteTo.Sink(s_sinkAggregate)
-                .CreateLogger();
+            LoggerConfiguration configuration = new LoggerConfiguration()
+                .WriteTo.Sink(s_sinkAggregate);
 
+            if (Environment.UserInteractive)
+            {
+                configuration.WriteTo.Console();
+            }
+            Logger = configuration.CreateLogger();
             string assemblyVersion
                 = typeof(DevelopmentEnviroment)
                 .Assembly

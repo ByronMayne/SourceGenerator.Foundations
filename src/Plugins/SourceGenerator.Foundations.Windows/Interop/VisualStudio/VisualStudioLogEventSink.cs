@@ -10,8 +10,8 @@ namespace SGF.Interop.VisualStudio
 {
     public class VisualStudioLogEventSink : ILogEventSink
     {
-        const string outputPanelName = "Source Generators";
-        const string DefaultOutputTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] {SourceContext} | {Message:lj}{NewLine}{Exception}";
+        private const string outputPanelName = "Source Generators";
+        private const string DefaultOutputTemplate = "{Timestamp:HH:mm:ss} {SourceContext} | {Message:lj}{NewLine}{Exception}";
 
         private static readonly DTE? s_dte;
         private static readonly OutputWindow? s_outputWindow;
@@ -72,11 +72,9 @@ namespace SGF.Interop.VisualStudio
         {
             if (m_outputInitialized)
             {
-                using (StringWriter stringWriter = new StringWriter())
-                {
-                    m_templateFormatter.Format(logEvent, stringWriter);
-                    m_outputPane!.OutputString(stringWriter.ToString());
-                }
+                using StringWriter stringWriter = new();
+                m_templateFormatter.Format(logEvent, stringWriter);
+                m_outputPane!.OutputString(stringWriter.ToString());
             }
         }
 
