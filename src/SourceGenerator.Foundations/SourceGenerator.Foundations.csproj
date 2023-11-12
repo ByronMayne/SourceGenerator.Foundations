@@ -28,6 +28,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Serilog" Version="3.1.1" />
 
 
     <!--=================================================================
@@ -48,6 +49,7 @@
 
     <SGF_EmbeddedScript Include="Reflection\AssemblyResolver.cs" />
     <SGF_EmbeddedScript Include="IncrementalGenerator.cs" />
+    <SGF_EmbeddedScript Include="SgfInitializationContext.cs"/>
     <SGF_EmbeddedScript Include="Configuration\ResourceConfiguration.cs" />
     <SGF_EmbeddedScript Include="Runtime\ModuleInitializerAttribute.cs" />
     <SGF_EmbeddedScript Include="Generators\ScriptInjectorGenerator.cs" />

@@ -1,6 +1,7 @@
 ﻿#nullable enable
 using Microsoft.CodeAnalysis;
 using Serilog;
+using Serilog.Core;
 using SGF.Reflection;
 using System;
 using System.Diagnostics;
@@ -13,6 +14,11 @@ namespace SGF
     /// </summary>
     internal abstract class IncrementalGenerator : IIncrementalGenerator
     {
+        /// <summary>
+        /// Gets the name of the source generator
+        /// </summary>
+        public string Name { get; }
+
         /// <summary>
         /// Gets the log that can allow you to output information to your
         /// IDE of choice
@@ -29,7 +35,8 @@ namespace SGF
         /// </summary>
         protected IncrementalGenerator(string? name)
         {
-            Logger = DevelopmentEnviroment.Logger.ForContext(GetType());
+            Name = name ?? GetType().Name;
+            Logger = DevelopmentEnviroment.Logger.ForContext(Constants.SourceContextPropertyName, Name);
             Logger.Information("Initalizing {GeneratorName}", name ?? GetType().Name);
         }
 
@@ -48,17 +55,29 @@ namespace SGF
         {
             try
             {
-                OnInitialize(context);
+                SgfInitializationContext sgfContext = new SgfInitializationContext(context, OnGenerateException);
+
+                OnInitialize(sgfContext);
             }
             catch (Exception exception)
             {
-                Logger.Error(exception, "Error! An unhandle exception was thrown while running the source generator.");
+                Logger.Error(exception, "Error! An unhandle exception was thrown while initializing the source generator '{Name}'.", Name);
             }
+        }
+
+        /// <summary>
+        /// Raised when one of the generator functions throws an unhandle exception. Override this to define your own behaviour 
+        /// to handle the exception. 
+        /// </summary>
+        /// <param name="exception">The exception that was thrown</param>
+        protected virtual void OnGenerateException(Exception exception)
+        {
+            Logger.Error(exception, "Unhandled exception was throw while running the generator {Name}", Name);
         }
 
         /// <summary>
         /// Implement to initalize the incremental source generator
         /// </ summary >
-        protected abstract void OnInitialize(IncrementalGeneratorInitializationContext context);
+        protected abstract void OnInitialize(SgfInitializationContext context);
     }
 }

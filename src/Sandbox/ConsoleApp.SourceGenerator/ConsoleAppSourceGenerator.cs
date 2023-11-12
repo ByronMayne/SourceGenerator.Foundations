@@ -16,10 +16,11 @@ namespace ConsoleApp.SourceGenerator
 
         public ConsoleAppSourceGenerator() : base("ConsoleApp")
         {
+            AttachDebugger();
 
         }
 
-        protected override void OnInitialize(IncrementalGeneratorInitializationContext context)
+        protected override void OnInitialize(SgfInitializationContext context)
         {
             Payload payload = new Payload()
             {

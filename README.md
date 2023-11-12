@@ -14,7 +14,8 @@ namespace Example
     // IncrementalGenerator, is a generated type from `SourceGenerator.Foundations'
     public class ExampleSourceGenerator : IncrementalGenerator 
     {
-       protected override void OnInitialize(IncrementalGeneratorInitializationContext context)
+        // SgfInitializationContext is a wrapper around IncrementalGeneratorInitializationContext
+       protected override void OnInitialize(SgfInitializationContext context)
        {
             // Attaches Visaul Studio debugger without prompt 
             AttachDebugger();
@@ -62,19 +63,21 @@ With this library we leverage the existing Output window and create an entry for
 
 When a source generator throws an exception it normally just stops. In the base library we process all exceptions and forward their output to the `Source Generator` output tab. 
 
-```log
-[13:35:39 ERR] Error! An unhandle exception was thrown while running the source generator.
-System.IO.FileNotFoundException: Could not load file or assembly 'System.Collections.Immutable, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' or one of its dependencies. The system cannot find the file specified.
-File name: 'System.Collections.Immutable, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a'
-   at Jawon.SourceGenerator.JawonSourceGenerator.OnInitialize(IncrementalGeneratorInitializationContext context)
-   at SGF.IncrementalGenerator.Microsoft.CodeAnalysis.IIncrementalGenerator.Initialize(IncrementalGeneratorInitializationContext context)
+```ini
+# Build Window 
+6>CSC : warning CS8032: An instance of analyzer ConsoleApp.SourceGenerator.ConsoleAppSourceGenerator cannot be created from D:\Repositories\SourceGenerator.Foudations\src\Sandbox\ConsoleApp.SourceGenerator\bin\Debug\netstandard2.0\ConsoleApp.SourceGenerator.dll : Exception has been thrown by the target of an invocation..
 
-WRN: Assembly binding logging is turned OFF.
-To enable assembly bind failure logging, set the registry value [HKLM\Software\Microsoft\Fusion!EnableLog] (DWORD) to 1.
-Note: There is some performance penalty associated with assembly bind failure logging.
-To turn this feature off, remove the registry value [HKLM\Software\Microsoft\Fusion!EnableLog].
+# Source Generator Window 
+[13:02:39 ERR] ConsoleApp | Unhandled exception was throw while running the generator ConsoleApp
+System.NotImplementedException: The method or operation is not implemented.
+   at ConsoleApp.SourceGenerator.ConsoleAppSourceGenerator.PostInit(IncrementalGeneratorPostInitializationContext obj) in D:\Repositories\SourceGenerator.Foudations\src\Sandbox\ConsoleApp.SourceGenerator\ConsoleAppSourceGenerator.cs:line 42
+   at SGF.SgfInitializationContext.<>c__DisplayClass19_0.<RegisterPostInitializationOutput>b__0(IncrementalGeneratorPostInitializationContext context) in D:\Repositories\SourceGenerator.Foudations\src\Sandbox\ConsoleApp.SourceGenerator\SourceGenerator.Foundations\SGF.Generators.ScriptInjectorGenerator\SgfInitializationContext.generated.cs:line 106
+
 ```
-*Example of a missing Assembly exception*
+In this case my source generator just throws `NotImplementedException` but all details are lost with the build in framework. Using the source generator tab it will give you a full call stack.
+
+This is done by implementing a wrapper around `IncrementalGeneratorInitializationContext` which is called `SgfInitializationContext`. This will wrap every single subscription in a `try {} catch {}` and give details whenever an unhandled exception is thrown.
+
 
 
 ### Debugging 

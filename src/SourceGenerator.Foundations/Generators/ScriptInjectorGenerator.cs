@@ -16,7 +16,7 @@ namespace SGF.Generators
         public ScriptInjectorGenerator() : base("ScriptInjector")
         { }
 
-        protected override void OnInitialize(IncrementalGeneratorInitializationContext context)
+        protected override void OnInitialize(SgfInitializationContext context)
         {
             context.RegisterSourceOutput(context
                 .CompilationProvider

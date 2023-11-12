@@ -1,4 +1,5 @@
 ﻿using EnvDTE;
+using Microsoft.VisualStudio.Shell.Interop;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Formatting.Display;
@@ -74,7 +75,8 @@ namespace SGF.Interop.VisualStudio
             {
                 using StringWriter stringWriter = new();
                 m_templateFormatter.Format(logEvent, stringWriter);
-                m_outputPane!.OutputString(stringWriter.ToString());
+                string message = stringWriter.ToString();
+                m_outputPane!.OutputString(message);
             }
         }
 
