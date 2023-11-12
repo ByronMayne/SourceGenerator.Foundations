@@ -2,6 +2,7 @@
 using Microsoft.CodeAnalysis;
 using Serilog;
 using Newtonsoft.Json;
+using System;
 
 namespace ConsoleApp.SourceGenerator
 {
@@ -32,6 +33,12 @@ namespace ConsoleApp.SourceGenerator
             Log.Information("This generator references Newtonsoft.Json and it can just be referenced without any other boilerplate");
             Log.Information(JsonConvert.SerializeObject(payload));
             Log.Information("Having the log makes working with generators much simpler!");
+        }
+
+        protected override void OnException(Exception exception)
+        {
+
+            base.OnException(exception);
         }
     }
 }

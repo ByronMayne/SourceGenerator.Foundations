@@ -55,7 +55,7 @@ namespace SGF
         {
             try
             {
-                SgfInitializationContext sgfContext = new SgfInitializationContext(context, OnGenerateException);
+                SgfInitializationContext sgfContext = new SgfInitializationContext(context, OnException);
 
                 OnInitialize(sgfContext);
             }
@@ -70,7 +70,7 @@ namespace SGF
         /// to handle the exception. 
         /// </summary>
         /// <param name="exception">The exception that was thrown</param>
-        protected virtual void OnGenerateException(Exception exception)
+        protected virtual void OnException(Exception exception)
         {
             Logger.Error(exception, "Unhandled exception was throw while running the generator {Name}", Name);
         }
