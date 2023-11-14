@@ -37,7 +37,7 @@ namespace SGF
         {
             Name = name ?? GetType().Name;
             Logger = DevelopmentEnviroment.Logger.ForContext(Constants.SourceContextPropertyName, Name);
-            Logger.Information("Initalizing {GeneratorName}", name ?? GetType().Name);
+            Logger.Debug("Initalizing {GeneratorName}", name ?? GetType().Name);
         }
 
         /// <summary>
