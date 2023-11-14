@@ -29,7 +29,7 @@ namespace SGF.Generators
             try
             {
                 Compilation compilation = tuple.compilation;
-                Logger.Information("Adding source files to {AssemblyName}", compilation.AssemblyName);
+                Logger.Debug("Adding source files to {AssemblyName}", compilation.AssemblyName);
                 AnalyzerConfigOptionsProvider analyzerConfigOptions = tuple.analyzerConfigOptions;
 
                 Assembly assembly = typeof(ScriptInjectorGenerator).Assembly;
@@ -50,9 +50,8 @@ namespace SGF.Generators
                     string templates = reader.ReadToEnd();
                     SourceText sourceText = SourceText.From(templates, Encoding.UTF8);
                     context.AddSource(hintName, sourceText);
-                    Logger.Information("Added {FileName}", Path.GetFileName(hintName));
+                    Logger.Debug("Added {FileName}", Path.GetFileName(hintName));
                 }
-                Logger.Information("Generation complete");
             }
             catch (Exception exception)
             {
