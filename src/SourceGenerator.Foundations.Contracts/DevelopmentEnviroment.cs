@@ -1,7 +1,6 @@
 ﻿using Serilog;
 using SGF.Sinks;
 using System;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -21,28 +20,13 @@ namespace SGF
         public static IDevelopmentEnviroment Instance { get; }
 
         /// <summary>
-        /// Gets the temp directory where generators can store data
-        /// </summary>
-        public static string TempDirectory { get; }
-
-        /// <summary>
         /// Gets the logger that was created
         /// </summary>
         public static ILogger Logger { get; }
 
-        public static ILogger CreateLogger()
-            => Logger;
-
         static DevelopmentEnviroment()
         {
             s_sinkAggregate = new LogEventSinkAggregate();
-
-            TempDirectory = Path.Combine(Path.GetTempPath(), "SourceGenerator.Foundations");
-
-            if (!Directory.Exists(TempDirectory))
-            {
-                Directory.CreateDirectory(TempDirectory);
-            }
 
             LoggerConfiguration configuration = new LoggerConfiguration()
                 .WriteTo.Sink(s_sinkAggregate);
@@ -92,8 +76,6 @@ namespace SGF
                 // Do nothing
             }
         }
-
-
 
         /// <summary>
         /// Attaches the debugger to the given process Id

@@ -18,5 +18,5 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj" />
 	</ItemGroup>
-	<Import Project="$(MSBuildThisFileDirectory)..\..\SourceGenerator.Foundations\SourceGenerator.Foundations.props" />
+	<Import Project="$(MSBuildThisFileDirectory)..\..\SourceGenerator.Foundations\SourceGenerator.Embedding.props" />
 </Project>

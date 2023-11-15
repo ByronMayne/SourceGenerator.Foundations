@@ -15,11 +15,5 @@
     <PackageReference Include="Serilog.Sinks.Console" Version="5.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
   </ItemGroup>
-  <!--<Target Name="SGF_AddPluginDependedencies" BeforeTargets="SGF_EmbedDependencies">
-    <ItemGroup>
-      <SGF_DevelopmentPlugin Include="SourceGenerator.Foundations.Windows" />
-      <SGF_EmbeddedAssembly Include="@(SGF_DevelopmentPlugin->'..\Plugins\%(Identity)\bin\$(Configuration)\$(TargetFramework)\%(Identity).dll')"/>
-    </ItemGroup>
-  </Target>-->
-  <Import Project="..\SourceGenerator.Foundations\SourceGenerator.Foundations.props" />
+  <Import Project="..\SourceGenerator.Foundations\SourceGenerator.Embedding.props" />
 </Project>

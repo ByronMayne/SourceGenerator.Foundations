@@ -19,6 +19,7 @@
     <NoWarn>$(NoWarn);NU5128</NoWarn>
     <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);Nuget_AppendContent</TargetsForTfmSpecificContentInPackage>
     <NoWarn>$(NoWarn);NU5100</NoWarn>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
   </PropertyGroup>
   <ItemGroup>
     <None Update="$(AssemblyName).props" PackagePath="build" />
@@ -49,7 +50,7 @@
 
     <SGF_EmbeddedScript Include="Reflection\AssemblyResolver.cs" />
     <SGF_EmbeddedScript Include="IncrementalGenerator.cs" />
-    <SGF_EmbeddedScript Include="SgfInitializationContext.cs"/>
+    <SGF_EmbeddedScript Include="SgfInitializationContext.cs" />
     <SGF_EmbeddedScript Include="Configuration\ResourceConfiguration.cs" />
     <SGF_EmbeddedScript Include="Runtime\ModuleInitializerAttribute.cs" />
     <SGF_EmbeddedScript Include="Generators\ScriptInjectorGenerator.cs" />
@@ -67,10 +68,10 @@
       <TfmSpecificPackageFile Include="$(MSBuildThisFileDirectory)$(AssemblyName).props">
         <PackagePath>build/$(AssemblyName).props</PackagePath>
       </TfmSpecificPackageFile>
-      <!--<TfmSpecificPackageFile Include="$(OutputPath)$(AssemblyName).???">
-				<PackagePath>lib\netstandard2.0</PackagePath>
-			</TfmSpecificPackageFile>-->
+      <TfmSpecificPackageFile Include="$(MSBuildThisFileDirectory)SourceGenerator.Embedding.props">
+        <PackagePath>build/SourceGenerator.Embedding.props</PackagePath>
+      </TfmSpecificPackageFile>
     </ItemGroup>
   </Target>
-  <Import Project="$(MSBuildThisFileDirectory)$(AssemblyName).props" />
+  <Import Project="$(MSBuildThisFileDirectory)SourceGenerator.Embedding.props" />
 </Project>

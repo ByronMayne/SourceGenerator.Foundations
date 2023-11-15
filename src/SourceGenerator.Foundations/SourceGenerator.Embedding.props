@@ -1,0 +1,81 @@
+<Project>
+
+  <Target Name="SGF_EmbedDependencies" AfterTargets="ResolveAssemblyReferences">
+    <PropertyGroup>
+      <IsRoslynComponent>true</IsRoslynComponent>
+    </PropertyGroup>
+
+    <!-- Exposed Compiler Flags -->
+    <ItemGroup>
+      <CompilerVisibleProperty Include="RootNamespace" />
+      <CompilerVisibleProperty Include="AssemblyName" />
+      <CompilerVisibleProperty Include="BaseOutputPath "/>
+    </ItemGroup>
+
+    <!-- Shared References -->
+    <ItemGroup>
+      <PackageReference Include="Serilog" Version="2.12.0" />
+    </ItemGroup>
+
+    <!-- Embedded Assemblies -->
+    <ItemGroup>
+      <!-- Include all the referenced assemblies -->
+      <SGF_EmbeddedAssembly Include="@(ReferencePath->'%(RootDir)%(Directory)%(Filename)%(Extension)')"/>
+      <!-- Assemblies To Ingore -->
+      <!--<SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)SourceGenerator.Foundations.*.dll')"/>-->
+      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.IO*.dll')"/>
+      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Collections*.dll')"/>
+      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.ComponentModel*.dll')"/>
+      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Core*.dll')"/>
+      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Diagnostics*.dll')"/>
+      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Drawing*.dll')"/>
+      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Data*.dll')"/>
+      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Dynamic*.dll')"/>
+      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Globalization*.dll')"/>
+      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Linq*.dll')"/>
+      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Memory*.dll')"/>
+      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Net*.dll')"/>
+      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Numerics*.dll')"/>
+      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Reflection*.dll')"/>
+      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Resources*.dll')"/>
+      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Runtime*.dll')"/>
+      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Security*.dll')"/>
+      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Threading*.dll')"/>
+      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Text*.dll')"/>
+      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Xml*.dll')"/>
+      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.dll')"/>
+      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Buffers.dll')"/>
+      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Console.dll')"/>
+      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Buffers.dll')"/>
+      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Buffers.dll')"/>
+      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Web.dll')"/>
+      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Windows.dll')"/>
+      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.ValueTuple.dll')"/>
+      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)Microsoft.Win32.Primitives.dll')"/>
+      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)netstandard.dll')"/>
+      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.AppContext.dll')"/>
+      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)mscorlib.dll')"/>
+      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.ObjectModel.dll')"/>
+      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.ServiceModel*.dll')"/>
+      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Transactions.dll')"/>
+      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)Microsoft.CodeAnalysis*.dll')"/>
+      <!-- Embedded Assemblies -->
+      <EmbeddedResource Include="@(SGF_EmbeddedAssembly)">
+        <LogicalName>SGF.Assembly::%(FileName)%(Extension)</LogicalName>
+      </EmbeddedResource>
+      <!-- Embedded Scripts -->
+      <EmbeddedResource Include="@(SGF_EmbeddedScript)">
+        <LogicalName>SGF.Script::%(RecursiveDir)%(FileName)%(Extension)</LogicalName>
+      </EmbeddedResource>
+    </ItemGroup>
+    <Message Importance="high" Text="[$(MSBuildProjectName)== @(SGF_EmbeddedAssembly)"/>
+  </Target>
+  <!-- Validates they are targeting 'netstandard2.0-->
+  <Target Name="SGF_TargetFrameworkValidation" BeforeTargets="CoreCompile" Condition="'$(TargetFramework)' != 'netstandard2.0'">
+    <Error Text="[SourceGenerator.Foundations] The project $(MSBuildProjectName) is currently using the target framework '$(TargetFramework)' which is an error. All source generators must use the target framework 'netstandard2.0'. You can read how to change it here https://learn.microsoft.com/en-us/dotnet/standard/frameworks"/>
+  </Target>
+  <!-- Validates they are at least using LangVersion 7.3 for nullable refernece types-->
+  <Target Name="SGF_LangVersionValidation" BeforeTargets="CoreCompile" Condition="'$(LangVersion)' == '7.2' OR '$(LangVersion)' == '7.1' OR '$(LangVersion)' == '7' OR '$(LangVersion)' == '6' OR '$(LangVersion)' == '5' OR '$(LangVersion)' == '4' OR '$(LangVersion)' == '3' OR '$(LangVersion)' == '2' OR '$(LangVersion)' == 'ISO-2' OR '$(LangVersion)' == 'ISO-1' OR '$(LangVersion)' == '1' OR '$(LangVersion)' == '7.3' OR '$(LangVersion)' == '8.0'">
+    <Error Text="[SourceGenerator.Foundations] The project $(MSBuildProjectName) is currently using the language version $(LangVersion) which does not meet the minimum required of 9.0. Read how to change it here https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/configure-language-version"/>
+  </Target>
+</Project>

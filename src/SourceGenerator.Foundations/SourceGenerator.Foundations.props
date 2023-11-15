@@ -1,86 +1,32 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<Project>
-	<Target Name="SGF_EmbedDependencies" AfterTargets="ResolveAssemblyReferences">
-		<PropertyGroup>
-			<IsRoslynComponent>true</IsRoslynComponent>
-			<IsInNugetPackage>false</IsInNugetPackage>
-			<IsInNugetPackage Condition="Exists('$(MSBuildThisFileDirectory)..\.nupkg.metadata')">true</IsInNugetPackage>
-			<SGF_NugGetEmbeddedAssemblyDir>$(MSBuildThisFileDirectory)..\sgf\embedded\assemblies\</SGF_NugGetEmbeddedAssemblyDir>
-      <SGF_NugGetScriptsAssemblyDir>$(MSBuildThisFileDirectory)..\sgf\embedded\scripts\</SGF_NugGetScriptsAssemblyDir>
-			<SGF_NetGetNetStandardDir>$(MSBuildThisFileDirectory)..\lib\netstandard2.0\</SGF_NetGetNetStandardDir>
-			<SGF_IsMainAssembly>false</SGF_IsMainAssembly>
-			<SGF_IsMainAssembly Condition="'$(MSBuildProjectName)' == 'SourceGenerator.Foundations'">True</SGF_IsMainAssembly>
-		</PropertyGroup>
-    
-    <!-- Exposed Compiler Flags -->
+<Project InitialTargets="SGF_NugetReference">
+  <PropertyGroup>
+    <IsNugetReference>false</IsNugetReference>
+    <IsNugetReference Condition="Exists('$(MSBuildThisFileDirectory)..\.nupkg.metadata')">true</IsNugetReference>
+  </PropertyGroup>
+
+  <!-- Reference from nuget package -->
+  <Target Name="SGF_NugetReference" Condition="'$(IsNugetReference.ToLower())' == 'true'">
+    <Message Importance="high" Text="=========================="/>
     <ItemGroup>
-      <CompilerVisibleProperty Include="RootNamespace" />
-      <CompilerVisibleProperty Include="AssemblyName" />
-      <CompilerVisibleProperty Include="BaseOutputPath "/>
+      <SGF_EmbeddedAssembly Include="$(MSBuildThisFileDirectory)..\sgf\embedded\assemblies\*.*"/>
+      <SGF_EmbeddedScript Include="$(MSBuildThisFileDirectory)..\sgf\embedded\scripts\*.*"/>
     </ItemGroup>
-    
-		<!-- Shared References -->
-		<ItemGroup>
-			<PackageReference Include="Serilog" Version="2.12.0" />
-		</ItemGroup>
-		
-		<!--When inside a NuGet package copy all the sgf/embeded/scripts and sgf/embedded/assemblies if they exist -->
-		<ItemGroup Condition="$(IsInNugetPackage)">
-			<SGF_EmbeddedAssembly Include="$(SGF_NetGetNetStandardDir)*.*"/>
-			<SGF_EmbeddedAssembly Include="$(SGF_NugGetEmbeddedAssemblyDir)*.*"/>
-      <SGF_EmbeddedScript Include="$(SGF_NugGetScriptsAssemblyDir)*.*"/>
-		</ItemGroup>
+  </Target>
 
-		<!-- Embedded Assemblies -->
-		<ItemGroup>
-			<!-- Include all the referenced assemblies -->
-			<SGF_EmbeddedAssembly Include="@(ReferencePath->'%(RootDir)%(Directory)%(Filename)%(Extension)')"/>
-			<!-- Assemblies To Ingore -->
-			<SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.IO*.dll')"/>
-      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Collections*.dll')"/>
-      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.ComponentModel*.dll')"/>
-      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Core*.dll')"/>
-      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Diagnostics*.dll')"/>
-      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Drawing*.dll')"/>
-      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Globalization*.dll')"/>
-      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Linq*.dll')"/>
-      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Memory*.dll')"/>
-      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Net*.dll')"/>
-      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Numerics*.dll')"/>
-      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Reflection*.dll')"/>
-      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Runtime*.dll')"/>
-      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Security*.dll')"/>
-      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Threading*.dll')"/>
-      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Text*.dll')"/>
-      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Xml*.dll')"/>
-      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.dll')"/>
-      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)Web.dll')"/>
-      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)Windows.dll')"/>
-      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)ValueTuple.dll')"/>
-      <!--<SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)Microsoft.*.dll')"/>-->
+  <!-- Refernece locally on disk -->
+  <Target Name="SGF_LocalReference" BeforeTargets="SGF_EmbedDependencies" Condition="'$(IsNugetReference.ToLower())' == 'false'">
+    <Message Importance="high" Text="=========== $(MSBuildThisFileDirectory)..\SourceGenerator.Foundations.Contracts\bin\$(Configuration)\netstandard2.0\SourceGenerator.Foundations.Contracts.dll"/>
+    <!--<ItemGroup >
+      <SGF_EmbeddedAssembly Include="$(MSBuildThisFileDirectory)..\Plugins\*\bin\$(Configuration)\netstandard2.0\*dll"/>
+      <SGF_EmbeddedAssembly Include="$(MSBuildThisFileDirectory)..\SourceGenerator.Foundations.Contracts\bin\$(Configuration)\netstandard2.0\SourceGenerator.Foundations.Contracts.dll"/>
+    </ItemGroup>-->
+  </Target>
 
-      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)mscorlib.dll')"/>
-			<!-- Only the foundations library should have embedded plugins -->
-			<SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)SourceGenerator.Foundations.*.dll')" Condition="!$(SGF_IsMainAssembly)"/>
-			<!-- Embed them as resources -->
-			<EmbeddedResource Include="@(SGF_EmbeddedAssembly)">
-				<LogicalName>SGF.Assembly::%(FileName)%(Extension)</LogicalName>
-			</EmbeddedResource>
-		</ItemGroup>
-    
-    <!-- Embeded Scripts -->
-		<ItemGroup>
-			<EmbeddedResource Include="@(SGF_EmbeddedScript)">
-				<LogicalName>SGF.Script::%(RecursiveDir)%(FileName)%(Extension)</LogicalName>
-			</EmbeddedResource>
-		</ItemGroup>
-	</Target>
-	  <!-- Validates they are targeting 'netstandard2.0-->
-	  <Target Name="SGF_TargetFrameworkValidation" BeforeTargets="CoreCompile" Condition="'$(TargetFramework)' != 'netstandard2.0'">
-	    <Error Text="[SourceGenerator.Foundations] The project $(MSBuildProjectName) is currently using the target framework '$(TargetFramework)' which is an error. All source generators must use the target framework 'netstandard2.0'. You can read how to change it here https://learn.microsoft.com/en-us/dotnet/standard/frameworks"/>
-	  </Target>
-	  <!-- Validates they are at least using LangVersion 7.3 for nullable refernece types-->
-	  <Target Name="SGF_LangVersionValidation" BeforeTargets="CoreCompile" Condition="'$(LangVersion)' == '7.2' OR '$(LangVersion)' == '7.1' OR '$(LangVersion)' == '7' OR '$(LangVersion)' == '6' OR '$(LangVersion)' == '5' OR '$(LangVersion)' == '4' OR '$(LangVersion)' == '3' OR '$(LangVersion)' == '2' OR '$(LangVersion)' == 'ISO-2' OR '$(LangVersion)' == 'ISO-1' OR '$(LangVersion)' == '1' OR '$(LangVersion)' == '7.3' OR '$(LangVersion)' == '8.0'">
-	    <Error Text="[SourceGenerator.Foundations] The project $(MSBuildProjectName) is currently using the language version $(LangVersion) which does not meet the minimum required of 9.0. Read how to change it here https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/configure-language-version"/>
-	  </Target>
+  <ItemGroup Condition="'$(IsNugetReference.ToLower())' == 'false'">
+      <ProjectReference Include="$(MSBuildThisFileDirectory)..\SourceGenerator.Foundations\SourceGenerator.Foundations.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer"/>
+      <ProjectReference Include="$(MSBuildThisFileDirectory)..\SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj" />
+  </ItemGroup>
+  
+  <Import Project="$(MSBuildThisFileDirectory)SourceGenerator.Embedding.props"/>
 </Project>
