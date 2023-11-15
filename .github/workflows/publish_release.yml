@@ -1,4 +1,5 @@
 name: Publish
+runs-on: windows-latest
 on:
   release: 
     types: [published]
