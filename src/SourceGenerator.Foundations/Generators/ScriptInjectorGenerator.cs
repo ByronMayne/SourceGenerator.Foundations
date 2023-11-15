@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 using SGF.Configuration;
 using System;
+using System.Data;
 using System.IO;
 using System.Reflection;
 using System.Text;

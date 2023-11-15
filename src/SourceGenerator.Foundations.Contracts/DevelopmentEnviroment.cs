@@ -30,6 +30,9 @@ namespace SGF
         /// </summary>
         public static ILogger Logger { get; }
 
+        public static ILogger CreateLogger()
+            => Logger;
+
         static DevelopmentEnviroment()
         {
             s_sinkAggregate = new LogEventSinkAggregate();

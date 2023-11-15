@@ -31,8 +31,7 @@ namespace SGF
             switch (Type)
             {
                 case EnvironmentType.VisualStudio:
-                    VisualStudioInterop.AttachDebugger();
-                    break;
+                    return VisualStudioInterop.AttachDebugger();
             }
             return true;
         }

@@ -9,7 +9,8 @@ namespace SGF
     public interface IDevelopmentEnviroment
     {
         /// <summary>
-        /// Attaches the debugger to the given process Id
+        /// Attaches the debugger to the given process Id and returns back if it was successful or not. This can
+        /// fail if Visual Studio is not already running
         /// </summary>
         bool AttachDebugger(int processId);
 

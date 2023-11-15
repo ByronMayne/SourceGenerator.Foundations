@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Project>
 	<Target Name="SGF_EmbedDependencies" AfterTargets="ResolveAssemblyReferences">
 		<PropertyGroup>
@@ -36,7 +36,7 @@
 			<!-- Include all the referenced assemblies -->
 			<SGF_EmbeddedAssembly Include="@(ReferencePath->'%(RootDir)%(Directory)%(Filename)%(Extension)')"/>
 			<!-- Assemblies To Ingore -->
-			<SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.*.dll')"/>
+			<!--<SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.*.dll')"/>-->
 			<SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.dll')"/>
 			<!--<SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)Microsoft.*.dll')"/>-->
 			<SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)mscorlib.dll')"/>

@@ -1,45 +1,47 @@
 ﻿#nullable enable
 using SGF.Configuration;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 
 namespace SGF.Reflection
 {
     internal static class AssemblyResolver
     {
-        private enum LogLevel
+        /// <summary>
+        /// Used to compare two <see cref="AssemblyName"/> to pull them out of the dictionary of types
+        /// </summary>
+        private class AssemblyNameComparer : IEqualityComparer<AssemblyName>
         {
-            Info,
-            Error,
-            Warning
-        }
-
-        private static readonly IList<Assembly> s_assemblies;
-        private static readonly AssemblyName s_contractsAssemblyName;
-        private static readonly string s_unpackDirectory;
-
-        static AssemblyResolver()
-        {
-            s_assemblies = new List<Assembly>();
-            s_unpackDirectory = Path.Combine(Path.GetTempPath(), "SourceGenerator.Foundations", "Assemblies");
-            s_contractsAssemblyName = new AssemblyName();
-            if (!Directory.Exists(s_unpackDirectory))
+            public bool Equals(AssemblyName x, AssemblyName y)
             {
-                Directory.CreateDirectory(s_unpackDirectory);
+                return string.Equals(x.Name, y.Name);
+            }
+
+            public int GetHashCode(AssemblyName obj)
+            {
+                return obj.Name.GetHashCode();
             }
         }
 
-        [ModuleInitializer]
+        private static readonly ConcurrentBag<Assembly> s_assembliesWithResources;
+        private static readonly Dictionary<AssemblyName, Assembly> s_loadedAssemblies;
+
+        static AssemblyResolver()
+        {
+            s_assembliesWithResources = new ConcurrentBag<Assembly>();
+            s_loadedAssemblies = new Dictionary<AssemblyName, Assembly>(new AssemblyNameComparer());
+        }
+
         internal static void Initialize()
         {
             // The assembly resolvers get added to multiple source generators 
             // so what we do here is only allow the first one defined to allow 
             // itself to be a resolver. Since this could lead to cases where two resolvers
             // exists and provide two different instances of the same assembly.
-
             const string RESOLVER_ATTACHED_KEY = "SGF_ASSEMBLY_RESOLVER_IS_ATTACHED";
             AppDomain currentDomain = AppDomain.CurrentDomain;
             object? rawValue = currentDomain.GetData(RESOLVER_ATTACHED_KEY);
@@ -47,24 +49,42 @@ namespace SGF.Reflection
             if (rawValue == null || (rawValue is bool isAttached && !isAttached))
             {
                 currentDomain.SetData(RESOLVER_ATTACHED_KEY, true);
-                currentDomain.AssemblyResolve += OnResolveAssembly;
                 currentDomain.AssemblyLoad += OnAssemblyLoaded;
+                currentDomain.AssemblyResolve += ResolveMissingAssembly;
 
                 foreach (Assembly assembly in currentDomain.GetAssemblies())
                 {
-                    if (!s_assemblies.Contains(assembly))
-                    {
-                        s_assemblies.Add(assembly);
-                    }
+                    AddAssembly(assembly);
                 }
             }
         }
 
+        /// <summary>
+        /// Raised whenever our app domain loads a new assembly
+        /// </summary>
+        /// <param name="sender">THe thing that raised the event</param>
+        /// <param name="args">The parameters</param>
         private static void OnAssemblyLoaded(object sender, AssemblyLoadEventArgs args)
         {
-            if (!s_assemblies.Contains(args.LoadedAssembly))
+            AddAssembly(args.LoadedAssembly);
+        }
+
+        /// <summary>
+        /// Adds an assembly to the veriuos collections used to keep track of loaded items
+        /// </summary>
+        private static void AddAssembly(Assembly assembly)
+        {
+            AssemblyName assemblyName = assembly.GetName();
+
+            if (s_loadedAssemblies.ContainsKey(assemblyName))
             {
-                s_assemblies.Add(args.LoadedAssembly);
+                return;
+            }
+            s_loadedAssemblies.Add(assemblyName, assembly);
+
+            if (!assembly.IsDynamic && assembly.GetManifestResourceNames().Any(r => r.StartsWith(ResourceConfiguration.AssemblyResourcePrefix)))
+            {
+                s_assembliesWithResources.Add(assembly);
             }
         }
 
@@ -72,85 +92,72 @@ namespace SGF.Reflection
         /// Attempts to resolve any assembly by looking for dependencies that are embedded directly
         /// in this dll.
         /// </summary>
-        private static Assembly? OnResolveAssembly(object sender, ResolveEventArgs args)
+        private static Assembly? ResolveMissingAssembly(object sender, ResolveEventArgs args)
         {
             AssemblyName assemblyName = new(args.Name);
-            return ResolveAssembly(assemblyName);
-        }
 
-        private static Assembly? ResolveAssembly(AssemblyName assemblyName)
-        {
-            for (int i = 0; i < s_assemblies.Count; i++)
+            if (s_loadedAssemblies.TryGetValue(assemblyName, out Assembly assembly))
             {
-                Assembly assembly = s_assemblies[i];
-                if (AssemblyName.ReferenceMatchesDefinition(assemblyName, assembly.GetName()))
-                {
-                    return assembly;
-                }
+                return assembly;
             }
 
-            string resourceName = $"{ResourceConfiguration.AssemblyResourcePrefix}{assemblyName.Name}.dll";
-
-            for (int i = 0; i < s_assemblies.Count; i++)
+            foreach (Assembly loadedAssembly in s_assembliesWithResources)
             {
-                Assembly assembly = s_assemblies[i];
-
-                if (assembly.IsDynamic)
+                string resourceName = $"{ResourceConfiguration.AssemblyResourcePrefix}{assemblyName.Name}.dll";
+                if (TryExtractingAssembly(loadedAssembly, resourceName, out Assembly? extractedAssembly))
                 {
-                    // Dynamic assemblies don't have reosurces and throw exceptions if you try to access them.
-                    continue;
-                }
-
-                ManifestResourceInfo resourceInfo = assembly.GetManifestResourceInfo(resourceName);
-                if (resourceInfo != null)
-                {
-                    string assemblyPath = Path.Combine(s_unpackDirectory, $"{assemblyName.Name}-{assemblyName.Version}.dll");
-
-                    if (!File.Exists(assemblyPath))
-                    {
-                        using (Stream resourceStream = assembly.GetManifestResourceStream(resourceName))
-                        using (FileStream fileStream = new FileStream(assemblyPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read))
-                        {
-                            resourceStream.CopyTo(fileStream);
-                            fileStream.Flush();
-                        }
-                    }
-                    Assembly resolvedAssembly = Assembly.LoadFile(assemblyPath);
-                    s_assemblies.Add(resolvedAssembly);
-                    return resolvedAssembly;
-                }
+                    AddAssembly(extractedAssembly!);
+                    return extractedAssembly!;
+                };
             }
+
             return null;
         }
 
+
         /// <summary>
-        /// Wrapper around the logging implemention to handle the case where loading the contracts library can actually fail
+        /// Attempts to load an assembly that is contained within aonther assembly as a resource
         /// </summary>
-        private static void Log(Exception? exception, LogLevel level, string message, params object?[]? parameters)
+        /// <param name="assembly">The assembly that should contain the resource</param>
+        /// <param name="resourceName">The expected name of the reosurce</param>
+        /// <param name="loadedAssembly">The assembly if it was loaded</param>
+        /// <returns>True if the assembly could be loaded otherwise false</returns>
+        private static bool TryExtractingAssembly(Assembly assembly, string resourceName, out Assembly? loadedAssembly)
         {
-            /// <summary>
-            /// This indirection might seem a bit weird but it's because we want to log output from the assembly resolver
-            /// however since the logging library is defined within `SourceGenerator.Foundations.Contracts` if that assembly
-            /// fails to load we will create a stake overflow since calling to the logger will try to load the assembly again. 
-            /// We issoloate the logging in this function so the runtime does not attempt to load it directrly 
-            /// </summary>
-            static void LogInternal(Exception? exception, LogLevel level, string message, object?[]? parameters)
+            loadedAssembly = null;
+            if (TryGetResourceBytes(assembly, resourceName, out byte[]? assemblyBytes))
             {
-                switch (level)
-                {
-                    case LogLevel.Info:
-                        DevelopmentEnviroment.Logger.Information(exception, message, parameters);
-                        break;
-                    case LogLevel.Warning:
-                        DevelopmentEnviroment.Logger.Warning(exception, message, parameters);
-                        break;
-                    case LogLevel.Error:
-                        DevelopmentEnviroment.Logger.Error(exception, message, parameters);
-                        break;
-                }
+                loadedAssembly = TryGetResourceBytes(assembly, Path.ChangeExtension(resourceName, ".pdb"), out byte[]? symbolBytes)
+                    ? Assembly.Load(assemblyBytes, symbolBytes)
+                    : Assembly.Load(assemblyBytes);
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Attempts to read bytes from a resource and returns back if it's successful or not
+        /// </summary>
+        /// <param name="assembly">The assembly to pull the resource from</param>
+        /// <param name="resourceName">The name of the resource</param>
+        /// <param name="bytes">The bytes[] if the resource could be found</param>
+        /// <returns>True if the resource was found otherwise false</returns>
+        private static bool TryGetResourceBytes(Assembly assembly, string resourceName, out byte[]? bytes)
+        {
+            bytes = null;
+            ManifestResourceInfo resourceInfo = assembly.GetManifestResourceInfo(resourceName);
+            if (resourceInfo == null)
+            {
+                return false;
             }
 
-            LogInternal(exception, LogLevel.Info, message, parameters);
+            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+            {
+                bytes = new byte[stream.Length];
+                _ = stream.Read(bytes, 0, bytes.Length);
+            }
+
+            return true;
         }
     }
 }

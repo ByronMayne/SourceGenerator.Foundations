@@ -16,10 +16,7 @@ namespace ConsoleApp.SourceGenerator
         }
 
         public ConsoleAppSourceGenerator() : base("ConsoleApp")
-        {
-            AttachDebugger();
-
-        }
+        {}
 
         protected override void OnInitialize(SgfInitializationContext context)
         {

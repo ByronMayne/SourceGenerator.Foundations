@@ -87,11 +87,11 @@ namespace SGF.Interop.VisualStudio
         /// <summary>
         /// Attaches Visual Studio debugger to the current active process
         /// </summary>
-        public static void AttachDebugger()
+        public static bool AttachDebugger()
         {
             if(System.Diagnostics.Debugger.IsAttached)
             {
-                return;
+                return true;
             }
 
             DProcess currentProcess = DProcess.GetCurrentProcess();
@@ -100,9 +100,10 @@ namespace SGF.Interop.VisualStudio
             DteProcess? dteProcess = GetProcess(currentProcessId);
             if (dteProcess == null)
             {
-                throw new Exception("Unable to find DTE local process to attach too");
+                return false; 
             }
             dteProcess.Attach();
+            return true;
         }
 
         /// <summary>
