@@ -6,10 +6,10 @@
 -->
 <Project>
   <ItemGroup>
-    <ProjectReference Include="$(MSBuildThisFileDirectory)SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj" />
-    <ProjectReference Include="$(MSBuildThisFileDirectory)SourceGenerator.Foundations\SourceGenerator.Foundations.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+    <ProjectReference Include="$(MSBuildThisFileDirectory)SourceGenerator.Foundations.Contracts/SourceGenerator.Foundations.Contracts.csproj" />
+    <ProjectReference Include="$(MSBuildThisFileDirectory)SourceGenerator.Foundations/SourceGenerator.Foundations.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
   </ItemGroup>
-  <Import Project="$(MSBuildThisFileDirectory)SourceGenerator.Foundations\SourceGenerator.Foundations.props" />
+  <Import Project="$(MSBuildThisFileDirectory)SourceGenerator.Foundations/SourceGenerator.Foundations.props" />
   <!-- ==== Copy Plugin Assemblies to Resources ===
     We inject for example 'SourceGenerator.Foundations.Windows' into the assembly that is referencing this file. This is 
     done because we need to resolve this assembly at runtime. You would assembly that the better place to put this would be
