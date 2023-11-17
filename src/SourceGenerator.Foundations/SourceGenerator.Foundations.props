@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<Project InitialTargets="SGF_NugetReference">
+<Project>
   <PropertyGroup>
     <IsRoslynComponent>true</IsRoslynComponent>
     <IsNuGetPackage>false</IsNuGetPackage>
@@ -10,19 +10,14 @@
     <CompilerVisibleProperty Include="AssemblyName" />
     <CompilerVisibleProperty Include="BaseOutputPath "/>
   </ItemGroup>
-
-  <!-- Reference from nuget package -->
-  <Target Name="SGF_NugetReference" Condition="'$(IsNuGetPackage.ToLower())' == 'true'">
-    <ItemGroup>
-      <SGF_EmbeddedAssembly Include="$(MSBuildThisFileDirectory)..\sgf\embedded\assemblies\*.*"/>
-      <SGF_EmbeddedScript Include="$(MSBuildThisFileDirectory)..\sgf\embedded\scripts\*.*"/>
-      <Compile Include="$(MSBuildThisFileDirectory)..\sgf\src\**\*.cs" Visible="False">
-        <Link>SGF/%(RecursiveDir)%(Filename)%(Extension)</Link>
-      </Compile>
-    </ItemGroup>
-  </Target>
+  <ItemGroup Condition="'$(IsNuGetPackage.ToLower())' == 'true'">
+    <SGF_EmbeddedAssembly Include="$(MSBuildThisFileDirectory)..\sgf\embedded\assemblies\*.*"/>
+    <Compile Include="$(MSBuildThisFileDirectory)..\sgf\src\**\*.cs" Visible="False">
+      <Link>SGF/%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Compile>
+  </ItemGroup>
   <ItemGroup Condition="'$(IsNuGetPackage.ToLower())' != 'true'">
-      <ProjectReference Include="$(MSBuildThisFileDirectory)..\SourceGenerator.Foundations\SourceGenerator.Foundations.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer"/>
-      <ProjectReference Include="$(MSBuildThisFileDirectory)..\SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj" />
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\SourceGenerator.Foundations\SourceGenerator.Foundations.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer"/>
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj" />
   </ItemGroup>
 </Project>
