@@ -1,22 +1,5 @@
 <Project>
-
   <Target Name="SGF_EmbedDependencies" AfterTargets="ResolveAssemblyReferences">
-    <PropertyGroup>
-      <IsRoslynComponent>true</IsRoslynComponent>
-    </PropertyGroup>
-
-    <!-- Exposed Compiler Flags -->
-    <ItemGroup>
-      <CompilerVisibleProperty Include="RootNamespace" />
-      <CompilerVisibleProperty Include="AssemblyName" />
-      <CompilerVisibleProperty Include="BaseOutputPath "/>
-    </ItemGroup>
-
-    <!-- Shared References -->
-    <ItemGroup>
-      <PackageReference Include="Serilog" Version="2.12.0" />
-    </ItemGroup>
-
     <!-- Embedded Assemblies -->
     <ItemGroup>
       <!-- Include all the referenced assemblies -->
@@ -68,7 +51,6 @@
         <LogicalName>SGF.Script::%(RecursiveDir)%(FileName)%(Extension)</LogicalName>
       </EmbeddedResource>
     </ItemGroup>
-    <Message Importance="high" Text="[$(MSBuildProjectName)== @(SGF_EmbeddedAssembly)"/>
   </Target>
   <!-- Validates they are targeting 'netstandard2.0-->
   <Target Name="SGF_TargetFrameworkValidation" BeforeTargets="CoreCompile" Condition="'$(TargetFramework)' != 'netstandard2.0'">

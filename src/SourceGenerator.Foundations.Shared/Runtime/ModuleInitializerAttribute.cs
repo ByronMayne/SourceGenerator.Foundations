@@ -7,5 +7,5 @@ namespace System.Runtime.CompilerServices
     /// the problem for bootstrapping without user intervention
     /// </summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-    public sealed class ModuleInitializerAttribute : Attribute { }
+    internal sealed class ModuleInitializerAttribute : Attribute { }
 }

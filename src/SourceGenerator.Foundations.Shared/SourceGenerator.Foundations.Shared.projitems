@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>8af3630c-2bf5-4854-a45d-0074c2787964</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>SGF</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Configuration\ResourceConfiguration.cs" Pack="True" PackagePath="sgf/src/Configuration\ResourceConfiguration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Reflection\AssemblyNameComparer.cs" Pack="True" PackagePath="sgf/src/Reflection\AssemblyNameComparer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Reflection\AssemblyResolver.cs" Pack="True" PackagePath="sgf/src/Reflection\AssemblyResolver.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runtime\ModuleInitializerAttribute.cs" Pack="True" PackagePath="sgf/src/Runtime\ModuleInitializerAttribute.cs" />
+  </ItemGroup>
+</Project>

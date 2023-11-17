@@ -1,32 +1,28 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Project InitialTargets="SGF_NugetReference">
   <PropertyGroup>
-    <IsNugetReference>false</IsNugetReference>
-    <IsNugetReference Condition="Exists('$(MSBuildThisFileDirectory)..\.nupkg.metadata')">true</IsNugetReference>
+    <IsRoslynComponent>true</IsRoslynComponent>
+    <IsNuGetPackage>false</IsNuGetPackage>
+    <IsNuGetPackage Condition="Exists('$(MSBuildThisFileDirectory)..\.nupkg.metadata')">true</IsNuGetPackage>
   </PropertyGroup>
+  <ItemGroup>
+    <CompilerVisibleProperty Include="RootNamespace" />
+    <CompilerVisibleProperty Include="AssemblyName" />
+    <CompilerVisibleProperty Include="BaseOutputPath "/>
+  </ItemGroup>
 
   <!-- Reference from nuget package -->
-  <Target Name="SGF_NugetReference" Condition="'$(IsNugetReference.ToLower())' == 'true'">
-    <Message Importance="high" Text="=========================="/>
+  <Target Name="SGF_NugetReference" Condition="'$(IsNuGetPackage.ToLower())' == 'true'">
     <ItemGroup>
       <SGF_EmbeddedAssembly Include="$(MSBuildThisFileDirectory)..\sgf\embedded\assemblies\*.*"/>
       <SGF_EmbeddedScript Include="$(MSBuildThisFileDirectory)..\sgf\embedded\scripts\*.*"/>
+      <Compile Include="$(MSBuildThisFileDirectory)..\sgf\src\**\*.cs" Visible="True">
+        <Link>SGF/%(RecursiveDir)%(Filename)%(Extension)</Link>
+      </Compile>
     </ItemGroup>
   </Target>
-
-  <!-- Refernece locally on disk -->
-  <Target Name="SGF_LocalReference" BeforeTargets="SGF_EmbedDependencies" Condition="'$(IsNugetReference.ToLower())' == 'false'">
-    <Message Importance="high" Text="=========== $(MSBuildThisFileDirectory)..\SourceGenerator.Foundations.Contracts\bin\$(Configuration)\netstandard2.0\SourceGenerator.Foundations.Contracts.dll"/>
-    <!--<ItemGroup >
-      <SGF_EmbeddedAssembly Include="$(MSBuildThisFileDirectory)..\Plugins\*\bin\$(Configuration)\netstandard2.0\*dll"/>
-      <SGF_EmbeddedAssembly Include="$(MSBuildThisFileDirectory)..\SourceGenerator.Foundations.Contracts\bin\$(Configuration)\netstandard2.0\SourceGenerator.Foundations.Contracts.dll"/>
-    </ItemGroup>-->
-  </Target>
-
-  <ItemGroup Condition="'$(IsNugetReference.ToLower())' == 'false'">
+  <ItemGroup Condition="'$(IsNuGetPackage.ToLower())' != 'true'">
       <ProjectReference Include="$(MSBuildThisFileDirectory)..\SourceGenerator.Foundations\SourceGenerator.Foundations.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer"/>
       <ProjectReference Include="$(MSBuildThisFileDirectory)..\SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj" />
   </ItemGroup>
-  
-  <Import Project="$(MSBuildThisFileDirectory)SourceGenerator.Embedding.props"/>
 </Project>

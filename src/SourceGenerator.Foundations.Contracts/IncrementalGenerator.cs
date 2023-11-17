@@ -2,10 +2,8 @@
 using Microsoft.CodeAnalysis;
 using Serilog;
 using Serilog.Core;
-using SGF.Reflection;
 using System;
 using System.Diagnostics;
-using System.Runtime.ExceptionServices;
 
 namespace SGF
 {
@@ -13,7 +11,7 @@ namespace SGF
 	/// Used as a base class for creating your own source generator. This class provides some helper
 	/// methods and impoved debugging expereince.
 	/// </summary>
-	internal abstract class IncrementalGenerator : IIncrementalGenerator, IDisposable
+	public abstract class IncrementalGenerator : IIncrementalGenerator, IDisposable
 	{
 		protected static readonly AppDomain s_currentDomain;
 
@@ -31,7 +29,6 @@ namespace SGF
 		static IncrementalGenerator()
 		{
 			s_currentDomain = AppDomain.CurrentDomain;
-			AssemblyResolver.Initialize();
 		}
 
 		/// <summary>
@@ -56,7 +53,13 @@ namespace SGF
 		/// Override to add logic for disposing this instance and free resources
 		/// </summary>
 		protected virtual void Dipose()
-		{}
+		{
+			if(Debugger.IsAttached && Environment.UserInteractive)
+			{
+				Console.WriteLine("Press any key to quit...");
+				Console.ReadKey();
+			}
+		}
 
 		/// <summary>
 		/// Attaches the debugger automtically if you are running from Visual Studio. You have the option

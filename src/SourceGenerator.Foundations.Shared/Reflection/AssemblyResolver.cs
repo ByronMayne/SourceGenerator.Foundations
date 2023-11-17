@@ -6,27 +6,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace SGF.Reflection
 {
     internal static class AssemblyResolver
     {
-        /// <summary>
-        /// Used to compare two <see cref="AssemblyName"/> to pull them out of the dictionary of types
-        /// </summary>
-        private class AssemblyNameComparer : IEqualityComparer<AssemblyName>
-        {
-            public bool Equals(AssemblyName x, AssemblyName y)
-            {
-                return string.Equals(x.Name, y.Name);
-            }
-
-            public int GetHashCode(AssemblyName obj)
-            {
-                return obj.Name.GetHashCode();
-            }
-        }
-
         private static readonly ConcurrentBag<Assembly> s_assembliesWithResources;
         private static readonly Dictionary<AssemblyName, Assembly> s_loadedAssemblies;
 
@@ -36,6 +21,7 @@ namespace SGF.Reflection
             s_loadedAssemblies = new Dictionary<AssemblyName, Assembly>(new AssemblyNameComparer());
         }
 
+        [ModuleInitializer]
         internal static void Initialize()
         {
             // The assembly resolvers get added to multiple source generators 
@@ -82,9 +68,21 @@ namespace SGF.Reflection
             }
             s_loadedAssemblies.Add(assemblyName, assembly);
 
-            if (!assembly.IsDynamic && assembly.GetManifestResourceNames().Any(r => r.StartsWith(ResourceConfiguration.AssemblyResourcePrefix)))
+            if (assembly.IsDynamic) return;
+
+            string[] resources = assembly.GetManifestResourceNames()
+                .Where(r => r.StartsWith(ResourceConfiguration.AssemblyResourcePrefix))
+                .ToArray();
+
+            if (resources.Length == 0) return;
+
+            foreach (string resource in resources)
             {
-                s_assembliesWithResources.Add(assembly);
+                Console.WriteLine($"Extracting: {resource}");
+                if (TryExtractingAssembly(assembly, resource, out Assembly? loadedAssembly))
+                {
+                    AddAssembly(loadedAssembly!);
+                }
             }
         }
 

@@ -19,6 +19,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SourceGenerator.Foundations
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sandbox", "Sandbox", "{6118BF32-23BA-4D33-946E-F7E8A6F5D758}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SourceGenerator.Foundations.Shared", "SourceGenerator.Foundations.Shared\SourceGenerator.Foundations.Shared.shproj", "{8AF3630C-2BF5-4854-A45D-0074C2787964}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp", "Sandbox\ConsoleApp\ConsoleApp.csproj", "{F4BA95B9-0353-44CA-9502-C74B532321B7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp.SourceGenerator", "Sandbox\ConsoleApp.SourceGenerator\ConsoleApp.SourceGenerator.csproj", "{594AACB5-B550-46CF-B6E2-16EF826D655A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,14 +57,38 @@ Global
 		{DC8C5A1A-6269-4BA7-852A-D21CB0B2B5A0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DC8C5A1A-6269-4BA7-852A-D21CB0B2B5A0}.Release|x64.ActiveCfg = Release|Any CPU
 		{DC8C5A1A-6269-4BA7-852A-D21CB0B2B5A0}.Release|x64.Build.0 = Release|Any CPU
+		{F4BA95B9-0353-44CA-9502-C74B532321B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4BA95B9-0353-44CA-9502-C74B532321B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4BA95B9-0353-44CA-9502-C74B532321B7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F4BA95B9-0353-44CA-9502-C74B532321B7}.Debug|x64.Build.0 = Debug|Any CPU
+		{F4BA95B9-0353-44CA-9502-C74B532321B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4BA95B9-0353-44CA-9502-C74B532321B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4BA95B9-0353-44CA-9502-C74B532321B7}.Release|x64.ActiveCfg = Release|Any CPU
+		{F4BA95B9-0353-44CA-9502-C74B532321B7}.Release|x64.Build.0 = Release|Any CPU
+		{594AACB5-B550-46CF-B6E2-16EF826D655A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{594AACB5-B550-46CF-B6E2-16EF826D655A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{594AACB5-B550-46CF-B6E2-16EF826D655A}.Debug|x64.ActiveCfg = Debug|x64
+		{594AACB5-B550-46CF-B6E2-16EF826D655A}.Debug|x64.Build.0 = Debug|x64
+		{594AACB5-B550-46CF-B6E2-16EF826D655A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{594AACB5-B550-46CF-B6E2-16EF826D655A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{594AACB5-B550-46CF-B6E2-16EF826D655A}.Release|x64.ActiveCfg = Release|x64
+		{594AACB5-B550-46CF-B6E2-16EF826D655A}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{DC8C5A1A-6269-4BA7-852A-D21CB0B2B5A0} = {A651676B-FBDB-4710-B010-D05AF3A56084}
+		{F4BA95B9-0353-44CA-9502-C74B532321B7} = {6118BF32-23BA-4D33-946E-F7E8A6F5D758}
+		{594AACB5-B550-46CF-B6E2-16EF826D655A} = {6118BF32-23BA-4D33-946E-F7E8A6F5D758}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EDB10920-970A-43F9-A2B3-7F1270DD477B}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		SourceGenerator.Foundations.Shared\SourceGenerator.Foundations.Shared.projitems*{0085a518-02b6-4218-b718-00c0f69b99ab}*SharedItemsImports = 5
+		SourceGenerator.Foundations.Shared\SourceGenerator.Foundations.Shared.projitems*{594aacb5-b550-46cf-b6e2-16ef826d655a}*SharedItemsImports = 5
+		SourceGenerator.Foundations.Shared\SourceGenerator.Foundations.Shared.projitems*{8af3630c-2bf5-4854-a45d-0074c2787964}*SharedItemsImports = 13
+		SourceGenerator.Foundations.Shared\SourceGenerator.Foundations.Shared.projitems*{dc8c5a1a-6269-4ba7-852a-d21cb0b2b5a0}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal

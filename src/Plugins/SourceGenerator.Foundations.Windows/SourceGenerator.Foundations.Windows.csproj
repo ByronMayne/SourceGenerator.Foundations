@@ -18,5 +18,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj" />
 	</ItemGroup>
-	<Import Project="$(MSBuildThisFileDirectory)..\..\SourceGenerator.Foundations\SourceGenerator.Embedding.props" />
+	<Import Project="..\..\SourceGenerator.Foundations.Shared\SourceGenerator.Foundations.Shared.projitems" Label="Shared" />
+  <Import Project="..\..\SourceGenerator.Foundations\SourceGenerator.Foundations.targets"/>
 </Project>

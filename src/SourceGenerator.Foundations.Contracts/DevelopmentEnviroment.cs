@@ -53,7 +53,7 @@ namespace SGF
 
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    AssemblyName windowsAssemblyName = new AssemblyName($"SourceGenerator.Foundations.Windows, Version={assemblyVersion}, Culture=neutral, PublicKeyToken=null");
+                    AssemblyName windowsAssemblyName = new AssemblyName("SourceGenerator.Foundations.Windows");
                     environmentAssembly = Assembly.Load(windowsAssemblyName);
                 }
 
