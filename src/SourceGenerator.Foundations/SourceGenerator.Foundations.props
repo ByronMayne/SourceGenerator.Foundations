@@ -16,7 +16,7 @@
     <ItemGroup>
       <SGF_EmbeddedAssembly Include="$(MSBuildThisFileDirectory)..\sgf\embedded\assemblies\*.*"/>
       <SGF_EmbeddedScript Include="$(MSBuildThisFileDirectory)..\sgf\embedded\scripts\*.*"/>
-      <Compile Include="$(MSBuildThisFileDirectory)..\sgf\src\**\*.cs" Visible="True">
+      <Compile Include="$(MSBuildThisFileDirectory)..\sgf\src\**\*.cs" Visible="False">
         <Link>SGF/%(RecursiveDir)%(Filename)%(Extension)</Link>
       </Compile>
     </ItemGroup>
