@@ -27,12 +27,13 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <None Include="..\..\README.md" Pack="True" PackagePath="/"/>
+    <None Include="..\..\README.md" Pack="True" PackagePath="/" />
     <PackageReference Include="Serilog" Version="3.1.1" />
-    <None Update="SourceGenerator.Foundations.props" Pack="True" PackagePath="build/$(AssemblyName).props"/>
-    <None Update="SourceGenerator.Foundations.targets" Pack="True" PackagePath="build/$(AssemblyName).targets"/>
-    <ProjectReference Include="..\SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj" PrivateAssets="All"/>
-    <ProjectReference Include="..\Plugins\SourceGenerator.Foundations.Windows\SourceGenerator.Foundations.Windows.csproj" PrivateAssets="All"/>
+    <None Update="SourceGenerator.Foundations.props" Pack="True" PackagePath="build/$(AssemblyName).props" />
+    <None Update="SourceGenerator.Foundations.targets" Pack="True" PackagePath="build/$(AssemblyName).targets" />
+    <ProjectReference Include="..\SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj" PrivateAssets="All" />
+    <ProjectReference Include="..\Plugins\SourceGenerator.Foundations.Windows\SourceGenerator.Foundations.Windows.csproj" PrivateAssets="All" />
+    <ProjectReference Include="..\Plugins\SourceGenerator.Foundations.Injector\SourceGenerator.Foundations.Injector.csproj" PrivateAssets="All" ReferenceOutputAssembly="False" />
   </ItemGroup>
   <Target Name="AppendNugetContent">
     <ItemGroup>
@@ -41,6 +42,9 @@
       </TfmSpecificPackageFile>
       <TfmSpecificPackageFile Include="..\Plugins\SourceGenerator.Foundations.Windows\bin\$(Configuration)\netstandard2.0\SourceGenerator.Foundations.Windows.dll">
         <PackagePath>lib/netstandard2.0/SourceGenerator.Foundations.Windows.dll</PackagePath>
+      </TfmSpecificPackageFile>
+      <TfmSpecificPackageFile Include="..\SourceGenerator.Foundations.Injector\bin\$(Configuration)\net6.0\*.*">
+        <PackagePath>sgf/injector/</PackagePath>
       </TfmSpecificPackageFile>
     </ItemGroup>
   </Target>

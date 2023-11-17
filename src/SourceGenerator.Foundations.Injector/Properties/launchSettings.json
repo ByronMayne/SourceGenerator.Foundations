@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "SourceGenerator.Foundations.Injector": {
+      "commandName": "Project",
+      "commandLineArgs": "SGF.Reflection.AssemblyResolver Initialize D:\\Repositories\\SourceGenerator.Foudations\\src\\Sandbox\\ConsoleApp.SourceGenerator\\bin\\Debug\\netstandard2.0\\ConsoleApp.SourceGenerator.dll"
+    }
+  }
+}

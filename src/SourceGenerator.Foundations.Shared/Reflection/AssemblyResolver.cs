@@ -21,7 +21,6 @@ namespace SGF.Reflection
             s_loadedAssemblies = new Dictionary<AssemblyName, Assembly>(new AssemblyNameComparer());
         }
 
-        [ModuleInitializer]
         internal static void Initialize()
         {
             // The assembly resolvers get added to multiple source generators 

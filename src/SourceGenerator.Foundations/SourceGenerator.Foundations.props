@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Project>
   <PropertyGroup>
+    <SgfShowImports Condition="'$(SgfShowImports)' == ''">false</SgfShowImports>
     <IsRoslynComponent>true</IsRoslynComponent>
     <IsNuGetPackage>false</IsNuGetPackage>
     <IsNuGetPackage Condition="Exists('$(MSBuildThisFileDirectory)..\.nupkg.metadata')">true</IsNuGetPackage>
+    <SgfInjectorPath>$(MSBuildThisFileDirectory)..\SourceGenerator.Foundations.Injector\bin\$(Configuration)\net6.0\SourceGenerator.Foundations.Injector.exe</SgfInjectorPath>
+    <SgfInjectorPath Condition="'$(IsNuGetPackage.ToLower())' == 'true'">$(MSBuildThisFileDirectory)..\sgf\injector\SourceGenerator.Foundations.Injector.exe</SgfInjectorPath>
   </PropertyGroup>
   <ItemGroup>
     <CompilerVisibleProperty Include="RootNamespace" />
@@ -12,7 +15,7 @@
   </ItemGroup>
   <ItemGroup Condition="'$(IsNuGetPackage.ToLower())' == 'true'">
     <SGF_EmbeddedAssembly Include="$(MSBuildThisFileDirectory)..\sgf\embedded\assemblies\*.*"/>
-    <Compile Include="$(MSBuildThisFileDirectory)..\sgf\src\**\*.cs" Visible="False">
+    <Compile Include="$(MSBuildThisFileDirectory)..\sgf\src\**\*.cs" Visible="$(SgfShowImports)">
       <Link>SGF/%(RecursiveDir)%(Filename)%(Extension)</Link>
     </Compile>
   </ItemGroup>
