@@ -12,12 +12,12 @@ namespace SGF.Reflection
 {
     internal static class AssemblyResolver
     {
-        private static readonly ConcurrentBag<Assembly> s_assembliesWithResources;
+        private static readonly List<Assembly> s_assembliesWithResources;
         private static readonly Dictionary<AssemblyName, Assembly> s_loadedAssemblies;
 
         static AssemblyResolver()
         {
-            s_assembliesWithResources = new ConcurrentBag<Assembly>();
+            s_assembliesWithResources = new List<Assembly>();
             s_loadedAssemblies = new Dictionary<AssemblyName, Assembly>(new AssemblyNameComparer());
         }
 
@@ -124,9 +124,11 @@ namespace SGF.Reflection
             loadedAssembly = null;
             if (TryGetResourceBytes(assembly, resourceName, out byte[]? assemblyBytes))
             {
+#pragma warning disable RS1035 // Do not use APIs banned for analyzers
                 loadedAssembly = TryGetResourceBytes(assembly, Path.ChangeExtension(resourceName, ".pdb"), out byte[]? symbolBytes)
                     ? Assembly.Load(assemblyBytes, symbolBytes)
                     : Assembly.Load(assemblyBytes);
+#pragma warning restore RS1035 // Do not use APIs banned for analyzers
                 return true;
             }
             return false;

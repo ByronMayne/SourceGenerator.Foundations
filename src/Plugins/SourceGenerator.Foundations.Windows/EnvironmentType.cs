@@ -1,6 +1,6 @@
 ﻿namespace SGF
 {
-    internal enum EnvironmentType
+    internal enum PlatformType
     {
         Unknown,
         VisualStudio,

@@ -1,4 +1,4 @@
-﻿using Serilog.Core;
+﻿using SGF.Diagnostics;
 using System.Collections.Generic;
 
 namespace SGF
@@ -6,7 +6,7 @@ namespace SGF
     /// <summary>
     /// Abstracts for development environments supported by the platform
     /// </summary>
-    public interface IDevelopmentEnviroment
+    public interface IDevelopmentPlatform
     {
         /// <summary>
         /// Attaches the debugger to the given process Id and returns back if it was successful or not. This can
@@ -18,6 +18,6 @@ namespace SGF
         /// Gets the list of sinks used for logging output
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<ILogEventSink> GetLogSinks();
+        public IEnumerable<ILogSink> GetLogSinks();
     }
 }

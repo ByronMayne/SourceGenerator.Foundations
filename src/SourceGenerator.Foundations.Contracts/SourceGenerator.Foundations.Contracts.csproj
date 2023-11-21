@@ -6,23 +6,10 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.3.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.0.1" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Serilog" Version="3.1.1" />
-    <PackageReference Include="Serilog.Sinks.Console" Version="5.0.0" />
-    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="IncrementalGenerator.cs">
-      <PackagePath>src/IncrementalGenerator.cs</PackagePath>
-      <Pack>True</Pack>
-    </Compile>
-    <Compile Update="SgfInitializationContext.cs">
-      <PackagePath>src/SgfInitializationContext.cs</PackagePath>
-      <Pack>True</Pack>
-    </Compile>
   </ItemGroup>
 </Project>

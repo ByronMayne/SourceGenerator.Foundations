@@ -10,7 +10,7 @@
       <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Collections*.dll')"/>
       <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.ComponentModel*.dll')"/>
       <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Core*.dll')"/>
-      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Diagnostics*.dll')"/>
+      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Diagnostics.dll')"/>
       <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Drawing*.dll')"/>
       <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Data*.dll')"/>
       <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Dynamic*.dll')"/>
@@ -42,6 +42,7 @@
       <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.ServiceModel*.dll')"/>
       <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)System.Transactions.dll')"/>
       <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)Microsoft.CodeAnalysis*.dll')"/>
+      <SGF_EmbeddedAssembly Remove="@(SGF_EmbeddedAssembly->'%(RootDir)%(Directory)Microsoft.CSharp.dll')"/>
       <!-- Embedded Assemblies -->
       <EmbeddedResource Include="@(SGF_EmbeddedAssembly)">
         <LogicalName>SGF.Assembly::%(FileName)%(Extension)</LogicalName>

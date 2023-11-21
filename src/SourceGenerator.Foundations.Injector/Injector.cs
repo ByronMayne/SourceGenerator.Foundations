@@ -3,13 +3,12 @@ using Mono.Cecil.Cil;
 using Mono.Cecil.Pdb;
 using Mono.Collections.Generic;
 using System.Diagnostics;
+using AssemblyDefinition = Mono.Cecil.AssemblyDefinition;
 
 namespace SourceGenerator.Foundations.Injector
 {
-
-    internal class Injector : IDisposable
+    internal class Injector
     {
-        private AssemblyDefinition Assembly { get; set; }
 
         private string? PdbFile(string assemblyFile)
         {
@@ -20,29 +19,34 @@ namespace SourceGenerator.Foundations.Injector
 
         public void Inject(string assemblyFile, string typeName, string methodName)
         {
+            AssemblyDefinition? assembly = null;
+
             try
             {
                 if (!File.Exists(assemblyFile))
                 {
                     throw ExceptionFactory.AssemblyDoesNotExist(assemblyFile);
                 }
+                assembly = ReadAssembly(assemblyFile);
+                MethodReference callee = GetCalleeMethod(typeName, methodName, assembly);
+                InjectInitializer(callee, assembly);
 
-                ReadAssembly(assemblyFile);
-                MethodReference callee = GetCalleeMethod(typeName, methodName);
-                InjectInitializer(callee);
-
-                WriteAssembly(assemblyFile, methodName);
+                WriteAssembly(assemblyFile, assembly);
             }
             catch (Exception ex)
             {
                 throw new InjectionException(ex.Message);
             }
+            finally
+            {
+                assembly?.Dispose();
+            }
         }
 
-        private void InjectInitializer(MethodReference callee)
+        private void InjectInitializer(MethodReference callee, AssemblyDefinition assemblyDefinition)
         {
-            Debug.Assert(Assembly != null);
-            TypeReference voidRef = Assembly.MainModule.ImportReference(callee.ReturnType);
+            Debug.Assert(assemblyDefinition != null);
+            TypeReference voidRef = assemblyDefinition.MainModule.ImportReference(callee.ReturnType);
             const MethodAttributes attributes = MethodAttributes.Static
                                                 | MethodAttributes.SpecialName
                                                 | MethodAttributes.RTSpecialName;
@@ -51,7 +55,7 @@ namespace SourceGenerator.Foundations.Injector
             il.Append(il.Create(OpCodes.Call, callee));
             il.Append(il.Create(OpCodes.Ret));
 
-            TypeDefinition? moduleClass = Find(Assembly.MainModule.Types, t => t.Name == "<Module>");
+            TypeDefinition? moduleClass = Find(assemblyDefinition.MainModule.Types, t => t.Name == "<Module>");
             if(moduleClass == null)
             {
                 throw ExceptionFactory.ModuleNotFound();
@@ -64,22 +68,19 @@ namespace SourceGenerator.Foundations.Injector
             Debug.Assert(moduleClass != null, "Found no module class!");
         }
 
-        private void WriteAssembly(string assemblyFile, string keyfile)
+        private void WriteAssembly(string assemblyFile, AssemblyDefinition assembly)
         {
-            Debug.Assert(Assembly != null);
             var writeParams = new WriterParameters();
             if (PdbFile(assemblyFile) != null)
             {
                 writeParams.WriteSymbols = true;
                 writeParams.SymbolWriterProvider = new PdbWriterProvider();
             }
-            Assembly.Write(assemblyFile, writeParams);
+            assembly.Write(assemblyFile, writeParams);
         }
 
-        private void ReadAssembly(string assemblyFile)
+        private AssemblyDefinition ReadAssembly(string assemblyFile)
         {
-            Debug.Assert(Assembly == null);
-
             var resolver = new DefaultAssemblyResolver();
             resolver.AddSearchDirectory(Path.GetDirectoryName(assemblyFile));
 
@@ -94,13 +95,12 @@ namespace SourceGenerator.Foundations.Injector
                 readParams.ReadSymbols = true;
                 readParams.SymbolReaderProvider = new PdbReaderProvider();
             }
-            Assembly = AssemblyDefinition.ReadAssembly(assemblyFile, readParams);
+            return AssemblyDefinition.ReadAssembly(assemblyFile, readParams);
         }
 
-        private MethodReference GetCalleeMethod(string typeName, string methodName)
+        private MethodReference GetCalleeMethod(string typeName, string methodName, AssemblyDefinition assembly)
         {
-            Debug.Assert(Assembly != null);
-            ModuleDefinition module = Assembly.MainModule;
+            ModuleDefinition module = assembly.MainModule;
             TypeDefinition? moduleInitializerClass;
 
             moduleInitializerClass = Find(module.Types, t => t.FullName == typeName);
@@ -140,11 +140,6 @@ namespace SourceGenerator.Foundations.Injector
                 }
             }
             return null;
-        }
-
-        public void Dispose()
-        {
-            Assembly.Dispose();
         }
     }
 }

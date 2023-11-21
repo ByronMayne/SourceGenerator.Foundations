@@ -12,6 +12,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\ResourceConfiguration.cs" Pack="True" PackagePath="sgf/src/Configuration\ResourceConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Reflection\AssemblyNameComparer.cs" Pack="True" PackagePath="sgf/src/Reflection\AssemblyNameComparer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Reflection\AssemblyResolver.cs" Pack="True" PackagePath="sgf/src/Reflection\AssemblyResolver.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runtime\ModuleInitializerAttribute.cs" Pack="True" PackagePath="sgf/src/Runtime\ModuleInitializerAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IncrementalGenerator.cs" Pack="True" PackagePath="sgf/src/IncrementalGenerator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SgfInitializationContext.cs" Pack="True" PackagePath="sgf/src/SgfInitializationContext.cs" />
   </ItemGroup>
 </Project>

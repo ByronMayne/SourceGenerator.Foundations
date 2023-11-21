@@ -1,8 +1,7 @@
-﻿using Serilog.Core;
+﻿using SGF.Diagnostics;
 using SGF.Interop.VisualStudio;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace SGF
 {
@@ -10,38 +9,37 @@ namespace SGF
     /// <summary>
     /// Represents a enviroment where the user is authoring code in Visual Studio 
     /// </summary>
-    internal class WindowsDevelopmentEnvironment : IDevelopmentEnviroment
+    internal class WindowsDevelopmentPlatform : IDevelopmentPlatform
     {
-        public EnvironmentType Type { get; }
+        public PlatformType Type { get; }
 
 
-        public WindowsDevelopmentEnvironment()
+        public WindowsDevelopmentPlatform()
         {
-            Type = EnvironmentType.VisualStudio;
+            Type = PlatformType.VisualStudio;
 
             if (!string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("VisualStudioVersion")))
             {
-                Type = EnvironmentType.VisualStudio;
+                Type = PlatformType.VisualStudio;
             }
         }
 
         /// <inheritdoc cref="IDevelopmentEnviroment"/>
         public bool AttachDebugger(int processId)
         {
-            switch (Type)
+            return Type switch
             {
-                case EnvironmentType.VisualStudio:
-                    return VisualStudioInterop.AttachDebugger();
-            }
-            return true;
+                PlatformType.VisualStudio => VisualStudioInterop.AttachDebugger(),
+                _ => true,
+            };
         }
 
         /// <inheritdoc cref="IDevelopmentEnviroment"/>
-        public IEnumerable<ILogEventSink> GetLogSinks()
+        public IEnumerable<ILogSink> GetLogSinks()
         {
             switch (Type)
             {
-                case EnvironmentType.VisualStudio:
+                case PlatformType.VisualStudio:
                     yield return new VisualStudioLogEventSink();
                     break;
             }

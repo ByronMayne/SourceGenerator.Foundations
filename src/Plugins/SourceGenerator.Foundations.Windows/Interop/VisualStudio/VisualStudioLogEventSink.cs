@@ -1,60 +1,65 @@
 ﻿using EnvDTE;
-using Microsoft.VisualStudio.Shell.Interop;
-using Serilog.Core;
-using Serilog.Events;
-using Serilog.Formatting.Display;
+using SGF.Diagnostics;
 using System;
 using System.IO;
 using Constants = EnvDTE.Constants;
 
 namespace SGF.Interop.VisualStudio
 {
-    public class VisualStudioLogEventSink : ILogEventSink
+    public class VisualStudioLogEventSink : ILogSink
     {
         private const string outputPanelName = "Source Generators";
-        private const string DefaultOutputTemplate = "{Timestamp:HH:mm:ss} {SourceContext} | {Message:lj}{NewLine}{Exception}";
 
-        private static readonly DTE? s_dte;
-        private static readonly OutputWindow? s_outputWindow;
-        private readonly bool m_outputInitialized;
-        private readonly OutputWindowPane? m_outputPane;
-        private readonly MessageTemplateTextFormatter m_templateFormatter;
+        /// https://learn.microsoft.com/en-us/visualstudio/extensibility/ide-guids?view=vs-2022
+        private const string BUILD_OUTPUT_PANE_GUID = "1BD8A850-02D1-11D1-BEE7-00A0C913D1F8";
 
-        static VisualStudioLogEventSink()
-        {
-            s_dte = VisualStudioInterop.GetDTE();
-            if (s_dte != null)
-            {
-                Window window = s_dte.Windows.Item(Constants.vsWindowKindOutput);
-                s_outputWindow = window.Object as OutputWindow;
-            }
-        }
+        private readonly DTE? m_dte;
+        private readonly OutputWindow? m_outputWindow;
+        private readonly OutputWindowPane? m_buildOutput;
+        private readonly OutputWindowPane? m_sourceGeneratorOutput;
 
         /// <summary>
         /// Initializes a new instance of an output channel with the
         /// Visual Studio output window. 
         /// </summary>
-        internal VisualStudioLogEventSink(
-            IFormatProvider? formatProvider = null,
-            string outputTemplate = DefaultOutputTemplate)
+        internal VisualStudioLogEventSink()
         {
-            m_outputInitialized = false;
-            m_templateFormatter = new MessageTemplateTextFormatter(outputTemplate, formatProvider);
-            if (s_outputWindow != null)
+            m_buildOutput = null;
+
+            try
             {
-                foreach (OutputWindowPane pane in s_outputWindow.OutputWindowPanes)
+                // TODO: Try to load DTE a at a later point
+                m_dte = VisualStudioInterop.GetDTE();
+                if (m_dte != null)
                 {
-                    if (Equals(pane.Name, outputPanelName) && pane.DTE == s_dte)
-                    {
-                        m_outputPane = pane;
-                        break;
-                    }
+                    Window window = m_dte.Windows.Item(Constants.vsWindowKindOutput);
+                    m_outputWindow = window.Object as OutputWindow;
                 }
-                // Store the currently active window, because adding a new one always draws focus, we don't want that 
-                OutputWindowPane currentActive = s_outputWindow.ActivePane;
-                m_outputPane ??= s_outputWindow.OutputWindowPanes.Add(outputPanelName);
-                currentActive.Activate(); // Set previous one to active
-                m_outputInitialized = m_outputPane != null;
+
+                if (m_outputWindow != null)
+                {
+                    foreach (OutputWindowPane pane in m_outputWindow.OutputWindowPanes)
+                    {
+                        string name = pane.Name;
+                        if (Equals(name, outputPanelName) && pane.DTE == m_dte)
+                        {
+                            m_sourceGeneratorOutput = pane;
+                        }
+
+                        if (string.Equals(BUILD_OUTPUT_PANE_GUID, pane.Guid))
+                        {
+                            m_buildOutput = pane;
+                        }
+                    }
+                    // Store the currently active window, because adding a new one always draws focus, we don't want that 
+                    OutputWindowPane currentActive = m_outputWindow.ActivePane;
+                    m_sourceGeneratorOutput ??= m_outputWindow.OutputWindowPanes.Add(outputPanelName);
+                    currentActive.Activate(); // Set previous one to active
+                }
+            }
+            catch
+            {
+                // nothing
             }
         }
 
@@ -63,43 +68,36 @@ namespace SGF.Interop.VisualStudio
         /// </summary>
         public void Clear()
         {
-            if (m_outputInitialized)
-            {
-                m_outputPane!.Clear();
-            }
+            m_sourceGeneratorOutput?.Clear();
         }
 
-        public void Emit(LogEvent logEvent)
+        public void Write(LogLevel logLevel, string message)
         {
-            if (m_outputInitialized)
+            if (logLevel >= LogLevel.Warning)
             {
-                using StringWriter stringWriter = new();
-                m_templateFormatter.Format(logEvent, stringWriter);
-                string message = stringWriter.ToString();
-                m_outputPane!.OutputString(message);
+                m_buildOutput?.OutputString(message);
             }
+
+            m_sourceGeneratorOutput?.OutputString(message);
         }
+
 
         /// <summary>
         /// Writes an entry to the output window if it has been initialized
         /// </summary>
         public void Write(string message)
         {
-            if (m_outputInitialized)
-            {
-                m_outputPane!.OutputString(message);
-            }
+            m_sourceGeneratorOutput?.OutputString(message);
         }
+
+     
 
         /// <summary>
         /// Writes an entry to the output window if it has been initialized
         /// </summary>
         public void WriteLine(string message)
         {
-            if (m_outputInitialized)
-            {
-                m_outputPane!.OutputString($"{message}{Environment.NewLine}");
-            }
+            m_sourceGeneratorOutput?.OutputString($"{message}{Environment.NewLine}");
         }
     }
 }
