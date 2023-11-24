@@ -5,8 +5,6 @@
     <IsRoslynComponent>true</IsRoslynComponent>
     <IsNuGetPackage>false</IsNuGetPackage>
     <IsNuGetPackage Condition="Exists('$(MSBuildThisFileDirectory)..\.nupkg.metadata')">true</IsNuGetPackage>
-    <SgfInjectorPath>$(MSBuildThisFileDirectory)..\SourceGenerator.Foundations.Injector\bin\$(Configuration)\net6.0\SourceGenerator.Foundations.Injector.exe</SgfInjectorPath>
-    <SgfInjectorPath Condition="'$(IsNuGetPackage.ToLower())' == 'true'">$(MSBuildThisFileDirectory)..\sgf\injector\SourceGenerator.Foundations.Injector.exe</SgfInjectorPath>
   </PropertyGroup>
   <ItemGroup>
     <CompilerVisibleProperty Include="RootNamespace" />

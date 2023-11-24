@@ -1,7 +1,8 @@
 ﻿using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 
 namespace SourceGenerator.Foundations.MSBuild
@@ -12,22 +13,16 @@ namespace SourceGenerator.Foundations.MSBuild
     /// assemblies 'Microsoft.CSharp'. We have to analizes these inside a custom task because some of this
     /// information is only accessable from within C# code.
     /// </summary>
-    public class FilterAssembliesTask : ITask
+    public class FilterAssembliesTask : Task
     {
-        private readonly ISet<string> m_ignoredNames;
-        private readonly IList<string> m_ignoredPrefixes;
+        private readonly string m_netStandardPatttern;
+        private readonly ISet<string> m_ignoredAssemblies;
 
         /// <summary>
         /// The list of assemblies that we can filter out 
         /// </summary>
         [Required]
         public ITaskItem[] Assemblies { get; set; }
-
-        /// <inheritdoc cref="ITask"/>
-        public IBuildEngine BuildEngine { get; set; }
-
-        /// <inheritdoc cref="ITask"/>
-        public ITaskHost HostObject { get; set; }
 
         /// <summary>
         /// The filtered version of <see cref="Assemblies"/>
@@ -38,70 +33,77 @@ namespace SourceGenerator.Foundations.MSBuild
 
         public FilterAssembliesTask()
         {
-            m_ignoredPrefixes = new List<string>()
+            m_netStandardPatttern = $"{Path.DirectorySeparatorChar}netstandard.library{Path.DirectorySeparatorChar}";
+            m_ignoredAssemblies = new HashSet<string>()
             {
-               "System.IO",
-               "System.Collections",
-               "System.ComponentModel",
-               "System.Core",
-               "System.Drawing",
-               "System.Data",
-               "System.Dynamic",
-               "System.Globalization",
-               "System.Linq",
-               "System.Memory",
-               "System.Net",
-               "System.Numerics",
-               "System.Reflection",
-               "System.Resources",
-               "System.Runtime",
-               "System.Security",
-               "System.Threading",
-               "System.Text",
-               "System.Xml",
-               "System",
-               "System.Buffers",
-               "System.Console",
-               "System.Buffers",
-               "System.Buffers",
-            };
-            m_ignoredNames = new HashSet<string>()
-            {
-                "System.Collections",
-                "System.Diagnostics",
-                "System",
-                "System.Console",
-                "System.Buffers",
-                "System.Buffers",
-                "System.Web",
-                "System.Windows",
-                "System.ValueTuple",
-                "Microsoft.Win32.Primitives",
-                "netstandard",
-                "System.AppContext",
-                "mscorlib",
-                "System.ObjectModel",
-                "System.ServiceModel*",
-                "System.Transactions",
-                "Microsoft.CodeAnalysis*",
-                "Microsoft.CSharp",
+                "Microsoft.CodeAnalysis.CSharp.dll",
+                "Microsoft.CSharp.dll",
+                "Microsoft.Win32.Primitives.dll",
+                "mscorlib.dll",
+                "netstandard.dll",
+                "System.AppContext.dll",
+                "System.Buffers.dll",
+                "System.CodeDom.dll",
+                "System.Collections.Immutable.dll",
+                "System.Console.dll",
+                "System.Diagnostics.dll",
+                "System.dll",
+                "System.Memory.dll",
+                "System.Numerics.Vectors.dll",
+                "System.ObjectModel.dll",
+                "System.Reflection.Metadata.dll",
+                "System.Runtime.CompilerServices.Unsafe.dll",
+                "System.ServiceModel.dll",
+                "System.Text.Encoding.CodePages.dll",
+                "System.Threading.Tasks.Extensions.dll",
+                "System.Transactions.dll",
+                "System.ValueTuple.dll",
+                "System.Web.dll",
+                "System.Windows.dll",
+                "System.Collections.dll",
             };
         }
 
-        public bool Execute()
+        /// <inheritdoc cref="Task"/>
+        public override bool Execute()
         {
             List<ITaskItem> filtered = new List<ITaskItem>(Assemblies.Length);
 
             foreach (ITaskItem assembly in Assemblies)
             {
                 string assemblyPath = assembly.ItemSpec;
-                if (string.IsNullOrWhiteSpace(assemblyPath)) continue;
-                if (assemblyPath.Contains("\\netstandard.library\\")) continue; // ignore built in 
+                if (string.IsNullOrWhiteSpace(assemblyPath))
+                {
+                    continue;
+                }
 
-                filtered.Add(assembly);
-
+                if (Include(assemblyPath))
+                {
+                    filtered.Add(assembly);
+                    Log.LogMessage(MessageImportance.Normal, "Added: {0}", assemblyPath);
+                }
+                else
+                {
+                    Log.LogMessage(MessageImportance.Normal, "Skipping: {0}", assemblyPath);
+                }
             }
             FilteredAssemblies = filtered.ToArray();
+            return true;
+        }
+
+        /// <summary>
+        /// Returns true if the assembly at the given path should be included otherwise false
+        /// </summary>
+        private bool Include(string assemblyPath)
+        {
+            foreach (string ignoredAssembly in m_ignoredAssemblies)
+            {
+                if (assemblyPath.IndexOf(m_netStandardPatttern, StringComparison.OrdinalIgnoreCase) > 0) return false;
+                if (assemblyPath.EndsWith(ignoredAssembly))
+                {
+                    return false;
+                }
+            }
             return true;
         }
 

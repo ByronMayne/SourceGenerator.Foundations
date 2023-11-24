@@ -1,6 +1,7 @@
 ﻿using EnvDTE;
 using SGF.Diagnostics;
 using System;
+using System.Diagnostics;
 using System.IO;
 using Constants = EnvDTE.Constants;
 
@@ -11,7 +12,7 @@ namespace SGF.Interop.VisualStudio
         private const string outputPanelName = "Source Generators";
 
         /// https://learn.microsoft.com/en-us/visualstudio/extensibility/ide-guids?view=vs-2022
-        private const string BUILD_OUTPUT_PANE_GUID = "1BD8A850-02D1-11D1-BEE7-00A0C913D1F8";
+        private const string BUILD_OUTPUT_PANE_GUID = "{1BD8A850-02D1-11D1-BEE7-00A0C913D1F8}";
 
         private readonly DTE? m_dte;
         private readonly OutputWindow? m_outputWindow;

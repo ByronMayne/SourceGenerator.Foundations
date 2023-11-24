@@ -9,15 +9,17 @@ namespace SGF.Diagnostics
     /// </summary>
     public class Logger : ILogger
     {
+        private readonly string m_sourceContext;
         private readonly List<ILogSink> m_sinks;
 
         public LogLevel Level { get; set; }
 
         public IReadOnlyList<ILogSink> Sinks => m_sinks;
 
-        public Logger()
+        public Logger(string sourceContext)
         {
             m_sinks = new List<ILogSink>();
+            m_sourceContext = sourceContext;
         }
 
         /// <summary>
@@ -33,13 +35,27 @@ namespace SGF.Diagnostics
 
         public void Log(LogLevel logLevel, Exception? exception, string message)
         {
-            if(exception != null)
+            StringBuilder builder = new StringBuilder()
+            .AppendFormat("[{0}] ", DateTime.Now.ToString("HH:mm:ss"))
+            .AppendFormat("{0} | ", m_sourceContext);
+
+            switch (logLevel)
             {
-                message += $"\n{exception}";
+                case LogLevel.Warning:
+                    builder.Append("Warning: ");
+                    break;
+                case LogLevel.Error:
+                    builder.Append("Error: ");
+                    break;
             }
-            foreach(var sink in m_sinks)
+
+            if(exception != null) builder.AppendLine(exception.ToString());
+
+            string renderedMessage = builder.ToString();
+
+            foreach(ILogSink sink in m_sinks)
             {
-                sink.Write(logLevel, message);
+                sink.Write(logLevel, renderedMessage);
             }
         }
     }

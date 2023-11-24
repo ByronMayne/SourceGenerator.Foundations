@@ -1,6 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
 using SGF.Diagnostics;
-using SGF.Diagnostics.Sinks;
 using SGF.Reflection;
 using System;
 using System.Diagnostics;
@@ -54,7 +53,7 @@ namespace SGF
 
         private ILogger CreateLogger(string sourceContext)
         {
-            Logger logger = new();
+            Logger logger = new(sourceContext);
 
             if (s_developmentPlatform != null)
             {
