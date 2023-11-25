@@ -74,6 +74,8 @@ namespace SGF.Interop.VisualStudio
 
         public void Write(LogLevel logLevel, string message)
         {
+            message += "\n";
+
             if (logLevel >= LogLevel.Warning)
             {
                 m_buildOutput?.OutputString(message);

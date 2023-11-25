@@ -2,8 +2,8 @@
   <PropertyGroup>
     <IsNuGetPackage>false</IsNuGetPackage>
     <IsNuGetPackage Condition="Exists('$(MSBuildThisFileDirectory)..\.nupkg.metadata')">true</IsNuGetPackage>
-    <SGFTaskAssemblyPath>$(MSBuildThisFileDirectory)\bin\$(Configuration)\netstandard2.0\SourceGenerator.Foundations.MSBuild.dll</SGFTaskAssemblyPath>
-    <SGFTaskAssemblyPath Condition="'$(IsNuGetPackage.ToLower())' == 'true'">$(MSBuildThisFileDirectory)..\build\SourceGenerator.Foundations.MSBuild.dll</SGFTaskAssemblyPath>
+    <SGFTaskAssemblyPath>$(MSBuildThisFileDirectory)bin/$(Configuration)/netstandard2.0\$(MSBuildThisFileName).dll</SGFTaskAssemblyPath>
+    <SGFTaskAssemblyPath Condition="Exists('$(MSBuildThisFileName).dll')">$(MSBuildThisFileName).dll</SGFTaskAssemblyPath>
   </PropertyGroup>
   <UsingTask
     TaskName="FilterAssembliesTask"

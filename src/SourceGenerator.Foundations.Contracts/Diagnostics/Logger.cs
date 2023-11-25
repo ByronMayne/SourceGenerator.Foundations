@@ -49,6 +49,8 @@ namespace SGF.Diagnostics
                     break;
             }
 
+            builder.Append(message);
+
             if(exception != null) builder.AppendLine(exception.ToString());
 
             string renderedMessage = builder.ToString();

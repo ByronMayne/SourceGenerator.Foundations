@@ -1,8 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="..\..\SourceGenerator.Foundations\SourceGenerator.Foundations.props" />
+  <Import Project="$(SGFPropsPath)" />
   <PropertyGroup>
-    <Nullable>enable</Nullable>
-    <LangVersion>9.0</LangVersion>
     <TargetFramework>netstandard2.0</TargetFramework>
     <IsRoslynComponent>true</IsRoslynComponent>
     <Platforms>AnyCPU;x64</Platforms>
@@ -13,8 +11,8 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Plugins\SourceGenerator.Foundations.Windows\SourceGenerator.Foundations.Windows.csproj" />
+    <ProjectReference Include="$(SGFWindowsPluginProjectPath)" />
   </ItemGroup>
   <Import Project="..\..\SourceGenerator.Foundations.Shared\SourceGenerator.Foundations.Shared.projitems" Label="Shared" />
-  <Import Project="..\..\SourceGenerator.Foundations\SourceGenerator.Foundations.targets" />
+  <Import Project="$(SGFTargetsPath)" />
 </Project>

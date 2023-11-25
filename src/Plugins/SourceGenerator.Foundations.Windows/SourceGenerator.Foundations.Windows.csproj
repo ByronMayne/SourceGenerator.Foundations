@@ -1,19 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<Nullable>enable</Nullable>
-		<LangVersion>10</LangVersion>
-		<RootNamespace>SGF</RootNamespace>
-		<TargetFramework>netstandard2.0</TargetFramework>
-	</PropertyGroup>
-	<ItemGroup>
-		<PackageReference Include="envdte" Version="17.4.33103.184" />
-		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="Microsoft.VisualStudio.Interop" Version="17.4.33103.184" GeneratePathProperty="true" PrivateAssets="all" />
-		<PackageReference Include="System.Management" Version="7.0.0" GeneratePathProperty="true" />
-	</ItemGroup>
-	<Import Project="..\..\SourceGenerator.Foundations.Shared\SourceGenerator.Foundations.Shared.projitems" Label="Shared" />
-  <Import Project="..\..\SourceGenerator.Foundations\SourceGenerator.Foundations.targets" />
+  <Import Project="$(SGFPropsPath)" />
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="envdte" Version="17.4.33103.184" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Interop" Version="17.4.33103.184" GeneratePathProperty="true" PrivateAssets="all" />
+    <PackageReference Include="System.Management" Version="7.0.0" GeneratePathProperty="true" />
+    <ProjectReference Include="$(SGFContractsProjectPath)" />
+  </ItemGroup>
+  <Import Project="$(SGFSharedProjectItemsPath)" Label="Shared" />
+  <Import Project="$(SGFTargetsPath)" />
 </Project>

@@ -2,7 +2,6 @@
 using Microsoft.Build.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 
 namespace SourceGenerator.Foundations.MSBuild
@@ -13,7 +12,7 @@ namespace SourceGenerator.Foundations.MSBuild
     /// assemblies 'Microsoft.CSharp'. We have to analizes these inside a custom task because some of this
     /// information is only accessable from within C# code.
     /// </summary>
-    public class FilterAssembliesTask : Task
+    public class FilterAssembliesTask : Task, ITask
     {
         private readonly string m_netStandardPatttern;
         private readonly ISet<string> m_ignoredAssemblies;
@@ -33,7 +32,10 @@ namespace SourceGenerator.Foundations.MSBuild
 
         public FilterAssembliesTask()
         {
-            m_netStandardPatttern = $"{Path.DirectorySeparatorChar}netstandard.library{Path.DirectorySeparatorChar}";
+			Assemblies = Array.Empty<ITaskItem>();
+            FilteredAssemblies = Array.Empty<ITaskItem>();
+
+			m_netStandardPatttern = $"{Path.DirectorySeparatorChar}netstandard.library{Path.DirectorySeparatorChar}";
             m_ignoredAssemblies = new HashSet<string>()
             {
                 "Microsoft.CodeAnalysis.CSharp.dll",
@@ -106,6 +108,5 @@ namespace SourceGenerator.Foundations.MSBuild
             }
             return true;
         }
-
     }
 }

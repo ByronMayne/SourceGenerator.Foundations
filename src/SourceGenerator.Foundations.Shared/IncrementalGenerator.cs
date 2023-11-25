@@ -1,11 +1,12 @@
-﻿using Microsoft.CodeAnalysis;
-using SGF.Diagnostics;
-using SGF.Reflection;
-using System;
-using System.Diagnostics;
+﻿using System;
 using System.Linq;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using SGF.Diagnostics;
+using SGF.Reflection;
+using SGF.Diagnostics.Sinks;
+using Microsoft.CodeAnalysis;
 
 namespace SGF
 {

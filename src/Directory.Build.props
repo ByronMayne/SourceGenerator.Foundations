@@ -1,0 +1,30 @@
+<Project>
+  <PropertyGroup>
+    <!-- Common Settings -->
+    <Nullable>enable</Nullable>
+    <LangVersion>10</LangVersion>
+    <RootNamespace>SGF</RootNamespace>
+    <!--- Paths -->
+    <SGFSourceDir>$(MSBuildThisFileDirectory)</SGFSourceDir>
+
+    <SGFProjectDir>$(SGFSourceDir)SourceGenerator.Foundations\</SGFProjectDir>
+    <SGFProjectPath>$(SGFProjectDir)SourceGenerator.Foundations.csproj</SGFProjectPath>
+    <SGFTargetsPath>$(SGFProjectDir)SourceGenerator.Foundations.targets</SGFTargetsPath>
+    <SGFPropsPath>$(SGFProjectDir)SourceGenerator.Foundations.props</SGFPropsPath>
+
+    <SGFSharedProjectDir>$(SGFSourceDir)SourceGenerator.Foundations.Shared\</SGFSharedProjectDir>
+    <SGFSharedProjectItemsPath>$(SGFSharedProjectDir)SourceGenerator.Foundations.Shared.projitems</SGFSharedProjectItemsPath>
+
+    <SGFContractsProjectDir>$(SGFSourceDir)SourceGenerator.Foundations.Contracts\</SGFContractsProjectDir>
+    <SGFContractsProjectPath>$(SGFContractsProjectDir)SourceGenerator.Foundations.Contracts.csproj</SGFContractsProjectPath>
+
+    <SGFInjectorProjectDir>$(SGFSourceDir)SourceGenerator.Foundations.Injector\</SGFInjectorProjectDir>
+    <SGFInjectorProjectPath>$(SGFInjectorProjectDir)SourceGenerator.Foundations.Injector.csproj</SGFInjectorProjectPath>
+
+    <SGFMSBuildProjectDir>$(SGFSourceDir)SourceGenerator.Foundations.MSBuild\</SGFMSBuildProjectDir>
+    <SGFMSBuildProjectPath>$(SGFMSBuildProjectDir)SourceGenerator.Foundations.MSBuild.csproj</SGFMSBuildProjectPath>
+
+    <SGFWindowsPluginProjectDir>$(SGFSourceDir)Plugins\SourceGenerator.Foundations.Windows\</SGFWindowsPluginProjectDir>
+    <SGFWindowsPluginProjectPath>$(SGFWindowsPluginProjectDir)SourceGenerator.Foundations.Windows.csproj</SGFWindowsPluginProjectPath>
+  </PropertyGroup>
+</Project>

@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
+  <!-- ===================== Note =====================
+   This file is include in all projects that reference 
+   the NuGet packages. Don't references varaibles 
+   from Directory.Build.[props|targets] as these files
+   won't exist.
+  ==================================================-->
 <Project>
   <PropertyGroup>
     <SgfShowImports Condition="'$(SgfShowImports)' == ''">false</SgfShowImports>
@@ -10,15 +16,12 @@
     <CompilerVisibleProperty Include="RootNamespace" />
     <CompilerVisibleProperty Include="AssemblyName" />
     <CompilerVisibleProperty Include="BaseOutputPath "/>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.3.1" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup Condition="'$(IsNuGetPackage.ToLower())' == 'true'">
     <SGF_EmbeddedAssembly Include="$(MSBuildThisFileDirectory)..\sgf\embedded\assemblies\*.*"/>
     <Compile Include="$(MSBuildThisFileDirectory)..\sgf\src\**\*.cs" Visible="$(SgfShowImports)">
       <Link>SGF/%(RecursiveDir)%(Filename)%(Extension)</Link>
     </Compile>
-  </ItemGroup>
-  <ItemGroup Condition="'$(IsNuGetPackage.ToLower())' != 'true'">
-    <ProjectReference Include="$(MSBuildThisFileDirectory)..\SourceGenerator.Foundations\SourceGenerator.Foundations.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer"/>
-    <ProjectReference Include="$(MSBuildThisFileDirectory)..\SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj" />
   </ItemGroup>
 </Project>

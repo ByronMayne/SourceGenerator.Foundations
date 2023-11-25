@@ -1,0 +1,38 @@
+<Project>
+  <!-- ==== NuGet Package Config ====
+    Referenced by SourceGenerator.Foundations.cs proj to configure 
+    the settings for nuget. This just removes a lot of visual noise 
+   ===============================-->
+  <PropertyGroup>
+    <TItle>Source Generator Foundations</TItle>
+    <AUthors>Byron Mayne</AUthors>
+    <Description>Provides boilerplate code to be used by source generators. Provides the ability to have nuget packages that are resolvable at runtime as well as much better exception handling.</Description>
+    <PackageProjectUrl>https://github.dev/ByronMayne/SourceGenerator.Foundations</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <IncludeSymbols>false</IncludeSymbols>
+    <RepositoryUrl>https://github.com/ByronMayne/SourceGenerator.Foudations</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>source;generator;csharp</PackageTags>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <NoWarn>$(NoWarn);NU5128;NU5100</NoWarn>
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);AppendNugetContent</TargetsForTfmSpecificContentInPackage>
+  </PropertyGroup>
+
+  <!-- Changes the content of the nuget package by manually adding files-->
+  <Target Name="AppendNugetContent">
+    <ItemGroup>
+      <TfmSpecificPackageFile Include="$(SGFContractsProjectDir)bin\$(Configuration)\netstandard2.0\SourceGenerator.Foundations.Contracts.dll">
+        <PackagePath>lib/netstandard2.0/SourceGenerator.Foundations.Contracts.dll</PackagePath>
+      </TfmSpecificPackageFile>
+      <TfmSpecificPackageFile Include="$(SGFWindowsPluginProjectDir)bin\$(Configuration)\netstandard2.0\SourceGenerator.Foundations.Windows.dll">
+        <PackagePath>lib/netstandard2.0/SourceGenerator.Foundations.Windows.dll</PackagePath>
+      </TfmSpecificPackageFile>
+      <TfmSpecificPackageFile Include="$(SGFMSBuildProjectDir)bin\$(Configuration)netstandard2.0\SourceGenerator.Foundations.MSBuild.*">
+        <PackagePath>sgf/injector/</PackagePath>
+      </TfmSpecificPackageFile>
+      <TfmSpecificPackageFile Include="$(SGFInjectorProjectPath)bin\$(Configuration)\net6.0\*.*">
+        <PackagePath>build/</PackagePath>
+      </TfmSpecificPackageFile>
+    </ItemGroup>
+  </Target>
+</Project>

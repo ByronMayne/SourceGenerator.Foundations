@@ -1,18 +1,27 @@
 <Project>
+  <!-- ===================== Note =====================
+    This file is include in all projects that reference 
+    the NuGet packages. Don't references varaibles 
+    from Directory.Build.[props|targets] as these files
+    won't exist.
+   ==================================================-->
   <PropertyGroup>
-    <SgfInjectorPath>$(MSBuildThisFileDirectory)..\SourceGenerator.Foundations.Injector\bin\$(Configuration)\net6.0\SourceGenerator.Foundations.Injector.exe</SgfInjectorPath>
-    <SgfInjectorPath Condition="'$(IsNuGetPackage.ToLower())' == 'true'">$(MSBuildThisFileDirectory)..\sgf\injector\SourceGenerator.Foundations.Injector.exe</SgfInjectorPath>
+    <SgfInjectorPath>$(MSBuildThisFileDirectory)..\sgf\injector\SourceGenerator.Foundations.Injector.exe</SgfInjectorPath>
+    <SgfInjectorPath Condition="'$(SGFInjectorProjectDir)' != ''">$(SGFInjectorProjectDir)bin\$(Configuration)\net6.0\SourceGenerator.Foundations.Injector.exe</SgfInjectorPath>
   </PropertyGroup>
-  <Import Project="$(MSBuildThisFileDirectory)..\SourceGenerator.Foundations.MSBuild\SourceGenerator.Foundations.MSBuild.targets"/>
+  <Import Condition="Exists('$(MSBuildThisFileDirectory)SourceGenerator.Foundations.MSBuild.targets')" Project="$(MSBuildThisFileDirectory)SourceGenerator.Foundations.MSBuild.targets"/>
+  <Import Condition="'$(SGFMSBuildProjectDir)' !=''" Project="$(SGFMSBuildProjectDir)SourceGenerator.Foundations.MSBuild.targets"/>
   <Target Name="SGF_EmbedDependencies" AfterTargets="ResolveAssemblyReferences">
     <FilterAssembliesTask Assemblies="@(ReferencePath->'%(RootDir)%(Directory)%(Filename)%(Extension)')">
       <Output TaskParameter="FilteredAssemblies" ItemName="SGF_FilteredAssembly"/>
     </FilterAssembliesTask>
+
+    <Message Importance="high" Text="Filtered: @(System.Runtime.InteropServices)"/>
     
     <!-- Embedded Assemblies -->
     <ItemGroup>
       <!-- Embedded Assemblies -->
-      <EmbeddedResource Include="@(FilteredAssemblies)">
+      <EmbeddedResource Include="@(SGF_FilteredAssembly)">
         <LogicalName>SGF.Assembly::%(FileName)%(Extension)</LogicalName>
       </EmbeddedResource>
       <!-- Embedded Scripts -->

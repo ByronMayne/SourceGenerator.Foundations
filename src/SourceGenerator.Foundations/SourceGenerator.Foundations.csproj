@@ -1,25 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="$(SGFSourceDir)Nuget.Build.props"/>
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <LangVersion>9.0</LangVersion>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <IsRoslynComponent>true</IsRoslynComponent>
-    <IncludeSymbols>false</IncludeSymbols>
-    <Title>Source Generator Foundations</Title>
-    <Authors>Byron Mayne</Authors>
-    <Description>A Source Generator for Source Generators to smooth out the bumps in development. A foucs on removing the boilerplate and improving the debugging experince.</Description>
-    <PackageProjectUrl></PackageProjectUrl>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <RepositoryUrl>https://github.com/ByronMayne/SourceGenerator.Foudations</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <PackageTags>source;generator;csharp</PackageTags>
-    <RootNamespace>SGF</RootNamespace>
-    <NoWarn>$(NoWarn);NU5128</NoWarn>
-    <NoWarn>$(NoWarn);NU5100</NoWarn>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);AppendNugetContent</TargetsForTfmSpecificContentInPackage>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.3.1" PrivateAssets="all" />
@@ -30,25 +15,13 @@
     <None Include="..\..\README.md" Pack="True" PackagePath="/" />
     <None Update="SourceGenerator.Foundations.props" Pack="True" PackagePath="build/$(AssemblyName).props" />
     <None Update="SourceGenerator.Foundations.targets" Pack="True" PackagePath="build/$(AssemblyName).targets" />
-    <ProjectReference Include="..\SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj" PrivateAssets="All" />
-    <ProjectReference Include="..\Plugins\SourceGenerator.Foundations.Windows\SourceGenerator.Foundations.Windows.csproj" PrivateAssets="All" />
-    <ProjectReference Include="..\SourceGenerator.Foundations.Injector\SourceGenerator.Foundations.Injector.csproj" PrivateAssets="All" ReferenceOutputAssembly="False">
+    <ProjectReference Include="$(SGFContractsProjectPath)" PrivateAssets="All" />
+    <ProjectReference Include="$(SGFWindowsPluginProjectPath)" PrivateAssets="All" />
+    <ProjectReference Include="$(SGFInjectorProjectPath)" PrivateAssets="All" ReferenceOutputAssembly="False">
       <SetTargetFramework>TargetFramework=net6.0</SetTargetFramework>
     </ProjectReference>
   </ItemGroup>
-  <Target Name="AppendNugetContent">
-    <ItemGroup>
-      <TfmSpecificPackageFile Include="..\SourceGenerator.Foundations.Contracts\bin\$(Configuration)\netstandard2.0\SourceGenerator.Foundations.Contracts.dll">
-        <PackagePath>lib/netstandard2.0/SourceGenerator.Foundations.Contracts.dll</PackagePath>
-      </TfmSpecificPackageFile>
-      <TfmSpecificPackageFile Include="..\Plugins\SourceGenerator.Foundations.Windows\bin\$(Configuration)\netstandard2.0\SourceGenerator.Foundations.Windows.dll">
-        <PackagePath>lib/netstandard2.0/SourceGenerator.Foundations.Windows.dll</PackagePath>
-      </TfmSpecificPackageFile>
-      <TfmSpecificPackageFile Include="..\SourceGenerator.Foundations.Injector\bin\$(Configuration)\net6.0\*.*">
-        <PackagePath>sgf/injector/</PackagePath>
-      </TfmSpecificPackageFile>
-    </ItemGroup>
-  </Target>
-  <Import Project="..\SourceGenerator.Foundations.Shared\SourceGenerator.Foundations.Shared.projitems" Label="Shared" />
-  <Import Project="SourceGenerator.Foundations.targets" />
+
+  <Import Project="$(SGFSharedProjectItemsPath)" Label="Shared" />
+  <Import Project="$(SGFTargetsPath)" />
 </Project>
