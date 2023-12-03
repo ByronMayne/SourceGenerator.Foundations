@@ -123,3 +123,32 @@ When your source generator runs it needs to find it's dependencies and this is o
 ![AssemblyResolver](./img/AssemblyLoading.jpg)
 
 You can embed any assemblies you want by adding them to `<SGF_EmbeddedAssembly Include="Your Assembly Path"/>`
+
+
+## Project Layout  
+
+This library is made up of quite a few different components leveraging various techniques to help
+make the experience of integrating the library simple. Below I break down the purpose of each project and what they provide to you as the end users.
+
+### Source.Generator.Foundations 
+
+A very small library that only appears to contain a C# analyzer for adding errors and warnings when trying to use this library. However once compiled this dll will have embedded as a resource every other project that is needed during compilation. 
+
+
+### Source.Generator.Foundations.Contracts
+
+Contains common classes and utility methods that can be leveraged by source generators. 
+
+### Source.Generator.Foundations.Injector 
+
+Uses `Mono.Cecil` to inject a static call to the `AssemblyResolver` to initialize as soon as the module is loaded. This same effect could be achieved using the `[ModuleInitialize]` attribute. However, this has two downsides. One, if other classes in the referencing project also use this attribute, the order of loading will not be known. Two, this attribute is not part of .netStandard so it has to be injected, there is a chance of conflict. 
+
+
+
+### Source.Generator.Foundations.MSBuild 
+
+Contains a custom MSBuild C# target implementation used to figure out which assemblies should be embedded as resources and which should be ignored. For example this will not embed any resources that are part of `.netstandard`.
+
+### Source.Generator.Foundations.Shared 
+
+A shared project that every project that references this will have the files copied to it. 

@@ -20,6 +20,7 @@
 
   <!-- Changes the content of the nuget package by manually adding files-->
   <Target Name="AppendNugetContent">
+    <Message Importance="high" Text="Importing: $(SGFInjectorProjectPath)bin\$(Configuration)\net6.0\*.*"/>
     <ItemGroup>
       <TfmSpecificPackageFile Include="$(SGFContractsProjectDir)bin\$(Configuration)\netstandard2.0\SourceGenerator.Foundations.Contracts.dll">
         <PackagePath>lib/netstandard2.0/SourceGenerator.Foundations.Contracts.dll</PackagePath>
@@ -30,8 +31,8 @@
       <TfmSpecificPackageFile Include="$(SGFMSBuildProjectDir)bin\$(Configuration)netstandard2.0\SourceGenerator.Foundations.MSBuild.*">
         <PackagePath>sgf/injector/</PackagePath>
       </TfmSpecificPackageFile>
-      <TfmSpecificPackageFile Include="$(SGFInjectorProjectPath)bin\$(Configuration)\net6.0\*.*">
-        <PackagePath>build/</PackagePath>
+      <TfmSpecificPackageFile Include="$(SGFInjectorProjectDir)bin\$(Configuration)\net6.0\**\*.*">
+        <PackagePath>build</PackagePath>
       </TfmSpecificPackageFile>
     </ItemGroup>
   </Target>

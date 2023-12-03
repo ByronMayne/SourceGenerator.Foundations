@@ -1,6 +1,7 @@
 ﻿using EnvDTE;
 using SGF.Diagnostics;
 using System;
+using System.Linq;
 using System.Diagnostics;
 using System.IO;
 using Constants = EnvDTE.Constants;
@@ -52,10 +53,17 @@ namespace SGF.Interop.VisualStudio
                             m_buildOutput = pane;
                         }
                     }
-                    // Store the currently active window, because adding a new one always draws focus, we don't want that 
-                    OutputWindowPane currentActive = m_outputWindow.ActivePane;
+    
                     m_sourceGeneratorOutput ??= m_outputWindow.OutputWindowPanes.Add(outputPanelName);
-                    currentActive.Activate(); // Set previous one to active
+
+                    // When adding a pane will will steal focus, we don't want this. So lets force it back to build
+                    foreach(OutputWindowPane pane in m_outputWindow.OutputWindowPanes)
+                    {
+                        if(string.Equals(BUILD_OUTPUT_PANE_GUID, pane.Guid))
+                        {
+                            pane.Activate();
+                        }
+                    }
                 }
             }
             catch

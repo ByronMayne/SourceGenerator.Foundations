@@ -4,6 +4,7 @@
     <Nullable>enable</Nullable>
     <LangVersion>10</LangVersion>
     <RootNamespace>SGF</RootNamespace>
+    <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     <!--- Paths -->
     <SGFSourceDir>$(MSBuildThisFileDirectory)</SGFSourceDir>
 
@@ -27,4 +28,13 @@
     <SGFWindowsPluginProjectDir>$(SGFSourceDir)Plugins\SourceGenerator.Foundations.Windows\</SGFWindowsPluginProjectDir>
     <SGFWindowsPluginProjectPath>$(SGFWindowsPluginProjectDir)SourceGenerator.Foundations.Windows.csproj</SGFWindowsPluginProjectPath>
   </PropertyGroup>
+  <!-- Debug Targets -->
+  <Target Name="PrintSGFPaths">
+    <Message Importance="high" Text="SGFProjectDir: $(SGFProjectDir)"/>
+    <Message Importance="high" Text="SGFSharedProjectDir: $(SGFSharedProjectDir)"/>
+    <Message Importance="high" Text="SGFContractsProjectDir: $(SGFContractsProjectDir)"/>
+    <Message Importance="high" Text="SGFInjectorProjectDir: $(SGFInjectorProjectDir)"/>
+    <Message Importance="high" Text="SGFMSBuildProjectDir: $(SGFMSBuildProjectDir)"/>
+    <Message Importance="high" Text="SGFWindowsPluginProjectDir: $(SGFWindowsPluginProjectDir)"/>
+  </Target>
 </Project>
