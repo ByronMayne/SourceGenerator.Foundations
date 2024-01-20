@@ -15,9 +15,6 @@
     <FilterAssembliesTask Assemblies="@(ReferencePath->'%(RootDir)%(Directory)%(Filename)%(Extension)')">
       <Output TaskParameter="FilteredAssemblies" ItemName="SGF_FilteredAssembly"/>
     </FilterAssembliesTask>
-
-    <Message Importance="high" Text="Filtered: @(System.Runtime.InteropServices)"/>
-    
     <!-- Embedded Assemblies -->
     <ItemGroup>
       <!-- Embedded Assemblies -->
