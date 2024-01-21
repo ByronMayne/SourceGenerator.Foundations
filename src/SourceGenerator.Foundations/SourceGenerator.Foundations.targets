@@ -6,7 +6,7 @@
     won't exist.
    ==================================================-->
   <!-- TaskFactory is set to 'TaskHostFactory' so that we don't get the 'dll' is locked error -->
-  <UsingTask TaskName="FilterAssembliesTask"  AssemblyFile="$(SGFMsBuildPath)" TaskFactory="TaskHostFactory"/>
+  <UsingTask TaskName="FilterAssembliesTask" AssemblyFile="$(SGFMsBuildPath)" TaskFactory="TaskHostFactory"/>
   <Target Name="SGF_EmbedDependencies" AfterTargets="ResolveAssemblyReferences">
     <FilterAssembliesTask Assemblies="@(ReferencePath->'%(RootDir)%(Directory)%(Filename)%(Extension)')">
       <Output TaskParameter="FilteredAssemblies" ItemName="SGF_FilteredAssembly" />
