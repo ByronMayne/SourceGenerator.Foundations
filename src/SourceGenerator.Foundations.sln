@@ -29,6 +29,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp.SourceGenerator"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SourceGenerator.Foundations.Injector", "SourceGenerator.Foundations.Injector\SourceGenerator.Foundations.Injector.csproj", "{E9B785CC-B19E-499F-915D-7E37F727C50C}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SourceGenerator.Foundations.MSBuild", "SourceGenerator.Foundations.MSBuild\SourceGenerator.Foundations.MSBuild.csproj", "{E95587D6-78E8-48FE-9F98-371800A77B69}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{F0124C8F-B8FB-4832-9D65-D0F13E4308AE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -85,6 +89,14 @@ Global
 		{E9B785CC-B19E-499F-915D-7E37F727C50C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E9B785CC-B19E-499F-915D-7E37F727C50C}.Release|x64.ActiveCfg = Release|Any CPU
 		{E9B785CC-B19E-499F-915D-7E37F727C50C}.Release|x64.Build.0 = Release|Any CPU
+		{E95587D6-78E8-48FE-9F98-371800A77B69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E95587D6-78E8-48FE-9F98-371800A77B69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E95587D6-78E8-48FE-9F98-371800A77B69}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E95587D6-78E8-48FE-9F98-371800A77B69}.Debug|x64.Build.0 = Debug|Any CPU
+		{E95587D6-78E8-48FE-9F98-371800A77B69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E95587D6-78E8-48FE-9F98-371800A77B69}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E95587D6-78E8-48FE-9F98-371800A77B69}.Release|x64.ActiveCfg = Release|Any CPU
+		{E95587D6-78E8-48FE-9F98-371800A77B69}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

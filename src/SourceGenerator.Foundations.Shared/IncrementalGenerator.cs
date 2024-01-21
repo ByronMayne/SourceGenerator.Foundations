@@ -184,7 +184,7 @@ namespace SGF
         {
             try
             {
-                SgfInitializationContext sgfContext = new(context, OnException);
+                SgfInitializationContext sgfContext = new(context, Logger, OnException);
 
                 OnInitialize(sgfContext);
             }

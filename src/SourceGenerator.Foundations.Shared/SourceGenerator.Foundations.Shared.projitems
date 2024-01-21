@@ -14,5 +14,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Reflection\AssemblyResolver.cs" Pack="True" PackagePath="sgf/src/Reflection\AssemblyResolver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IncrementalGenerator.cs" Pack="True" PackagePath="sgf/src/IncrementalGenerator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SgfInitializationContext.cs" Pack="True" PackagePath="sgf/src/SgfInitializationContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SgfSourceProductionContext.cs" Pack="True" PackagePath="sgf/src/SgfSourceProductionContext.cs" />
   </ItemGroup>
 </Project>

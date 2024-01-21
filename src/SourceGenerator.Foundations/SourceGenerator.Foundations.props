@@ -11,6 +11,8 @@
     <IsRoslynComponent>true</IsRoslynComponent>
     <IsNuGetPackage>false</IsNuGetPackage>
     <IsNuGetPackage Condition="Exists('$(MSBuildThisFileDirectory)..\.nupkg.metadata')">true</IsNuGetPackage>
+    <SgfMsBuildPath Condition="$(SgfMsBuildPath) == ''">$(MSBuildThisFileDirectory)SourceGenerator.Foundations.MSBuild.dll</SgfMsBuildPath>
+    <SgfInjectorPath Condition="$(SgfInjectorPath) == ''">$(MSBuildThisFileDirectory)SourceGenerator.Foundations.Injector.exe</SgfInjectorPath>
   </PropertyGroup>
   <ItemGroup>
     <CompilerVisibleProperty Include="RootNamespace" />
