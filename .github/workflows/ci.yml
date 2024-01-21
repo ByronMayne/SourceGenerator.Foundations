@@ -10,6 +10,7 @@ env:
   ProjectDir: src\SourceGenerator.Foundations\
   ProjectName: SourceGenerator.Foundations.csproj
   SolutionPath: src\SourceGenerator.Foundations.sln
+  MSBUILDDISABLENODEREUSE: '1' # Stops MSBuild from locking MSBuild nuget package
 jobs:
   publish:
     name: build, bundle & publish
@@ -27,13 +28,23 @@ jobs:
         run: dotnet tool restore 
       - name: GitVersion
         run: dotnet gitversion /output buildserver
+      # Set Common MSbuild Variables 
+      - name: Set Variables 
+        run: set Version=${{env.GitVersion_AssemblySemVer}} | set --configuration ${{env.Configuration}} | -p:PackageVersion=${{env.GitVersion_SemVer}} 
+      
+      # Build Dependencies  
+      - name: Build Injector 
+        run: dotnet build src\SourceGenerator.Foundations.Injector\SourceGenerator.Foundations.Injector.csproj
+      - name: Build MSBuild 
+        run: dotnet build src\SourceGenerator.Foundations.MSBuild\SourceGenerator.Foundations.MSBuild.csproj
+
+      # Build Main 
       - name: Build 
-        run: dotnet build ${{env.SolutionPath}} -t:build -p:Version=${{env.GitVersion_AssemblySemVer}} --configuration ${{env.Configuration}}
+        run: dotnet build src\SourceGenerator.Foundations\SourceGenerator.Foundations.csproj
       - name: Test 
         run: dotnet test ${{env.SolutionPath}}
-      - name: Build 
-        run: dotnet build ${{env.SolutionPath}} -t:pack -p:PackageVersion=${{env.GitVersion_SemVer}} --configuration ${{env.Configuration}}
+      - name: Pack 
+        run: dotnet pack src\SourceGenerator.Foundations\SourceGenerator.Foundations.csproj
       # -- Release Only --
       - name: Push NuGet
-        if: ${{ github.event_name == 'release' }} 
         run: dotnet nuget push ${{env.ProjectDir}}bin\${{env.Configuration}}\*.nupkg --skip-duplicate --api-key ${{secrets.NUGET_API_KEY}}  --source https://api.nuget.org/v3/index.json
