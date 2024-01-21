@@ -30,7 +30,7 @@ jobs:
         run: dotnet gitversion /output buildserver
       # Set Common MSbuild Variables 
       - name: Set Variables 
-        run: set Version=${{env.GitVersion_AssemblySemVer}} | set --configuration ${{env.Configuration}} | PackageVersion=${{env.GitVersion_SemVer}} 
+        run: set Version=${{env.GitVersion_AssemblySemVer}} | set --configuration ${{env.Configuration}} | set PackageVersion=${{env.GitVersion_SemVer}} 
       
       # Build Dependencies  
       - name: Build Injector 
