@@ -28,23 +28,18 @@ jobs:
         run: dotnet tool restore 
       - name: GitVersion
         run: dotnet gitversion /output buildserver
-      # Set Common MSbuild Variables 
-      - name: Set Variables 
-        run: set Version=${{env.GitVersion_AssemblySemVer}} | set --configuration ${{env.Configuration}} | set PackageVersion=${{env.GitVersion_SemVer}} 
-      
       # Build Dependencies  
       - name: Build Injector 
-        run: dotnet build src\SourceGenerator.Foundations.Injector\SourceGenerator.Foundations.Injector.csproj
+        run: dotnet build src\SourceGenerator.Foundations.Injector\SourceGenerator.Foundations.Injector.csproj -p:Version=${{env.GitVersion_AssemblySemVer}}
       - name: Build MSBuild 
-        run: dotnet build src\SourceGenerator.Foundations.MSBuild\SourceGenerator.Foundations.MSBuild.csproj
-
+        run: dotnet build src\SourceGenerator.Foundations.MSBuild\SourceGenerator.Foundations.MSBuild.csproj -p:Version=${{env.GitVersion_AssemblySemVer}}
       # Build Main 
       - name: Build 
-        run: dotnet build src\SourceGenerator.Foundations\SourceGenerator.Foundations.csproj
+        run: dotnet build src\SourceGenerator.Foundations\SourceGenerator.Foundations.csproj -p:Version=${{env.GitVersion_AssemblySemVer}} -p:PackageVersion=${{env.GitVersion_SemVer}} 
       - name: Test 
         run: dotnet test ${{env.SolutionPath}}
       - name: Pack 
-        run: dotnet pack src\SourceGenerator.Foundations\SourceGenerator.Foundations.csproj
+        run: dotnet pack src\SourceGenerator.Foundations\SourceGenerator.Foundations.csproj -p:Version=${{env.GitVersion_AssemblySemVer}}  -p:PackageVersion=${{env.GitVersion_FullSemVer}} 
       # -- Release Only --
       - name: Push NuGet
         run: dotnet nuget push ${{env.ProjectDir}}bin\${{env.Configuration}}\*.nupkg --skip-duplicate --api-key ${{secrets.NUGET_API_KEY}}  --source https://api.nuget.org/v3/index.json
