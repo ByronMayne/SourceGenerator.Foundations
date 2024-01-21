@@ -29,16 +29,16 @@ jobs:
       - name: GitVersion
         run: dotnet gitversion /output buildserver
       # Build Dependencies  
-      - name: Build Injector 
+      - name: Build | SourceGenerator.Foundations.Injector 
         run: dotnet build src\SourceGenerator.Foundations.Injector\SourceGenerator.Foundations.Injector.csproj -p:Version=${{env.GitVersion_AssemblySemVer}}
-      - name: Build MSBuild 
+      - name: Build | SourceGenerator.Foundations.MSBuild 
         run: dotnet build src\SourceGenerator.Foundations.MSBuild\SourceGenerator.Foundations.MSBuild.csproj -p:Version=${{env.GitVersion_AssemblySemVer}}
       # Build Main 
-      - name: Build 
+      - name: Build | SourceGenerator.Foundations\SourceGenerator.Foundations
         run: dotnet build src\SourceGenerator.Foundations\SourceGenerator.Foundations.csproj -p:Version=${{env.GitVersion_AssemblySemVer}} -p:PackageVersion=${{env.GitVersion_SemVer}} 
-      - name: Test 
+      - name: Test | Solution
         run: dotnet test ${{env.SolutionPath}}
-      - name: Pack 
+      - name: Pack | SourceGenerator.Foundations\SourceGenerator.Foundations
         run: dotnet pack src\SourceGenerator.Foundations\SourceGenerator.Foundations.csproj -p:Version=${{env.GitVersion_AssemblySemVer}}  -p:PackageVersion=${{env.GitVersion_FullSemVer}} 
       # -- Release Only --
       - name: Push NuGet

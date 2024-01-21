@@ -13,7 +13,6 @@ namespace SGF
     internal readonly struct SgfInitializationContext
     {
         private readonly ILogger m_logger;
-        private readonly Action<Exception> m_exceptionHandler;
         private readonly IncrementalGeneratorInitializationContext m_context;
 
         public SyntaxValueProvider SyntaxProvider => m_context.SyntaxProvider;
@@ -24,56 +23,17 @@ namespace SGF
         public IncrementalValuesProvider<MetadataReference> MetadataReferencesProvider => m_context.MetadataReferencesProvider;
 
         public SgfInitializationContext(
-            IncrementalGeneratorInitializationContext context, 
-            ILogger logger,
-            Action<Exception> exceptionHandler)
+            IncrementalGeneratorInitializationContext context,
+            ILogger logger)
         {
             m_logger = logger;
             m_context = context;
-            m_exceptionHandler = exceptionHandler;
         }
 
         public void RegisterSourceOutput<TSource>(IncrementalValueProvider<TSource> source, Action<SgfSourceProductionContext, TSource> action)
         {
             ILogger logger = m_logger;
-            Action<Exception> exceptionHandler = m_exceptionHandler;
 
-            void wrappedAction(SourceProductionContext context, TSource source)
-            {
-                try
-                {
-                    action(new (context, logger), source);
-                }
-                catch (Exception exception)
-                {
-                    exceptionHandler(exception);
-                }
-            }
-            m_context.RegisterSourceOutput(source, wrappedAction);
-        }
-
-        public void RegisterSourceOutput<TSource>(IncrementalValuesProvider<TSource> source, Action<SgfSourceProductionContext, TSource> action)
-        {
-            ILogger logger = m_logger;
-            Action<Exception> exceptionHandler = m_exceptionHandler;
-            void wrappedAction(SourceProductionContext context, TSource source)
-            {
-                try
-                {
-                    action(new (context, logger), source);
-                }
-                catch (Exception exception)
-                {
-                    exceptionHandler(exception);
-                }
-            }
-            m_context.RegisterSourceOutput(source, wrappedAction);
-        }
-
-        public void RegisterImplementationSourceOutput<TSource>(IncrementalValueProvider<TSource> source, Action<SgfSourceProductionContext, TSource> action)
-        {
-            ILogger logger = m_logger;
-            Action<Exception> exceptionHandler = m_exceptionHandler;
             void wrappedAction(SourceProductionContext context, TSource source)
             {
                 try
@@ -82,25 +42,63 @@ namespace SGF
                 }
                 catch (Exception exception)
                 {
-                    exceptionHandler(exception);
+                    LogException(logger, exception, action.Method);
+                }
+            }
+            m_context.RegisterSourceOutput(source, wrappedAction);
+        }
+
+        public void RegisterSourceOutput<TSource>(IncrementalValuesProvider<TSource> source, Action<SgfSourceProductionContext, TSource> action)
+        {
+            ILogger logger = m_logger;
+            void wrappedAction(SourceProductionContext context, TSource source)
+            {
+                try
+                {
+                    action(new(context, logger), source);
+                }
+                catch (Exception exception)
+                {
+                    LogException(logger, exception, action.Method);
+                }
+            }
+            m_context.RegisterSourceOutput(source, wrappedAction);
+        }
+
+        public void RegisterImplementationSourceOutput<TSource>(IncrementalValueProvider<TSource> source, Action<SgfSourceProductionContext, TSource> action)
+        {
+            ILogger logger = m_logger;
+            void wrappedAction(SourceProductionContext context, TSource source)
+            {
+                try
+                {
+                    SgfSourceProductionContext sgfContext = new SgfSourceProductionContext(context, logger);
+                    action(sgfContext, source);
+                    logger.Information($" SourceFiles: {sgfContext.SourceCount}");
+                }
+                catch (Exception exception)
+                {
+                    LogException(logger, exception, action.Method);
                 }
             }
             m_context.RegisterImplementationSourceOutput(source, wrappedAction);
         }
 
+  
+
         public void RegisterImplementationSourceOutput<TSource>(IncrementalValuesProvider<TSource> source, Action<SgfSourceProductionContext, TSource> action)
         {
             ILogger logger = m_logger;
-            Action<Exception> exceptionHandler = m_exceptionHandler;
+
             void wrappedAction(SourceProductionContext context, TSource source)
             {
                 try
                 {
-                    action(new (context, logger), source);
+                    action(new(context, logger), source);
                 }
                 catch (Exception exception)
                 {
-                    exceptionHandler(exception);
+                    LogException(logger, exception, action.Method);
                 }
             }
             m_context.RegisterImplementationSourceOutput(source, wrappedAction);
@@ -108,7 +106,7 @@ namespace SGF
 
         public void RegisterPostInitializationOutput(Action<IncrementalGeneratorPostInitializationContext> callback)
         {
-            Action<Exception> exceptionHandler = m_exceptionHandler;
+            ILogger logger = m_logger; 
             void wrappedCallback(IncrementalGeneratorPostInitializationContext context)
             {
                 try
@@ -117,10 +115,17 @@ namespace SGF
                 }
                 catch (Exception exception)
                 {
-                    exceptionHandler(exception);
+                    LogException(logger, exception, callback.Method);
                 }
             }
             m_context.RegisterPostInitializationOutput(wrappedCallback);
+        }
+
+        private static void LogException(ILogger logger, Exception exception, MethodInfo actionInfo)
+        {
+            string methodName = actionInfo.Name;
+            string className = actionInfo.DeclaringType.FullName;
+            logger.Error(exception, $"An {exception.GetType().Name} exception was thrown while invoking {className}.{methodName}");
         }
     }
 }

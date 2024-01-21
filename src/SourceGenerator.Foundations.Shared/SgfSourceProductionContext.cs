@@ -8,9 +8,14 @@ using System.Threading;
 /// </summary>
 internal struct SgfSourceProductionContext
 {
-    private int m_sourceCount;
     private readonly ILogger m_logger;
     private readonly SourceProductionContext m_context;
+
+    /// <summary>
+    /// Gets the number of source files that were added
+    /// </summary>
+    public int SourceCount { get; private set; }
+
 
     /// <summary>
     /// A token that will be cancelled when generation should stop
@@ -19,12 +24,10 @@ internal struct SgfSourceProductionContext
 
     internal SgfSourceProductionContext(SourceProductionContext context, ILogger logger)
     {
-        m_sourceCount = 0;
+        SourceCount = 0;
         m_logger = logger;
         m_context = context;
     }
-
-
 
     /// <summary>
     /// Adds source code in the form of a <see cref="string"/> to the compilation.
@@ -40,8 +43,8 @@ internal struct SgfSourceProductionContext
     /// <param name="sourceText">The <see cref="SourceText"/> to add to the compilation</param>
     public void AddSource(string hintName, SourceText sourceText)
     {
-        m_sourceCount++;
-        m_logger.Information($" [AddedSource:{m_sourceCount:00}]: {hintName}");
+        SourceCount++;
+        m_logger.Information($" SourceAdded: {SourceCount}. {hintName}");
         m_context.AddSource(hintName, sourceText);
     }
 
