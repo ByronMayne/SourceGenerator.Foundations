@@ -1,9 +1,6 @@
 ﻿using EnvDTE;
 using SGF.Diagnostics;
 using System;
-using System.Linq;
-using System.Diagnostics;
-using System.IO;
 using Constants = EnvDTE.Constants;
 
 namespace SGF.Interop.VisualStudio
@@ -19,6 +16,13 @@ namespace SGF.Interop.VisualStudio
         private readonly OutputWindow? m_outputWindow;
         private readonly OutputWindowPane? m_buildOutput;
         private readonly OutputWindowPane? m_sourceGeneratorOutput;
+        
+        private static bool s_clearedOuput;
+
+        static VisualStudioLogEventSink()
+        {
+            s_clearedOuput = false;
+        }
 
         /// <summary>
         /// Initializes a new instance of an output channel with the
@@ -57,13 +61,19 @@ namespace SGF.Interop.VisualStudio
                     m_sourceGeneratorOutput ??= m_outputWindow.OutputWindowPanes.Add(outputPanelName);
 
                     // When adding a pane will will steal focus, we don't want this. So lets force it back to build
-                    foreach(OutputWindowPane pane in m_outputWindow.OutputWindowPanes)
+                    foreach (OutputWindowPane pane in m_outputWindow.OutputWindowPanes)
                     {
                         if(string.Equals(BUILD_OUTPUT_PANE_GUID, pane.Guid))
                         {
                             pane.Activate();
                         }
                     }
+                }
+
+                if(!s_clearedOuput && m_sourceGeneratorOutput != null)
+                {
+                    s_clearedOuput = true;
+                    m_sourceGeneratorOutput?.Clear();
                 }
             }
             catch
