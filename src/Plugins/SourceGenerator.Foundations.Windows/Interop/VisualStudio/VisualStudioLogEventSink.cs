@@ -1,6 +1,7 @@
 ﻿using EnvDTE;
 using SGF.Diagnostics;
 using System;
+using System.Runtime.InteropServices;
 using Constants = EnvDTE.Constants;
 
 namespace SGF.Interop.VisualStudio
@@ -96,10 +97,10 @@ namespace SGF.Interop.VisualStudio
 
             if (logLevel >= LogLevel.Warning)
             {
-                m_buildOutput?.OutputString(message);
+               Write(message);
             }
 
-            m_sourceGeneratorOutput?.OutputString(message);
+            Write(message);
         }
 
 
@@ -108,17 +109,24 @@ namespace SGF.Interop.VisualStudio
         /// </summary>
         public void Write(string message)
         {
-            m_sourceGeneratorOutput?.OutputString(message);
+            try
+            {
+                m_sourceGeneratorOutput?.OutputString(message);
+            }
+            catch (COMException)
+            {
+                // When the person is debugging Visual Studio will be busy and this will throw this exception 
+            }
+            catch(Exception exception)
+            {
+                Console.WriteLine($"Exception was thrown while writing log. Please report this on gihub {exception}");
+            }
         }
-
-     
 
         /// <summary>
         /// Writes an entry to the output window if it has been initialized
         /// </summary>
         public void WriteLine(string message)
-        {
-            m_sourceGeneratorOutput?.OutputString($"{message}{Environment.NewLine}");
-        }
+            =>  Write($"{message}{Environment.NewLine}");
     }
 }
