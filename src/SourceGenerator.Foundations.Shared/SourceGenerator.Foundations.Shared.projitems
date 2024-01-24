@@ -15,5 +15,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)IncrementalGenerator.cs" Pack="True" PackagePath="sgf/src/IncrementalGenerator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SgfInitializationContext.cs" Pack="True" PackagePath="sgf/src/SgfInitializationContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SgfSourceProductionContext.cs" Pack="True" PackagePath="sgf/src/SgfSourceProductionContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Polyfills/**/*.cs" Pack="True" PackagePath="sgf/src/Polyfills/%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 </Project>

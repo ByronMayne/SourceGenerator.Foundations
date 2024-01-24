@@ -13,6 +13,9 @@
     <IsNuGetPackage Condition="Exists('$(MSBuildThisFileDirectory)..\.nupkg.metadata')">true</IsNuGetPackage>
     <SgfMsBuildPath Condition="$(SgfMsBuildPath) == ''">$(MSBuildThisFileDirectory)SourceGenerator.Foundations.MSBuild.dll</SgfMsBuildPath>
     <SgfInjectorPath Condition="$(SgfInjectorPath) == ''">$(MSBuildThisFileDirectory)SourceGenerator.Foundations.Injector.exe</SgfInjectorPath>
+    <SgfAddNullablePolyfill Condition="'$(SgfAddNullablePolyfill)' == ''">true</SgfAddNullablePolyfill>
+    <SgfAddInitPropertyPolyfill Condition="'$(SgfAddInitPropertyPolyfill)' == ''">true</SgfAddInitPropertyPolyfill>
+    <SgfAddRequiredMemberPolyfill Condition="'$(SgfAddRequiredMemberPolyfill)' == ''">true</SgfAddRequiredMemberPolyfill>
   </PropertyGroup>
   <ItemGroup>
     <CompilerVisibleProperty Include="RootNamespace" />
@@ -22,8 +25,32 @@
   </ItemGroup>
   <ItemGroup Condition="'$(IsNuGetPackage.ToLower())' == 'true'">
     <SGF_EmbeddedAssembly Include="$(MSBuildThisFileDirectory)..\sgf\embedded\assemblies\*.*"/>
-    <Compile Include="$(MSBuildThisFileDirectory)..\sgf\src\**\*.cs" Visible="$(SgfShowImports)">
+    <SGF_Polyfills Include="$(MSBuildThisFileDirectory)..\sgf\src\Polyfills\**.cs"/>
+    
+    <!-- Core -->
+    <Compile Include="$(MSBuildThisFileDirectory)..\sgf\src\**.cs" Exclude="$(SGF_Polyfills)" Visible="$(SgfShowImports)">
       <Link>SGF/%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Compile>
+    <!-- Polyfills: Nullable-->
+    <Compile 
+        Include="$(MSBuildThisFileDirectory)..\sgf\src\Polyfills\Nullable\**\*.cs" 
+        Condition="'$(SGF_AddNullablePolyfill.ToLower())' == 'true'" 
+        Visible="$(SgfShowImports)">
+      <Link>SGF/Polyfills/Nullable/%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Compile>
+    <!-- Polyfills: Init Properites-->
+    <Compile 
+        Include="$(MSBuildThisFileDirectory)..\sgf\src\Polyfills\InitProperties\**\*.cs"
+        Condition="'$(SgfAddInitPropertyPolyfill.ToLower())' == 'true'"     
+        Visible="$(SgfShowImports)">
+      <Link>SGF/Polyfills/InitProperties/%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Compile>
+    <!-- Polyfills: Required Member -->
+    <Compile
+    Include="$(MSBuildThisFileDirectory)..\sgf\src\Polyfills\RequiredMembers\**\*.cs"
+    Condition="'$(SgfAddRequiredMemberPolyfill.ToLower())' == 'true'"
+    Visible="$(SgfShowImports)">
+      <Link>SGF/Polyfills/RequiredMembers/%(RecursiveDir)%(Filename)%(Extension)</Link>
     </Compile>
   </ItemGroup>
 </Project>
