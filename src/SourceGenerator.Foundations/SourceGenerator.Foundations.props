@@ -33,7 +33,7 @@
     <!-- Polyfills: Nullable-->
     <Compile 
         Include="$(MSBuildThisFileDirectory)..\sgf\src\Polyfills\Nullable\**\*.cs" 
-        Condition="'$(SGF_AddNullablePolyfill.ToLower())' == 'true'" 
+        Condition="'$(SgfAddNullablePolyfill.ToLower())' == 'true'" 
         Visible="$(SgfShowImports)">
       <Link>SGF/Polyfills/Nullable/%(RecursiveDir)%(Filename)%(Extension)</Link>
     </Compile>
