@@ -25,10 +25,9 @@
   </ItemGroup>
   <ItemGroup Condition="'$(IsNuGetPackage.ToLower())' == 'true'">
     <SGF_EmbeddedAssembly Include="$(MSBuildThisFileDirectory)..\sgf\embedded\assemblies\*.*"/>
-    <SGF_Polyfills Include="$(MSBuildThisFileDirectory)..\sgf\src\Polyfills\**.cs"/>
     
     <!-- Core -->
-    <Compile Include="$(MSBuildThisFileDirectory)..\sgf\src\**.cs" Exclude="$(SGF_Polyfills)" Visible="$(SgfShowImports)">
+    <Compile Include="$(MSBuildThisFileDirectory)..\sgf\src\Core\**\*.cs" Visible="$(SgfShowImports)">
       <Link>SGF/%(RecursiveDir)%(Filename)%(Extension)</Link>
     </Compile>
     <!-- Polyfills: Nullable-->
