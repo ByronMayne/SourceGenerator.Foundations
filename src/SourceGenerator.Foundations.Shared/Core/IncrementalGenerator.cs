@@ -63,11 +63,12 @@ namespace SGF
                     logger.AddSink(sink);
                 }
             }
-
+#pragma warning disable RS1035 // Do not use APIs banned for analyzers
             if (Environment.UserInteractive)
             {
                 logger.AddSink<ConsoleSink>();
             }
+#pragma warning restore RS1035 // Do not use APIs banned for analyzers
 
             return logger;
         }
@@ -156,7 +157,9 @@ namespace SGF
                 Assembly? assembly = null;
                 try
                 {
+#pragma warning disable RS1035 // Do not use APIs banned for analyzers
                     assembly = Assembly.Load(platformAssembly);
+#pragma warning restore RS1035 // Do not use APIs banned for analyzers
                     Type? platformType = assembly?
                         .GetTypes()
                         .Where(typeof(IDevelopmentPlatform).IsAssignableFrom)
