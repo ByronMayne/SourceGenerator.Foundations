@@ -5,6 +5,7 @@
     <IsRoslynComponent>true</IsRoslynComponent>
     <Platforms>AnyCPU;x64</Platforms>
     <AssemblySearchPath_UseOutDir>true</AssemblySearchPath_UseOutDir>
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.3.1" />
@@ -12,7 +13,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="$(SGFWindowsPluginProjectPath)" />
+    <ProjectReference Include="..\..\SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj" />
+    <ProjectReference Include="..\..\SourceGenerator.Foundations\SourceGenerator.Foundations.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
-  <Import Project="..\..\SourceGenerator.Foundations.Shared\SourceGenerator.Foundations.Shared.projitems" Label="Shared" />
   <Import Project="$(SGFTargetsPath)" />
 </Project>

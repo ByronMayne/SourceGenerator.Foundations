@@ -13,6 +13,5 @@
     <PackageReference Include="System.Management" Version="7.0.0" GeneratePathProperty="true" />
     <ProjectReference Include="$(SGFContractsProjectPath)" />
   </ItemGroup>
-  <Import Project="$(SGFSharedProjectItemsPath)" Label="Shared" />
   <Import Project="$(SGFTargetsPath)" />
 </Project>

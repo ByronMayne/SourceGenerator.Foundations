@@ -9,6 +9,6 @@
     <Import_RootNamespace>SGF</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)**\*.cs" Pack="True" PackagePath="sgf/src/%(RecursiveDir)%(Filename)%(Extension)" />
+    <Folder Include="$(MSBuildThisFileDirectory)Core\" />
   </ItemGroup>
 </Project>

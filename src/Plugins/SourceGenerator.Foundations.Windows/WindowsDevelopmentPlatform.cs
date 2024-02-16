@@ -9,13 +9,16 @@ namespace SGF
     /// <summary>
     /// Represents a enviroment where the user is authoring code in Visual Studio 
     /// </summary>
-    internal class WindowsDevelopmentPlatform : IDevelopmentPlatform
+    internal class WindowsDevelopmentPlatform : IGeneratorEnvironment
     {
         public PlatformType Type { get; }
+
+        public string Name { get; }
 
 
         public WindowsDevelopmentPlatform()
         {
+            Name = "VisualStudio";
             Type = PlatformType.VisualStudio;
 
             if (!string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("VisualStudioVersion")))

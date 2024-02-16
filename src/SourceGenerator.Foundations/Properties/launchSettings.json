@@ -3,7 +3,6 @@
     "ConsoleApp.SourceGenerator Target": {
       "commandName": "DebugRoslynComponent",
       "targetProject": "..\\..\\src\\Sandbox\\ConsoleApp.SourceGenerator\\ConsoleApp.SourceGenerator.csproj",
-
     }
   }
 }

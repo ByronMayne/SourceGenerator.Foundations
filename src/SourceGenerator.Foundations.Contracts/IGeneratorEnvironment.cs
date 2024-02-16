@@ -4,10 +4,16 @@ using System.Collections.Generic;
 namespace SGF
 {
     /// <summary>
-    /// Abstracts for development environments supported by the platform
+    /// Contains information about the enviroment that this source generator is running in. It allows you to 
+    /// star tthe debuggger and get the custom platform loggers based on the context. 
     /// </summary>
-    public interface IDevelopmentPlatform
+    public interface IGeneratorEnvironment
     {
+        /// <summary>
+        /// Gets the name of the environment 
+        /// </summary>
+        string Name { get; }
+
         /// <summary>
         /// Attaches the debugger to the given process Id and returns back if it was successful or not. This can
         /// fail if Visual Studio is not already running
