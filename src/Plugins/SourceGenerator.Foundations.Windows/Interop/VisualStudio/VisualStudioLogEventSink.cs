@@ -97,21 +97,21 @@ namespace SGF.Interop.VisualStudio
 
             if (logLevel >= LogLevel.Warning)
             {
-               Write(message);
+               Write(message, m_buildOutput);
             }
 
-            Write(message);
+            Write(message, m_sourceGeneratorOutput);
         }
 
 
         /// <summary>
         /// Writes an entry to the output window if it has been initialized
         /// </summary>
-        public void Write(string message)
+        public void Write(string message, OutputWindowPane? outputPain)
         {
             try
             {
-                m_sourceGeneratorOutput?.OutputString(message);
+                outputPain?.OutputString(message);
             }
             catch (COMException)
             {
@@ -122,11 +122,5 @@ namespace SGF.Interop.VisualStudio
                 Console.WriteLine($"Exception was thrown while writing log. Please report this on gihub {exception}");
             }
         }
-
-        /// <summary>
-        /// Writes an entry to the output window if it has been initialized
-        /// </summary>
-        public void WriteLine(string message)
-            =>  Write($"{message}{Environment.NewLine}");
     }
 }

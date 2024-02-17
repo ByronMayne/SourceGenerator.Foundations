@@ -29,8 +29,6 @@ jobs:
       - name: GitVersion
         run: dotnet gitversion /output buildserver
       # Build Dependencies  
-      - name: Build | SourceGenerator.Foundations.Injector 
-        run: dotnet build src\SourceGenerator.Foundations.Injector\SourceGenerator.Foundations.Injector.csproj -p:Version=${{env.GitVersion_AssemblySemVer}}
       - name: Build | SourceGenerator.Foundations.MSBuild 
         run: dotnet build src\SourceGenerator.Foundations.MSBuild\SourceGenerator.Foundations.MSBuild.csproj -p:Version=${{env.GitVersion_AssemblySemVer}}
       # Build Main 

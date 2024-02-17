@@ -4,6 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <IncludeBuildOutput>false</IncludeBuildOutput>
+    <LangVersion>11</LangVersion>
     <IsRoslynComponent>true</IsRoslynComponent>
     <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);CustomNugetPack</TargetsForTfmSpecificContentInPackage>
   </PropertyGroup>
@@ -19,19 +20,14 @@
     <ProjectReference Include="$(SGFContractsProjectPath)" PrivateAssets="All" />
     <ProjectReference Include="$(SGFWindowsPluginProjectPath)" PrivateAssets="All" />
     <ProjectReference Include="$(SGFMSBuildProjectPath)" PrivateAssets="All" ReferenceOutputAssembly="False" />
-    <ProjectReference Include="$(SGFInjectorProjectPath)" PrivateAssets="All" ReferenceOutputAssembly="False">
-      <SetTargetFramework>TargetFramework=net6.0</SetTargetFramework>
-    </ProjectReference>
   </ItemGroup>
-
-  <Import Project="$(SGFSharedProjectItemsPath)" Label="Shared" />
   <Import Project="$(SGFTargetsPath)" />
 
   <Target Name="CustomNugetPack">
     <ItemGroup>
-      <TfmSpecificPackageFile  Include="$(SGFMsBuildPath)">
+      <TfmSpecificPackageFile Include="$(SGFMsBuildPath)">
         <PackagePath>build/</PackagePath>
-      </TfmSpecificPackageFile >
+      </TfmSpecificPackageFile>
     </ItemGroup>
   </Target>
 </Project>

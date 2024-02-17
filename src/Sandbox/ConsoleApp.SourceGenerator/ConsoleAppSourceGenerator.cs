@@ -6,7 +6,7 @@ using System;
 
 namespace ConsoleApp.SourceGenerator
 {
-    [Generator]
+    [SgfGenerator]
     internal class ConsoleAppSourceGenerator : IncrementalGenerator
     {
         public class Payload
@@ -15,10 +15,12 @@ namespace ConsoleApp.SourceGenerator
             public string? Version { get; set; }
         }
 
-        public ConsoleAppSourceGenerator() : base("ConsoleAppSourceGenerator")
-        { }
+        public ConsoleAppSourceGenerator(IGeneratorEnvironment generatorEnvironment, ILogger logger) : base("ConsoleAppSourceGenerator", generatorEnvironment, logger)
+        {
+            
+        }
 
-        protected override void OnInitialize(SgfInitializationContext context)
+        public override void OnInitialize(SgfInitializationContext context)
         {
             Payload payload = new()
             {

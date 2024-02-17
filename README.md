@@ -6,18 +6,28 @@ Source Generators are awesome but working with them can be a bit painful. This l
 
 ## Quick Start
 
-To get started all you need to do is add the NuGet package reference. You may or may not have to restart Visual Studio for the new types to show up. Then implement the base class `IncrementalGenerator`. 
+To get started all you need to do is add the NuGet package reference. You may or may not have to restart Visual Studio for the new types to show up. Then implement the base class `IncrementalGenerator` and apply the `[SgfGenerator]` attribute to your type;
 
 ```cs
 namespace Example
 {
     // IncrementalGenerator, is a generated type from `SourceGenerator.Foundations'
+    [SgfGenerator]
     public class ExampleSourceGenerator : IncrementalGenerator 
     {
+        // Constructor can only take two arguments in this order 
+        public ExampleSourceGenerator(
+            IGeneratorEnvironment generatorEnvironment, 
+            ILogger logger) : base("ExampleSourceGenerator", 
+            generatorPlatform, logger)
+        {
+            
+        }
+
         // SgfInitializationContext is a wrapper around IncrementalGeneratorInitializationContext
        protected override void OnInitialize(SgfInitializationContext context)
        {
-            // Attaches Visaul Studio debugger without prompt 
+            // Attaches Visual Studio debugger without prompt 
             AttachDebugger();
 
             // Writes output to Visual Studios output window
@@ -26,6 +36,10 @@ namespace Example
     }
 }
 ```
+
+> 🛈 You don't apply the `SourceGenerator` attribute or implement the `IIncrementalGenerator` interface. Behind the scenes Source Generator Foundations is generating a class that will host your generator. This is done so that we can capture all errors and also resolve any type loading.
+
+
 
 # What is inside?
 
@@ -177,12 +191,6 @@ A very small library that only appears to contain a C# analyzer for adding error
 ### Source.Generator.Foundations.Contracts
 
 Contains common classes and utility methods that can be leveraged by source generators. 
-
-### Source.Generator.Foundations.Injector 
-
-Uses `Mono.Cecil` to inject a static call to the `AssemblyResolver` to initialize as soon as the module is loaded. This same effect could be achieved using the `[ModuleInitialize]` attribute. However, this has two downsides. One, if other classes in the referencing project also use this attribute, the order of loading will not be known. Two, this attribute is not part of .netStandard so it has to be injected, there is a chance of conflict. 
-
-
 
 ### Source.Generator.Foundations.MSBuild 
 

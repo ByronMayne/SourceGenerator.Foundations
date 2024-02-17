@@ -9,4 +9,14 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup>
+    <Compile Update="SgfInitializationContext.cs">
+      <PackagePath>sgf/src/%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+      <Pack>True</Pack>
+    </Compile>
+    <Compile Update="SgfSourceProductionContext.cs">
+      <PackagePath>sgf/src/%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+      <Pack>True</Pack>
+    </Compile>
+  </ItemGroup>
 </Project>

@@ -17,9 +17,6 @@
     <!-- Paths | SGF Contracts -->
     <SGFContractsProjectDir>$(SGFSourceDir)SourceGenerator.Foundations.Contracts\</SGFContractsProjectDir>
     <SGFContractsProjectPath>$(SGFContractsProjectDir)SourceGenerator.Foundations.Contracts.csproj</SGFContractsProjectPath>
-    <!-- Paths | SGF Injector -->
-    <SGFInjectorProjectDir>$(SGFSourceDir)SourceGenerator.Foundations.Injector\</SGFInjectorProjectDir>
-    <SGFInjectorProjectPath>$(SGFInjectorProjectDir)SourceGenerator.Foundations.Injector.csproj</SGFInjectorProjectPath>
     <!-- Paths | SGF MSBuild -->
     <SGFMSBuildProjectDir>$(SGFSourceDir)SourceGenerator.Foundations.MSBuild\</SGFMSBuildProjectDir>
     <SGFMSBuildProjectPath>$(SGFMSBuildProjectDir)SourceGenerator.Foundations.MSBuild.csproj</SGFMSBuildProjectPath>

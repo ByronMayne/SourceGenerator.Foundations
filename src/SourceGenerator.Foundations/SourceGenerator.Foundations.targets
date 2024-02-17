@@ -23,9 +23,9 @@
       </EmbeddedResource>
     </ItemGroup>
   </Target>
-  <Target Name="SGFAddInitializer" AfterTargets="AfterBuild" Condition="'$(SgfInjectorPath)' != ''">
+  <!--<Target Name="SGFAddInitializer" AfterTargets="AfterBuild" Condition="'$(SgfInjectorPath)' != ''">
     <Exec Command="$(SgfInjectorPath) SGF.Reflection.AssemblyResolver Initialize $(TargetPath)" />
-  </Target>
+  </Target>-->
   <!-- Validates they are targeting 'netstandard2.0-->
   <Target Name="SGF_TargetFrameworkValidation" BeforeTargets="CoreCompile"
     Condition="'$(TargetFramework)' != 'netstandard2.0'">
