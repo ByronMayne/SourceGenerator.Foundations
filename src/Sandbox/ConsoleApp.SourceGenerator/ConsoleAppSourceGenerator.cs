@@ -15,7 +15,7 @@ namespace ConsoleApp.SourceGenerator
             public string? Version { get; set; }
         }
 
-        public ConsoleAppSourceGenerator(IGeneratorEnvironment generatorPlatform, ILogger logger) : base("ConsoleAppSourceGenerator", generatorPlatform, logger)
+        public ConsoleAppSourceGenerator(IGeneratorEnvironment generatorEnvironment, ILogger logger) : base("ConsoleAppSourceGenerator", generatorEnvironment, logger)
         {
             
         }
