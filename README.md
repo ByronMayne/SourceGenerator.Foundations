@@ -20,7 +20,7 @@ namespace Example
             IGeneratorEnvironment generatorEnvironment, 
             ILogger logger) : base("ExampleSourceGenerator", 
             generatorPlatform, logger)
-        {
+        {$$
             
         }
 
@@ -108,46 +108,6 @@ This will popup the following window and you have to select your visual studio i
 
 ![AutoAttach](./img/DebuggerAttach.gif)
 
-## Polyfills 
-
-Source generators are written targeting `netstandard2.0` which means you don't have access to some features of the language. By using this library you will get the following.
-
-### `init` Properties:
-```cs
-// init gives a compiler error without the polyfill 
-public string MyProperty { get; init; } 
-```
-These can be disabled by setting the `<SgfAddInitPropertyPolyfill>false<SgfAddInitPropertyPolyfill>`. The default value is `true`.
-
-### Required Members 
-A way of specifying that a property or field is required to be set during object initialization, forcing the instance creator to provide an initial value for the member in an object initializer at the creation site.
-
-```cs
-public class MyClass
-{
-    public required string Name { get; init; }
-}
-```
-These can be disabled by setting the `<SgfAddRequiredMemberPolyfill>false<SgfAddRequiredMemberPolyfill>`. The default value is `true`.
-
-### Nullable Attributes
-These attributes enable the compiler to provide warnings when you may dereference a null value, throwing a [System.NullReferenceException](https://learn.microsoft.com/en-us/dotnet/api/system.nullreferenceexception). 
-| Attribute | Category | Meaning |
-|-----------|----------|---------|
-| `AllowNull` | Precondition | A non-nullable parameter, field, or property may be null.
-| `DisallowNull` | Precondition | A nullable parameter, field, or property should never be null.
-| `MaybeNull` | Postcondition | A non-nullable parameter, field, property, or return value may be null.
-| `NotNull` | Postcondition | A nullable parameter, field, property, or return value will never be null.
-| `MaybeNullWhen` | Conditional postcondition | A non-nullable argument may be null when the method returns the specified bool value.
-| `NotNullWhen` | Conditional postcondition |	A nullable argument won't be null when the method returns the specified bool value.
-| `NotNullIfNotNull` | Conditional postcondition | A return value, property, or argument isn't null if the argument for the specified parameter isn't null.
-| `MemberNotNull` | Method and property helper methods | The listed member won't be null when the method returns.
-| `MemberNotNullWhen` | Method and property helper methods | 	The listed member won't be null when the method returns the specified bool value.
-| `DoesNotReturn` | Unreachable code | A method or property never returns. In other words, it always throws an exception.
-| `DoesNotReturnIf` | Unreachable code | This method or property never returns if the associated bool parameter has the specified value.
-
-These can be disabled by setting the `<SgfAddNullablePolyfill>false<SgfAddNullablePolyfill>`. The default value is `true`.
-
 ## Helpers 
 
 Included in the project is a series of helper classes to help you while working on your generator.
@@ -161,14 +121,6 @@ Included in the project is a series of helper classes to help you while working 
 * Combing paths without having to worry about leading or trailing slashes.
 
 # How it works
-
-## Script Injector
-It all starts with `ScriptInjector.cs`. This is a source generator loops over the resources within the current assembly and finds all `*.cs` files whos name starts with `SGF.Script::` and copies them into the target assembly. The image below shows
-some of the scripts that are copied.
-
-![ScriptInjector](./img/ScriptInjector.jpg)
-
-If you would like a script to be copied over you can add it as a `ItemGroup` element called `SGF_EmbeddedScript` which will be embedded in your assembly and prefixed with the correct name.
 
 ## Assembly Resolver
 When your source generator runs it needs to find it's dependencies and this is often what fails. When you want to provide external packages you will have to write your own resolve that is able to locate the required assemblies. So instead we have the `ScriptInjector` inject an implemention for you. This assembly resolver will loop over all the resources in the current assembly and look for all resources that start with `SGF.Assembly::`. If the assembly being requested to be loaded exists in the resources, it's extracted and loaded into the current appdomain. 

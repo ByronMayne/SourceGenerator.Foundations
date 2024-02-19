@@ -15,7 +15,7 @@ namespace ConsoleApp.SourceGenerator
             public string? Version { get; set; }
         }
 
-        public ConsoleAppSourceGenerator(IGeneratorEnvironment generatorEnvironment, ILogger logger) : base("ConsoleAppSourceGenerator", generatorEnvironment, logger)
+        public ConsoleAppSourceGenerator() : base("ConsoleAppSourceGenerator")
         {
             
         }
@@ -35,7 +35,7 @@ namespace ConsoleApp.SourceGenerator
             Logger.Information("Having the log makes working with generators much simpler!");
         }
 
-        protected override void OnException(Exception exception)
+        public override void OnException(Exception exception)
         {
 
             base.OnException(exception);

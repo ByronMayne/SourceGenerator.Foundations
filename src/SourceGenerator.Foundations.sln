@@ -29,6 +29,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SourceGenerator.Foundations
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{F0124C8F-B8FB-4832-9D65-D0F13E4308AE}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SourceGenerator.Foundations.Shared", "SourceGenerator.Foundations.Shared\SourceGenerator.Foundations.Shared.shproj", "{8AF3630C-2BF5-4854-A45D-0074C2787964}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -96,5 +98,8 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EDB10920-970A-43F9-A2B3-7F1270DD477B}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		SourceGenerator.Foundations.Shared\SourceGenerator.Foundations.Shared.projitems*{8af3630c-2bf5-4854-a45d-0074c2787964}*SharedItemsImports = 13
 	EndGlobalSection
 EndGlobal

@@ -2,6 +2,11 @@
 using System.Diagnostics;
 using SGF.Diagnostics;
 using Microsoft.CodeAnalysis;
+using SGF.Environments;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Linq;
+using SGF.Diagnostics.Sinks;
 
 namespace SGF
 {
@@ -12,31 +17,46 @@ namespace SGF
     /// </summary>
     public abstract class IncrementalGenerator : IDisposable
     {
-        private readonly IGeneratorEnvironment m_developmentPlatform;
+        private readonly static IGeneratorEnvironment s_environment;
 
         /// <summary>
         /// Gets the name of the source generator
         /// </summary>
-        public string Name { get; }
+        public string Name { get; private set; } 
 
         /// <summary>
         /// Gets the log that can allow you to output information to your
         /// IDE of choice
         /// </summary>
-        public ILogger Logger { get; }
+        public ILogger Logger { get; private set; } // Set with reflection, don't change 
 
+
+        static IncrementalGenerator()
+        {
+            s_environment = CreateEnvironment();
+        }
 
         /// <summary>
-        /// Initializes a new instance of the incremental generator with an optional name
+        /// Initializes a new instance of the incremental generator. Note both <paramref name="developmentPlatform"/>
+        /// and <paramref name="logger"/> will be provided by the framework.
         /// </summary>
-        protected IncrementalGenerator(
-            string? name,
-            IGeneratorEnvironment developmentPlatform,
-            ILogger logger)
+        protected IncrementalGenerator(string? name)
         {
-            m_developmentPlatform = developmentPlatform;
             Name = name ?? GetType().Name;
-            Logger = logger;
+            Logger = new Logger(Name);
+            if(s_environment != null)
+            {
+                foreach(ILogSink sink in s_environment.GetLogSinks())
+                {
+                    Logger.AddSink(sink);
+                }
+            }
+#pragma warning disable RS1035 // Do not use APIs banned for analyzers
+            if (Environment.UserInteractive)
+            {
+                Logger.AddSink<ConsoleSink>();
+            }
+#pragma warning restore RS1035 // Do not use APIs banned for analyzers
         }
 
         /// <summary>
@@ -57,7 +77,7 @@ namespace SGF
         protected void AttachDebugger()
         {
             Process process = Process.GetCurrentProcess();
-            m_developmentPlatform.AttachDebugger(process.Id);
+            s_environment.AttachDebugger(process.Id);
         }
 
         /// <summary>
@@ -65,7 +85,7 @@ namespace SGF
         /// to handle the exception. 
         /// </summary>
         /// <param name="exception">The exception that was thrown</param>
-        protected virtual void OnException(Exception exception)
+        public virtual void OnException(Exception exception)
         {
             Logger.Error(exception, $"Unhandled exception was throw while running the generator {Name}");
         }
@@ -79,6 +99,48 @@ namespace SGF
             {
                 OnException(exception);
             }
+        }
+
+        /// <summary>
+        /// Gets an instance of a development platform to be used to log and debug info
+        /// </summary>
+        /// <returns></returns>
+        private static IGeneratorEnvironment CreateEnvironment()
+        {
+            string? platformAssembly = null;
+            IGeneratorEnvironment? platform = null;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                // Windows Development Platform
+                platformAssembly = "SourceGenerator.Foundations.Windows";
+            }
+            else
+            {
+                // Generic Development Platform
+                platformAssembly = "SourceGenerator.Foundations.Contracts";
+            }
+
+            if (!string.IsNullOrWhiteSpace(platformAssembly))
+            {
+                AssemblyName assemblyName = new(platformAssembly);
+                Assembly? assembly = null;
+                try
+                {
+                    assembly = Assembly.Load(platformAssembly);
+                    Type? platformType = assembly?
+                        .GetTypes()
+                        .Where(typeof(IGeneratorEnvironment).IsAssignableFrom)
+                        .FirstOrDefault();
+                    if (platformType != null)
+                    {
+                        platform = Activator.CreateInstance(platformType) as IGeneratorEnvironment;
+                    }
+                }
+                catch
+                { }
+            }
+
+            return platform ?? new GenericDevelopmentEnvironment();
         }
 
         /// <inheritdoc cref="IDisposable"/>

@@ -1,4 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using System;
 using System.Collections.Immutable;
@@ -31,6 +33,13 @@ namespace SGF.Analyzer
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
             context.EnableConcurrentExecution();
+            context.RegisterSyntaxNodeAction(CheckForAttribute, SyntaxKind.ClassDeclaration);
+        }
+
+        private void CheckForAttribute(SyntaxNodeAnalysisContext context)
+        {
+           
+           
         }
     }
 }

@@ -26,7 +26,7 @@ namespace {{dataModel.Namespace}}
         // Has to be untyped otherwise it will try to resolve at startup
         private object? m_generator;
 
-        public {{dataModel.ClassName}}Hoist() : base("{{dataModel.ClassName}}")
+        public {{dataModel.ClassName}}Hoist() : base()
         {
             m_generator = null;        
         }
@@ -37,11 +37,7 @@ namespace {{dataModel.Namespace}}
         public void Initialize(IncrementalGeneratorInitializationContext context)
         {
             // The expected arguments types for the generator being created 
-            Type[] typeArguments = new Type[] 
-            {
-                typeof(IGeneratorEnvironment),
-                typeof(ILogger),
-            };
+            Type[] typeArguments = new Type[] { };
             
             BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
             Type generatorType = typeof(global::{{dataModel.QualifedName}});
@@ -49,34 +45,29 @@ namespace {{dataModel.Namespace}}
 
             if(constructor == null)
             {
-                string argumentString = string.Join(", ", typeArguments.Select(t => t.Name));
-                m_logger.Error($"Unable to create instance of {generatorType.FullName} as no constructor could be found that takes {argumentString}. The generator will not be run");
                 return;
             }
 
 
-            object[] constructorArguments = new  object[]
-            {
-                m_environment,
-                m_logger
-            };
+            object[] constructorArguments = new  object[]{};
             IncrementalGenerator generator = (global::{{dataModel.QualifedName}})constructor.Invoke(constructorArguments);
+            ILogger logger = generator.Logger;
+
             m_generator = generator;
             try
             {
-                SgfInitializationContext sgfContext = new(context, m_logger);
+                SgfInitializationContext sgfContext = new(context, logger);
 
                 generator.OnInitialize(sgfContext);
             }
             catch (Exception exception)
             {
-                m_logger.Error(exception, $"Error! An unhandle exception was thrown while initializing the source generator '{Name}'.");
+                logger.Error(exception, $"Error! An unhandle exception was thrown while initializing the source generator '{{dataModel.QualifedName}}'.");
             }
         }
 
-        protected override void Dispose()
+        public void Dispose()
         {
-            base.Dispose();
             if(m_generator is IDisposable disposable)
             {
                 disposable.Dispose();
