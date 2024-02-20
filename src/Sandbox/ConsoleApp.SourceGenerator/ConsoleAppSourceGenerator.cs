@@ -1,8 +1,10 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Text;
 using Newtonsoft.Json;
 using SGF;
 using SGF.Diagnostics;
 using System;
+using System.Text;
 
 namespace ConsoleApp.SourceGenerator
 {
@@ -33,6 +35,28 @@ namespace ConsoleApp.SourceGenerator
             Logger.Information("This generator references Newtonsoft.Json and it can just be referenced without any other boilerplate");
             Logger.Information(JsonConvert.SerializeObject(payload));
             Logger.Information("Having the log makes working with generators much simpler!");
+
+            context.RegisterPostInitializationOutput(AddSource);
+        }
+
+        private void AddSource(IncrementalGeneratorPostInitializationContext context)
+        {
+            SourceText sourceText = SourceText.From("""
+                namespace Examples 
+                {
+                    public class Person
+                    {
+                        public string Name { get; }
+
+                        public Person(string name)
+                        {
+                            Name = name;
+                        }
+                    }
+                }
+                """, Encoding.UTF8);
+
+            context.AddSource("Person.g.cs", sourceText);
         }
 
         public override void OnException(Exception exception)
