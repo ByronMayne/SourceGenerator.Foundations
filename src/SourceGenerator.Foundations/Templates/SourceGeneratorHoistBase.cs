@@ -9,6 +9,7 @@ public static class SourceGeneratorHoistBase
     public static SourceText RenderTemplate(string @namespace) => SourceText.From($$"""
 #nullable enable
 using System;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Reflection;
@@ -27,105 +28,148 @@ namespace {{@namespace}}
     /// </summary>
     internal abstract class SourceGeneratorHoist
     {
-        protected static readonly AppDomain s_currentDomain;
-
-        protected readonly ILogger m_logger;
-        // Needs to be an 'object' otherwise the assemblies will be attempted go be loaded before our assembly resolver
-        protected readonly object m_environment; 
-
-        /// <summary>
-        /// Gets the name of the source generator for logging purposes 
-        /// </summary>
-        public string Name { get; }
+        private static readonly List<Assembly> s_assembliesWithResources;
+        private static readonly Dictionary<AssemblyName, Assembly> s_loadedAssemblies;
 
         static SourceGeneratorHoist()
         {
-            AssemblyResolver.Initialize();
-            s_currentDomain = AppDomain.CurrentDomain;
-        }
+            s_assembliesWithResources = new List<Assembly>();
+            s_loadedAssemblies = new Dictionary<AssemblyName, Assembly>(new AssemblyNameComparer());
 
-        protected SourceGeneratorHoist(string name)
-        {
-            Name = name;
-            IGeneratorEnvironment environment  = GetEnvironment();
-            m_environment = environment;
-            s_currentDomain.ProcessExit += OnProcessExit;
+            // The assembly resolvers get added to multiple source generators 
+            // so what we do here is only allow the first one defined to allow 
+            // itself to be a resolver. Since this could lead to cases where two resolvers
+            // exists and provide two different instances of the same assembly.
+            const string RESOLVER_ATTACHED_KEY = "SGF_ASSEMBLY_RESOLVER_IS_ATTACHED";
+            AppDomain currentDomain = AppDomain.CurrentDomain;
+            object? rawValue = currentDomain.GetData(RESOLVER_ATTACHED_KEY);
 
-            m_logger = new Logger(Name);
-            if(environment != null)
+            if (rawValue == null || (rawValue is bool isAttached && !isAttached))
             {
-                foreach(ILogSink logSink in environment.GetLogSinks())
+                currentDomain.SetData(RESOLVER_ATTACHED_KEY, true);
+                currentDomain.AssemblyLoad += OnAssemblyLoaded;
+                currentDomain.AssemblyResolve += ResolveMissingAssembly;
+
+                foreach (Assembly assembly in currentDomain.GetAssemblies())
                 {
-                    m_logger.AddSink(logSink);
+                    AddAssembly(assembly);
                 }
-            }
-
-            if (Environment.UserInteractive)
-            {
-                m_logger.AddSink<ConsoleSink>();
-            }
-        }
-
-        protected virtual void Dispose()
-        {
-            s_currentDomain.ProcessExit -= OnProcessExit;
-        }
-
-        /// <summary>
-        /// Raised when the process is closing, giving us a chance to cleanup any resources
-        /// </summary>
-        private void OnProcessExit(object sender, EventArgs e)
-        {
-            try
-            {
-                Dispose();
-            }
-            catch (Exception ex)
-            {
-                m_logger.Error(ex, $"Exception thrown while disposing '{Name}'");
             }
         }
 
         /// <summary>
-        /// Gets an instance of a development platform to be used to log and debug info
+        /// Raised whenever our app domain loads a new assembly
         /// </summary>
-        /// <returns></returns>
-        private static IGeneratorEnvironment GetEnvironment()
+        /// <param name="sender">THe thing that raised the event</param>
+        /// <param name="args">The parameters</param>
+        private static void OnAssemblyLoaded(object sender, AssemblyLoadEventArgs args)
         {
-            string? platformAssembly = null;
-            IGeneratorEnvironment? platform = null;
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                // Windows Development Platform
-                platformAssembly = "SourceGenerator.Foundations.Windows";
-            }
-            else
-            {
-                // Generic Development Platform
-                platformAssembly = "SourceGenerator.Foundations.Contracts";
-            }
+            AddAssembly(args.LoadedAssembly);
+        }
 
-            if (!string.IsNullOrWhiteSpace(platformAssembly))
+        /// <summary>
+        /// Adds an assembly to the veriuos collections used to keep track of loaded items
+        /// </summary>
+        private static void AddAssembly(Assembly assembly)
+        {
+            AssemblyName assemblyName = assembly.GetName();
+
+            if (s_loadedAssemblies.ContainsKey(assemblyName))
             {
-                AssemblyName assemblyName = new(platformAssembly);
-                Assembly? assembly = null;
-                try
+                return;
+            }
+            s_loadedAssemblies.Add(assemblyName, assembly);
+
+            if (assembly.IsDynamic) return;
+
+            string[] resources = assembly.GetManifestResourceNames()
+                .Where(r => r.StartsWith("SGF.Assembly::"))
+                .ToArray();
+
+            if (resources.Length == 0) return;
+
+            foreach (string resource in resources)
+            {
+                Console.WriteLine($"Extracting {resource} assembly from {assemblyName.Name}'s resources.");
+                if (TryExtractingAssembly(assembly, resource, out Assembly? loadedAssembly))
                 {
-                    assembly = Assembly.Load(platformAssembly);
-                    Type? platformType = assembly?
-                        .GetTypes()
-                        .Where(typeof(IGeneratorEnvironment).IsAssignableFrom)
-                        .FirstOrDefault();
-                    if (platformType != null)
-                    {
-                        platform = Activator.CreateInstance(platformType) as IGeneratorEnvironment;
-                    }
+                    AddAssembly(loadedAssembly!);
                 }
-                catch
-                { }
+            }
+        }
+
+        /// <summary>
+        /// Attempts to resolve any assembly by looking for dependencies that are embedded directly
+        /// in this dll.
+        /// </summary>
+        private static Assembly? ResolveMissingAssembly(object sender, ResolveEventArgs args)
+        {
+            AssemblyName assemblyName = new(args.Name);
+
+            if (s_loadedAssemblies.TryGetValue(assemblyName, out Assembly assembly))
+            {
+                return assembly;
             }
 
-            return platform ?? new GenericDevelopmentEnvironment();
+            foreach (Assembly loadedAssembly in s_assembliesWithResources)
+            {
+                string resourceName = $"SGF.Assembly::{assemblyName.Name}.dll";
+                if (TryExtractingAssembly(loadedAssembly, resourceName, out Assembly? extractedAssembly))
+                {
+                    AddAssembly(extractedAssembly!);
+                    return extractedAssembly!;
+                };
+            }
+
+            return null;
+        }
+
+
+        /// <summary>
+        /// Attempts to load an assembly that is contained within aonther assembly as a resource
+        /// </summary>
+        /// <param name="assembly">The assembly that should contain the resource</param>
+        /// <param name="resourceName">The expected name of the reosurce</param>
+        /// <param name="loadedAssembly">The assembly if it was loaded</param>
+        /// <returns>True if the assembly could be loaded otherwise false</returns>
+        private static bool TryExtractingAssembly(Assembly assembly, string resourceName, out Assembly? loadedAssembly)
+        {
+            loadedAssembly = null;
+            if (TryGetResourceBytes(assembly, resourceName, out byte[]? assemblyBytes))
+            {
+#pragma warning disable RS1035 // Do not use APIs banned for analyzers
+                loadedAssembly = TryGetResourceBytes(assembly, Path.ChangeExtension(resourceName, ".pdb"), out byte[]? symbolBytes)
+                    ? Assembly.Load(assemblyBytes, symbolBytes)
+                    : Assembly.Load(assemblyBytes);
+#pragma warning restore RS1035 // Do not use APIs banned for analyzers
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Attempts to read bytes from a resource and returns back if it's successful or not
+        /// </summary>
+        /// <param name="assembly">The assembly to pull the resource from</param>
+        /// <param name="resourceName">The name of the resource</param>
+        /// <param name="bytes">The bytes[] if the resource could be found</param>
+        /// <returns>True if the resource was found otherwise false</returns>
+        private static bool TryGetResourceBytes(Assembly assembly, string resourceName, out byte[]? bytes)
+        {
+            bytes = null;
+            ManifestResourceInfo resourceInfo = assembly.GetManifestResourceInfo(resourceName);
+            if (resourceInfo == null)
+            {
+                return false;
+            }
+
+            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+            {
+                bytes = new byte[stream.Length];
+                _ = stream.Read(bytes, 0, bytes.Length);
+            }
+
+            return true;
         }
     }
 }
