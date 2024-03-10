@@ -15,12 +15,8 @@ namespace Example
     [SgfGenerator]
     public class ExampleSourceGenerator : IncrementalGenerator 
     {
-        // Constructor can only take two arguments in this order 
-        public ExampleSourceGenerator(
-            IGeneratorEnvironment generatorEnvironment, 
-            ILogger logger) : base("ExampleSourceGenerator", 
-            generatorPlatform, logger)
-        {$$
+        public ExampleSourceGenerator() : base("ExampleSourceGenerator")
+        {
             
         }
 
