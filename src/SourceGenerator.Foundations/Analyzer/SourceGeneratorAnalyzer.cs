@@ -2,31 +2,29 @@
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
-using System;
+using SGF.Analyzer.Rules;
 using System.Collections.Immutable;
+using System.Linq;
 
 namespace SGF.Analyzer
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SourceGeneratorAnalyzer : DiagnosticAnalyzer
     {
-        public DiagnosticDescriptor GeneratorAttributeDescriptor { get; }
-
         /// <inheritdoc cref="DiagnosticAnalyzer"/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; }
 
+        internal ImmutableArray<AnalyzerRule> Rules { get; }
+
         public SourceGeneratorAnalyzer()
         {
-            GeneratorAttributeDescriptor = new DiagnosticDescriptor("sgf-generator-attribute-is-applied",
-                "SourceGeneratorAttributeApplied",
-                $"The class is missing the {nameof(GeneratorAttribute)} which is required for them to work.",
-                "SourceGeneration",
-                DiagnosticSeverity.Error,
-                true,
-                $"Source generators are required to have the attribute {nameof(GeneratorAttribute)} applied to them otherwise the compiler won't invoke them",
-                "https://learn.microsoft.com/en-us/dotnet/api/microsoft.codeanalysis.generatorattribute?view=roslyn-dotnet-4.3.0");
-
-            SupportedDiagnostics = new[] { GeneratorAttributeDescriptor }.ToImmutableArray();
+            Rules = new AnalyzerRule[]
+            {
+                new RequireSfgGeneratorAttributeRule(),
+                new ProhibitGeneratorAttributeRule(),
+                new RequireDefaultConstructorRule()
+            }.ToImmutableArray();
+            SupportedDiagnostics = Rules.Select(r => r.Descriptor).ToImmutableArray();
         }
 
         public override void Initialize(AnalysisContext context)
@@ -38,8 +36,37 @@ namespace SGF.Analyzer
 
         private void CheckForAttribute(SyntaxNodeAnalysisContext context)
         {
-           
-           
+            SemanticModel semanticModel = context.SemanticModel;
+            ClassDeclarationSyntax classDeclaration = (ClassDeclarationSyntax)context.Node;
+            INamedTypeSymbol? symbolInfo = semanticModel.GetDeclaredSymbol(classDeclaration);
+
+            if (classDeclaration.BaseList == null || symbolInfo == null) return;
+            if (!IsIncrementalGenerator(symbolInfo)) return;
+
+            foreach(AnalyzerRule rule in Rules)
+            {
+                rule.Invoke(context, classDeclaration);
+            }
+        }
+
+        /// <summary>
+        /// Returns back if the type inheirts from <see cref="IncrementalGenerator"/> or not
+        /// </summary>
+        /// <param name="typeSymbol">The type to check</param>
+        /// <returns>True if it does and false if it does not</returns>
+        private static bool IsIncrementalGenerator(INamedTypeSymbol? typeSymbol)
+        {
+            while (typeSymbol != null)
+            {
+                if (string.Equals(typeSymbol.ToDisplayString(), "SGF.IncrementalGenerator"))
+                {
+                    return true;
+                }
+
+                typeSymbol = typeSymbol.BaseType;
+            }
+
+            return false;
         }
     }
 }
