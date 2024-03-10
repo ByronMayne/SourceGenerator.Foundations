@@ -15,12 +15,8 @@ namespace Example
     [SgfGenerator]
     public class ExampleSourceGenerator : IncrementalGenerator 
     {
-        // Constructor can only take two arguments in this order 
-        public ExampleSourceGenerator(
-            IGeneratorEnvironment generatorEnvironment, 
-            ILogger logger) : base("ExampleSourceGenerator", 
-            generatorPlatform, logger)
-        {$$
+        public ExampleSourceGenerator() : base("ExampleSourceGenerator")
+        {
             
         }
 
@@ -129,6 +125,88 @@ When your source generator runs it needs to find it's dependencies and this is o
 
 You can embed any assemblies you want by adding them to `<SGF_EmbeddedAssembly Include="Your Assembly Path"/>`
 
+## Diagnostic Analyzer
+
+Included with this package is a code analyzer that will be used to catch common mistakes when working with this library.
+
+
+### `SGF1001`
+**Has SgfGenerator Attribute**
+
+Any class that inherits from `IncrementalGenerator` is required to have the `SgfGenerator` attribute applied to it. 
+
+```cs
+// Error 
+public class MyGenerator : IncrementalGenerator 
+{
+    public MyGenerator() : base("MyGenerator")
+    {}
+}
+```
+
+To fix the error just apply the attribute.
+
+```cs 
+// Fixed 
+[SgfGeneratorAttribute]
+public class MyGenerator : IncrementalGenerator 
+{
+    public MyGenerator() : base("MyGenerator")
+    {}
+}
+```
+
+### `SGF1002`
+
+**Prohibit Generator Attribute**
+
+If an `IncrementalGenerator` has the `Generator` attribute applied it will cause a compiler error. The reason being that the `Generator` attribute is used on classes that implement `IIncrementalGenerator` which `IncrementalGenerator` does not. SGF has it's own attribute to not confuse roslyn. SGFs `IncrementalGenerator` is run from within a wrapper to help capture exceptions and handle runtime type resolving. 
+
+```cs
+// Error 
+[Generator]
+public class MyGenerator : IncrementalGenerator 
+{
+    public MyGenerator() : base("MyGenerator")
+    {}
+}
+```
+
+To fix the error just remove the attribute.
+
+```cs 
+// Fixed 
+public class MyGenerator : IncrementalGenerator 
+{
+    public MyGenerator() : base("MyGenerator")
+    {}
+}
+```
+
+### `SGF1003`
+**Has Default Constructor**
+
+`IncrementalGenerator` require a default constructor so they can be instantiated at runtime. If no constructor is defined the generator will never be run. 
+
+```cs
+// Error 
+public class MyGenerator : IncrementalGenerator 
+{
+    public MyGenerator(string name) : base(name)
+    {}
+}
+```
+
+Add a default constructor that takes no arguments.
+
+```cs 
+// Fixed 
+public class MyGenerator : IncrementalGenerator 
+{
+    public MyGenerator() : base("MyGenerator")
+    {}
+}
+```
 
 ## Project Layout  
 
