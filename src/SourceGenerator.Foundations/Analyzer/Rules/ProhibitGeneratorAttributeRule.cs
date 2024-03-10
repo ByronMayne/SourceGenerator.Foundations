@@ -17,6 +17,7 @@ namespace SGF.Analyzer.Rules
 
         protected override void Analyze(ClassDeclarationSyntax classDeclaration)
         {
+            
             if (TryGetAttribute(classDeclaration, nameof(GeneratorAttribute), out AttributeSyntax? attributeSyntax))
             {
                 Location location = attributeSyntax!.GetLocation();
@@ -26,7 +27,7 @@ namespace SGF.Analyzer.Rules
 
         private static DiagnosticDescriptor CreateDescriptor()
             => new DiagnosticDescriptor("SGF1002",
-                "ProhibitGeneratorAttribute",
+                "Prohibit GeneratorAttribute",
                 $"{{0}} has the {nameof(GeneratorAttribute)} which can't be applied to classes which are inheirting from the Generator Foundations type {nameof(IncrementalGenerator)}.",
                 "SourceGeneration",
                 DiagnosticSeverity.Error,

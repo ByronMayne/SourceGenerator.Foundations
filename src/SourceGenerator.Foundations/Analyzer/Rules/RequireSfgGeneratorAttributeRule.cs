@@ -21,11 +21,11 @@ namespace SGF.Analyzer.Rules
 
         private static DiagnosticDescriptor CreateDescriptor()
             => new DiagnosticDescriptor("SGF1001",
-                "SourceGeneratorAttributeApplied",
+                "SGFGeneratorAttributeApplied",
                 $"{{0}} is missing the {nameof(SgfGeneratorAttribute)}",
                 "SourceGeneration",
                 DiagnosticSeverity.Error,
                 true,
-                $"Source generators are required to have the attribute {nameof(GeneratorAttribute)} applied to them otherwise the compiler won't invoke them");
+                $"Source generators are required to have the attribute {nameof(SgfGeneratorAttribute)} applied to them otherwise the compiler won't invoke them");
     }
 }

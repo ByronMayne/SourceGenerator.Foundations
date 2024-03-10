@@ -40,7 +40,7 @@ namespace SGF.Analyzer.Rules
         private static DiagnosticDescriptor CreateDescriptor()
         {
             return new DiagnosticDescriptor("SGF1003",
-                        "SourceGeneratorHasDefaultConstructor",
+                        "HasDefaultConstructor",
                         $"{{0}} is missing a default constructor",
                         "SourceGeneration",
                         DiagnosticSeverity.Error,
