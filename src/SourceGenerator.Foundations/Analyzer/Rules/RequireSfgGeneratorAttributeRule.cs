@@ -26,6 +26,7 @@ namespace SGF.Analyzer.Rules
                 "SourceGeneration",
                 DiagnosticSeverity.Error,
                 true,
-                $"Source generators are required to have the attribute {nameof(SgfGeneratorAttribute)} applied to them otherwise the compiler won't invoke them");
+                $"Source generators are required to have the attribute {nameof(SgfGeneratorAttribute)} applied to them otherwise the compiler won't invoke them",
+                "https://github.com/ByronMayne/SourceGenerator.Foundations?tab=readme-ov-file#sgf1001");
     }
 }

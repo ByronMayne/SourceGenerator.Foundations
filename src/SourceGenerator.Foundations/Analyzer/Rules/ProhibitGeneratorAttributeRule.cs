@@ -32,6 +32,7 @@ namespace SGF.Analyzer.Rules
                 "SourceGeneration",
                 DiagnosticSeverity.Error,
                 true,
-                $"Incremental Generators should not have the {nameof(GeneratorAttribute)} applied to them.");
+                $"Incremental Generators should not have the {nameof(GeneratorAttribute)} applied to them.",
+                "https://github.com/ByronMayne/SourceGenerator.Foundations?tab=readme-ov-file#sgf1002");
     }
 }

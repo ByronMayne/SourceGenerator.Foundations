@@ -45,7 +45,8 @@ namespace SGF.Analyzer.Rules
                         "SourceGeneration",
                         DiagnosticSeverity.Error,
                         true,
-                        "SGF Incremental Generators must have a default constructor otherwise they will not be run");
+                        "SGF Incremental Generators must have a default constructor otherwise they will not be run",
+                        "https://github.com/ByronMayne/SourceGenerator.Foundations?tab=readme-ov-file#sgf1003");
         }
     }
 }

@@ -130,7 +130,8 @@ You can embed any assemblies you want by adding them to `<SGF_EmbeddedAssembly I
 Included with this package is a code analyzer that will be used to catch common mistakes when working with this library.
 
 
-### `SGF1001` SGFGeneratorAttributeApplied
+### `SGF1001`
+**Has SgfGenerator Attribute**
 
 Any class that inherits from `IncrementalGenerator` is required to have the `SgfGenerator` attribute applied to it. 
 
@@ -155,7 +156,9 @@ public class MyGenerator : IncrementalGenerator
 }
 ```
 
-### `SGF1002` ProhibitGeneratorAttribute
+### `SGF1002`
+
+**Prohibit Generator Attribute**
 
 If an `IncrementalGenerator` has the `Generator` attribute applied it will cause a compiler error. The reason being that the `Generator` attribute is used on classes that implement `IIncrementalGenerator` which `IncrementalGenerator` does not. SGF has it's own attribute to not confuse roslyn. SGFs `IncrementalGenerator` is run from within a wrapper to help capture exceptions and handle runtime type resolving. 
 
@@ -180,7 +183,8 @@ public class MyGenerator : IncrementalGenerator
 }
 ```
 
-### `SGF1003` HasDefaultConstructor
+### `SGF1003`
+**Has Default Constructor**
 
 `IncrementalGenerator` require a default constructor so they can be instantiated at runtime. If no constructor is defined the generator will never be run. 
 
