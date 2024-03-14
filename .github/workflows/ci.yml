@@ -15,11 +15,6 @@ jobs:
   publish:
     name: build, bundle & publish
     runs-on: windows-latest
-    strategy:
-      matrix:
-        nuget_projects: 
-          - SourceGenerator.Foundations
-          - SourceGenerator.Foundations.Contracts
     steps:
       - uses: actions/checkout@v3
         with:
@@ -43,9 +38,11 @@ jobs:
         run: dotnet test ${{env.SolutionPath}}
       
       # Pack Nuget Packages
-      - name: Pack |  ${{ matrix.nuget_projects }}
-        run: dotnet pack src\${{ matrix.nuget_projects }}\${{ matrix.nuget_projects }}.csproj -p:Version=${{env.GitVersion_AssemblySemVer}}  -p:PackageVersion=${{env.GitVersion_FullSemVer}} 
+      - name: Pack | SourceGenerator.Foundations\SourceGenerator.Foundations
+        run: dotnet pack src\SourceGenerator.Foundations\SourceGenerator.Foundations.csproj -p:Version=${{env.GitVersion_AssemblySemVer}}  -p:PackageVersion=${{env.GitVersion_FullSemVer}}  --no-build --output .\nuget
+      - name: Pack | SourceGenerator.Foundations\SourceGenerator.Foundations.Contracts
+        run: dotnet pack src\SourceGenerator.Foundations\SourceGenerator.Foundations.Contracts.csproj -p:Version=${{env.GitVersion_AssemblySemVer}}  -p:PackageVersion=${{env.GitVersion_FullSemVer}}  --no-build --output .\nuget
 
       # -- Release Only --
       - name: Push NuGet
-        run: dotnet nuget push ${{env.ProjectDir}}bin\${{env.Configuration}}\*.nupkg --skip-duplicate --api-key ${{secrets.NUGET_API_KEY}}  --source https://api.nuget.org/v3/index.json
+        run: dotnet nuget push .nuget\*.nupkg --skip-duplicate --api-key ${{secrets.NUGET_API_KEY}}  --source https://api.nuget.org/v3/index.json
