@@ -38,10 +38,10 @@ jobs:
         run: dotnet test ${{env.SolutionPath}}
       
       # Pack Nuget Packages
-      - name: Pack | SourceGenerator.Foundations\SourceGenerator.Foundations
+      - name: Pack | SourceGenerator.Foundations
         run: dotnet pack src\SourceGenerator.Foundations\SourceGenerator.Foundations.csproj -p:Version=${{env.GitVersion_AssemblySemVer}}  -p:PackageVersion=${{env.GitVersion_FullSemVer}}  --no-build --output .\nuget
-      - name: Pack | SourceGenerator.Foundations\SourceGenerator.Foundations.Contracts
-        run: dotnet pack src\SourceGenerator.Foundations\SourceGenerator.Foundations.Contracts.csproj -p:Version=${{env.GitVersion_AssemblySemVer}}  -p:PackageVersion=${{env.GitVersion_FullSemVer}}  --no-build --output .\nuget
+      - name: Pack | SourceGenerator.Foundations.Contracts
+        run: dotnet pack src\SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj -p:Version=${{env.GitVersion_AssemblySemVer}}  -p:PackageVersion=${{env.GitVersion_FullSemVer}}  --no-build --output .\nuget
 
       # -- Release Only --
       - name: Push NuGet
