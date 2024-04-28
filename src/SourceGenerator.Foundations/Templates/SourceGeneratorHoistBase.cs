@@ -19,6 +19,7 @@ using System.Runtime.InteropServices;
 using SGF.Environments;
 using SGF.Diagnostics;
 using SGF.Diagnostics.Sinks;
+using System.Runtime.CompilerServices;
 
 namespace {{@namespace}}
 {
@@ -28,6 +29,7 @@ namespace {{@namespace}}
     /// </summary>
     internal abstract class SourceGeneratorHoist
     {
+        private static bool s_isInitialized;
         private static readonly List<Assembly> s_assembliesWithResources;
         private static readonly Dictionary<AssemblyName, Assembly> s_loadedAssemblies;
 
@@ -35,6 +37,20 @@ namespace {{@namespace}}
         {
             s_assembliesWithResources = new List<Assembly>();
             s_loadedAssemblies = new Dictionary<AssemblyName, Assembly>(new AssemblyNameComparer());
+            Initialize();
+        }
+
+        /// <summary>
+        /// Used to initialize the source generators.
+        /// </summary>
+        [ModuleInitializer]
+        internal static void Initialize()
+        {
+            if(s_isInitialized)
+            {
+                return;
+            }
+            s_isInitialized = true;
 
             // The assembly resolvers get added to multiple source generators 
             // so what we do here is only allow the first one defined to allow 

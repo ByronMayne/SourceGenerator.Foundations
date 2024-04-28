@@ -1,18 +1,14 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 using SGF.Models;
 using SGF.Templates;
-using System;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Text;
+using System.Runtime.CompilerServices;
 
 namespace SGF
 {
-
     /// <summary>
     /// Most basic generator used to generate base class for all the generator
     /// classes defined within the project
@@ -37,10 +33,9 @@ namespace SGF
         private void AddCoreTypes(SourceProductionContext context, AnalyzerConfigOptionsProvider optionsProvider)
         {
             string @namespace = "SGF";
-
+            context.AddSource("System_Runtime_CompilerServices_ModuleInitializerAttribute.g.cs", ModuleInitializerTemplate.Render());
             context.AddSource("SgfSourceGeneratorHoist.g.cs", SourceGeneratorHoistBase.RenderTemplate(@namespace));
             context.AddSource("SgfAssemblyResolver.g.cs", AssemblyResolverTemplate.Render(@namespace));
-
         }
 
         private static bool IsSyntaxTargetForGeneration(SyntaxNode s)
