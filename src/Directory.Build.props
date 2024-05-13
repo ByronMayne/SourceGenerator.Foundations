@@ -6,6 +6,12 @@
     <RootNamespace>SGF</RootNamespace>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     <SGFSourceDir>$(MSBuildThisFileDirectory)</SGFSourceDir>
+    <ImgDir>$(MSBuildThisFileDirectory)..\img\</ImgDir>
+    <SGfIco>$(MSBuildThisFileDirectory)..\img\icon.png</SGfIco>
+    <!-- Icons -->
+    <ApplicationIcon>$(MSBuildThisFileDirectory)..\img\icon.ico</ApplicationIcon>
+
+    
     <!-- Paths | SGF Core -->
     <SGFProjectDir>$(SGFSourceDir)SourceGenerator.Foundations\</SGFProjectDir>
     <SGFProjectPath>$(SGFProjectDir)SourceGenerator.Foundations.csproj</SGFProjectPath>

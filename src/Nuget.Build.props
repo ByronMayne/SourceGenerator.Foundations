@@ -5,7 +5,8 @@
    ===============================-->
   <PropertyGroup>
     <TItle>Source Generator Foundations</TItle>
-    <AUthors>Byron Mayne</AUthors>
+    <Authors>Byron Mayne</Authors>
+    <PackageIcon>SgfIcon.png</PackageIcon>
     <Description>Provides boilerplate code to be used by source generators. Provides the ability to have nuget packages that are resolvable at runtime as well as much better exception handling.</Description>
     <PackageProjectUrl>https://github.dev/ByronMayne/SourceGenerator.Foundations</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -21,6 +22,9 @@
   <!-- Changes the content of the nuget package by manually adding files-->
   <Target Name="AppendNugetContent">
     <ItemGroup>
+      <TfmSpecificPackageFile Include="$(ImgDir)icon.png">
+        <PackagePath>/$(PackageIcon)</PackagePath>
+      </TfmSpecificPackageFile>
       <TfmSpecificPackageFile Include="$(SGFContractsProjectDir)bin\$(Configuration)\netstandard2.0\SourceGenerator.Foundations.Contracts.dll">
         <PackagePath>lib/netstandard2.0/SourceGenerator.Foundations.Contracts.dll</PackagePath>
       </TfmSpecificPackageFile>
