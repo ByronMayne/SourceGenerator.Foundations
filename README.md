@@ -229,3 +229,7 @@ Contains a custom MSBuild C# target implementation used to figure out which asse
 ### Source.Generator.Foundations.Shared 
 
 A shared project that every project that references this will have the files copied to it. 
+
+
+## Attribution 
+Icon by <a href="https://www.flaticon.com/free-icons/drywall" title="drywall icons">Drywall icons created by HAJICON - Flaticon</a>
