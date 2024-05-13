@@ -21,11 +21,9 @@
     <CompilerVisibleProperty Include="RootNamespace" />
     <CompilerVisibleProperty Include="AssemblyName" />
     <CompilerVisibleProperty Include="BaseOutputPath "/>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.3.1" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup Condition="'$(IsNuGetPackage.ToLower())' == 'true'">
     <SGF_EmbeddedAssembly Include="$(MSBuildThisFileDirectory)..\sgf\embedded\assemblies\*.*"/>
-    
     <!-- Core -->
     <Compile Include="$(MSBuildThisFileDirectory)..\sgf\src\Core\**\*.cs" Visible="$(SgfShowImports)">
       <Link>SGF/%(RecursiveDir)%(Filename)%(Extension)</Link>
