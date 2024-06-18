@@ -25,8 +25,8 @@
   </Target>
 
   <!--  Validates that 'Microsoft.CodeAnalysis.CSharp of any version is referenced -->
-  <Target Name="SGF_CodeAnalysisIsReferenced" 
-          AfterTargets="CoreCompile">
+  <Target Name="SGF_CodeAnalysisIsReferenced"
+          BeforeTargets="CoreCompile">
     <ItemGroup>
       <CodeAnalysisReference
         Include="@(Reference)"
