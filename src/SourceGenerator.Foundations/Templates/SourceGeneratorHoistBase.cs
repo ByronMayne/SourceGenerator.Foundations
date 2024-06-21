@@ -46,6 +46,9 @@ namespace {{@namespace}}
         [ModuleInitializer]
         internal static void Initialize()
         {
+            System.Console.WriteLine("Console.WriteLine");
+            System.Diagnostics.Debugger.Log(1, "whatever", "Deugger.Log");
+
             if(s_isInitialized)
             {
                 return;
@@ -153,12 +156,17 @@ namespace {{@namespace}}
             loadedAssembly = null;
             if (TryGetResourceBytes(assembly, resourceName, out byte[]? assemblyBytes))
             {
+                try 
+                {
 #pragma warning disable RS1035 // Do not use APIs banned for analyzers
-                loadedAssembly = TryGetResourceBytes(assembly, Path.ChangeExtension(resourceName, ".pdb"), out byte[]? symbolBytes)
-                    ? Assembly.Load(assemblyBytes, symbolBytes)
-                    : Assembly.Load(assemblyBytes);
+                    loadedAssembly = TryGetResourceBytes(assembly, Path.ChangeExtension(resourceName, ".pdb"), out byte[]? symbolBytes)
+                        ? Assembly.Load(assemblyBytes, symbolBytes)
+                        : Assembly.Load(assemblyBytes);
 #pragma warning restore RS1035 // Do not use APIs banned for analyzers
-                return true;
+                    return true;
+                }
+                catch 
+                {}
             }
             return false;
         }
