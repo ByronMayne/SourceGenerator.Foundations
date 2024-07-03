@@ -24,11 +24,23 @@ namespace {{dataModel.Namespace}}
     internal class {{dataModel.ClassName}}Hoist : SourceGeneratorHoist, IIncrementalGenerator
     {
         // Has to be untyped otherwise it will try to resolve at startup
-        private object? m_generator;
+        private Lazy<object?> m_lazyGenerator;
 
+        /// <summary>
+        /// Creates a new generator host that will create an instance of {{dataModel.ClassName}} at runtime.
+        /// </summary>
         public {{dataModel.ClassName}}Hoist() : base()
         {
-            m_generator = null;        
+            m_lazyGenerator = new Lazy<object?>(CreateInstance);    
+        }
+
+        /// <summary>
+        /// Creates a new generator host that will reuse an existing instance of {{dataModel.ClassName}} instead of creating one dynamically.
+        /// This function would only ever be called from unit tests.
+        /// </summary>
+        public {{dataModel.ClassName}}Hoist({{dataModel.ClassName}} generator): base()
+        {
+            m_lazyGenerator = new Lazy<object?>(() => generator);    
         }
 
         /// <summary>
@@ -36,24 +48,14 @@ namespace {{dataModel.Namespace}}
         /// </summary>
         public void Initialize(IncrementalGeneratorInitializationContext context)
         {
-            // The expected arguments types for the generator being created 
-            Type[] typeArguments = new Type[] { };
-            
-            BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
-            Type generatorType = typeof(global::{{dataModel.QualifedName}});
-            ConstructorInfo? constructor = generatorType.GetConstructor(bindingFlags, null, typeArguments, Array.Empty<ParameterModifier>());
+            IncrementalGenerator? generator = m_lazyGenerator.Value as IncrementalGenerator;
 
-            if(constructor == null)
+            if(generator == null)
             {
                 return;
             }
 
-
-            object[] constructorArguments = new  object[]{};
-            IncrementalGenerator generator = (global::{{dataModel.QualifedName}})constructor.Invoke(constructorArguments);
             ILogger logger = generator.Logger;
-
-            m_generator = generator;
             try
             {
                 SgfInitializationContext sgfContext = new(context, logger);
@@ -66,9 +68,29 @@ namespace {{dataModel.Namespace}}
             }
         }
 
+        private object? CreateInstance()
+        {
+            // The expected arguments types for the generator being created 
+            Type[] typeArguments = new Type[] { };
+            
+            BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+            Type generatorType = typeof(global::{{dataModel.QualifedName}});
+            ConstructorInfo? constructor = generatorType.GetConstructor(bindingFlags, null, typeArguments, Array.Empty<ParameterModifier>());
+
+            if(constructor == null)
+            {
+                return null;
+            }
+
+            object[] constructorArguments = new  object[]{};
+            IncrementalGenerator generator = (global::{{dataModel.QualifedName}})constructor.Invoke(constructorArguments);
+
+            return generator;
+        }
+
         public void Dispose()
         {
-            if(m_generator is IDisposable disposable)
+            if(m_lazyGenerator.Value is IDisposable disposable)
             {
                 disposable.Dispose();
             }

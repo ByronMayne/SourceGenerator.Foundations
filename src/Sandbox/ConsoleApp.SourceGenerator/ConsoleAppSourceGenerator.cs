@@ -16,9 +16,11 @@ namespace ConsoleApp.SourceGenerator
             public string? Version { get; set; }
         }
 
+        public string WarningMessage { get; set; }
+
         public ConsoleAppSourceGenerator() : base("ConsoleAppSourceGenerator")
         {
-            
+            WarningMessage = "Warnigs show up in the 'Build' pane along with the 'Source Generators' pane";
         }
 
         public override void OnInitialize(SgfInitializationContext context)
@@ -29,7 +31,7 @@ namespace ConsoleApp.SourceGenerator
                 Version = "13.0.1"
             };
 
-            Logger.Warning("Warnigs show up in the 'Build' pane along with the 'Source Generators' pane");
+            Logger.Warning(WarningMessage);
             Logger.Information("This is the output from the sournce generator assembly ConsoleApp.SourceGenerator");
             Logger.Information("This generator references Newtonsoft.Json and it can just be referenced without any other boilerplate");
             Logger.Information(JsonConvert.SerializeObject(payload));

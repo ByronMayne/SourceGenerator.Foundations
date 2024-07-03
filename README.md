@@ -208,6 +208,35 @@ public class MyGenerator : IncrementalGenerator
 }
 ```
 
+## Unit Tests 
+You can write unit test to validate that your source generators are working as expected. To do this for this library requires a very tiny amount of extra work. You can also look at the [example project](src\Sandbox\ConsoleApp.SourceGenerator.Tests\TestCase.cs) to see how it works. 
+
+The generated class will all be internal so your unit test assembly will need to have viability.
+
+```csharp
+using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("ConsoleApp.SourceGenerator.Tests")]
+```
+
+Then for your unit test functions the only difference will be that instead of creating an instance of your class you create an instance of the `Hoist` class.
+
+```c#
+// Create the instance of our generator and set whatever properties 
+ConsoleAppSourceGenerator generator = new ConsoleAppSourceGenerator()
+{
+    Explode = true
+};
+// Build the instance of the wrapper `Host` which takes in your generator.
+ConsoleAppSourceGeneratorHoist host = new
+
+// From here it's just like testing any other generator
+ConsoleAppSourceGeneratorHoist(generator);
+GeneratorDriver driver = CSharpGeneratorDriver.Create(host);
+driver = driver.RunGenerators(compilation);
+```
+The only unique feature is the wrapper class `{YourGeneratorName}Host`. This class is an internal feature of `SGF` and is used to make sure all dependencies are resolved before calling into your source generator. 
+
 ## Project Layout  
 
 This library is made up of quite a few different components leveraging various techniques to help
