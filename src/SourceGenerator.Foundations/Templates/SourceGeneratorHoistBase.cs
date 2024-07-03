@@ -81,7 +81,7 @@ namespace {{@namespace}}
         /// </summary>
         /// <param name="sender">THe thing that raised the event</param>
         /// <param name="args">The parameters</param>
-        private static void OnAssemblyLoaded(object sender, AssemblyLoadEventArgs args)
+        private static void OnAssemblyLoaded(object? sender, AssemblyLoadEventArgs args)
         {
             AddAssembly(args.LoadedAssembly);
         }
@@ -121,11 +121,11 @@ namespace {{@namespace}}
         /// Attempts to resolve any assembly by looking for dependencies that are embedded directly
         /// in this dll.
         /// </summary>
-        private static Assembly? ResolveMissingAssembly(object sender, ResolveEventArgs args)
+        private static Assembly? ResolveMissingAssembly(object? sender, ResolveEventArgs args)
         {
             AssemblyName assemblyName = new(args.Name);
 
-            if (s_loadedAssemblies.TryGetValue(assemblyName, out Assembly assembly))
+            if (s_loadedAssemblies.TryGetValue(assemblyName, out Assembly? assembly))
             {
                 return assembly;
             }
@@ -160,8 +160,8 @@ namespace {{@namespace}}
                 {
 #pragma warning disable RS1035 // Do not use APIs banned for analyzers
                     loadedAssembly = TryGetResourceBytes(assembly, Path.ChangeExtension(resourceName, ".pdb"), out byte[]? symbolBytes)
-                        ? Assembly.Load(assemblyBytes, symbolBytes)
-                        : Assembly.Load(assemblyBytes);
+                        ? Assembly.Load(assemblyBytes!, symbolBytes!)
+                        : Assembly.Load(assemblyBytes!);
 #pragma warning restore RS1035 // Do not use APIs banned for analyzers
                     return true;
                 }
@@ -181,14 +181,19 @@ namespace {{@namespace}}
         private static bool TryGetResourceBytes(Assembly assembly, string resourceName, out byte[]? bytes)
         {
             bytes = null;
-            ManifestResourceInfo resourceInfo = assembly.GetManifestResourceInfo(resourceName);
+            ManifestResourceInfo? resourceInfo = assembly.GetManifestResourceInfo(resourceName);
             if (resourceInfo == null)
             {
                 return false;
             }
 
-            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+            using (Stream? stream = assembly.GetManifestResourceStream(resourceName))
             {
+                if(stream == null)
+                {
+                    return false;
+                }
+
                 bytes = new byte[stream.Length];
                 _ = stream.Read(bytes, 0, bytes.Length);
             }

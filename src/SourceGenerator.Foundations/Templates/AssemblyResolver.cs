@@ -21,9 +21,22 @@ namespace {{@namespace}}
     /// </summary>
     internal class AssemblyNameComparer : IEqualityComparer<AssemblyName>
     {
-        public bool Equals(AssemblyName x, AssemblyName y)
+        public bool Equals(AssemblyName? x, AssemblyName? y)
         {
-            return string.Equals(GetName(x), GetName(y));
+            bool isLhsNull = ReferenceEquals(x, null);
+            bool isRhsNull = ReferenceEquals(y, null);
+
+            if(isLhsNull && isRhsNull)
+            {
+                return true;
+            }
+
+            if(isLhsNull != isRhsNull)
+            {
+                return false;
+            }
+
+            return string.Equals(GetName(x!), GetName(y!));
         }
 
         public int GetHashCode(AssemblyName obj)
