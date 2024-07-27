@@ -19,7 +19,6 @@
     <None Update="SourceGenerator.Foundations.targets" Pack="True" PackagePath="build/$(AssemblyName).targets" />
     <ProjectReference Include="$(SGFContractsProjectPath)" PrivateAssets="All" />
     <ProjectReference Include="$(SGFWindowsPluginProjectPath)" PrivateAssets="All" />
-    <ProjectReference Include="$(SGFMSBuildProjectPath)" PrivateAssets="All" ReferenceOutputAssembly="False" />
     <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
   </ItemGroup>
   <Import Project="$(SGFTargetsPath)" />

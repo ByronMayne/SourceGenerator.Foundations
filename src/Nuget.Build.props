@@ -31,7 +31,7 @@
       <TfmSpecificPackageFile Include="$(SGFWindowsPluginProjectDir)bin\$(Configuration)\netstandard2.0\SourceGenerator.Foundations.Windows.dll">
         <PackagePath>lib/netstandard2.0/SourceGenerator.Foundations.Windows.dll</PackagePath>
       </TfmSpecificPackageFile>
-      <TfmSpecificPackageFile Include="$(SGFMSBuildProjectDir)bin\$(Configuration)netstandard2.0\SourceGenerator.Foundations.MSBuild.*">
+      <TfmSpecificPackageFile Include="$(LibsDir)SourceGenerator.Foundations.MSBuild\*.*">
         <PackagePath>sgf/injector/</PackagePath>
       </TfmSpecificPackageFile>
     </ItemGroup>

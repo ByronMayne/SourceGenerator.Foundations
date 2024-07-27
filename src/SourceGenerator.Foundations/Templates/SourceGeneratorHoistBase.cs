@@ -46,9 +46,6 @@ namespace {{@namespace}}
         [ModuleInitializer]
         internal static void Initialize()
         {
-            System.Console.WriteLine("Console.WriteLine");
-            System.Diagnostics.Debugger.Log(1, "whatever", "Deugger.Log");
-
             if(s_isInitialized)
             {
                 return;
