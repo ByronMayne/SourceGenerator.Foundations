@@ -46,11 +46,20 @@
   </Target>
   <!-- Validates they are at least using LangVersion 7.3 for nullable refernece types-->
   <Target Name="SGF_LangVersionValidation" BeforeTargets="CoreCompile">
+    <ItemGroup>
+      <NamedVersion Include="preview"/>
+      <NamedVersion Include="preview"/>
+      <NamedVersion Include="latest"/>
+      <NamedVersion Include="latestMajor"/>
+    </ItemGroup>
     <PropertyGroup>
       <MinLangVersion>7.2</MinLangVersion>
+      <IsNamedVersion>false</IsNamedVersion>
+      <IsNamedVersion Condition="'%(NamedVersion.Identity)' == '$(LangVersion)'">true</IsNamedVersion>
     </PropertyGroup>
     <Error
-      Condition="$([MSBuild]::VersionGreaterThan('$(MinLangVersion)', '$(LangVersion)'))"
+      Condition="!$(IsNamedVersion) AND $([MSBuild]::VersionGreaterThan('$(MinLangVersion)', '$(LangVersion)'))"
       Text="[SourceGenerator.Foundations] The project $(MSBuildProjectName) is currently using the language version $(LangVersion) which does not meet the minimum required of $(MinLangVersion). Read how to change it here https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/configure-language-version" />
   </Target>
+  
 </Project>
