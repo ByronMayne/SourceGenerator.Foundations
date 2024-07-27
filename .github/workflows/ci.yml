@@ -1,9 +1,10 @@
 name: Publish
-on:
-  release: 
+on: 
+  push: {}
+  pull_request:  {}
+  release:
     types: [published]
-  pull_request: {}
-
+  
 env:
   Configuration: Release
   ProjectDir: src\SourceGenerator.Foundations\
