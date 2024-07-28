@@ -12,9 +12,24 @@ env:
   SolutionPath: src\SourceGenerator.Foundations.sln
   MSBUILDDISABLENODEREUSE: '1' # Stops MSBuild from locking MSBuild nuget package
 jobs:
+  build:
+    name: Build
+    runs-on: windows-latest
+    steps: 
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}   
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.0.x
+      - name: Build Solution
+        run: dotnet test src\SourceGenerator.Foundations.sln
+
   test: 
     name: Test
     runs-on: windows-latest
+    needs: build
     strategy:
       matrix:
         project: 
@@ -28,7 +43,7 @@ jobs:
         with:
           dotnet-version: 6.0.x
       - name: Test | ${{ matrix.project.name }}
-        run: dotnet test ${{ matrix.project.name }} 
+        run: dotnet test src\${{ matrix.project.name }}\${{ matrix.project.name }}.csproj
 
   publish:
     name: build, bundle & publish
