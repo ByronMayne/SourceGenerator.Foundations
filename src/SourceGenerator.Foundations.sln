@@ -31,6 +31,8 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SourceGenerator.Foundations
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp.SourceGenerator.Tests", "Sandbox\ConsoleApp.SourceGenerator.Tests\ConsoleApp.SourceGenerator.Tests.csproj", "{560C8028-2831-4697-9571-A9920FB972E7}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SourceGenerator.Foundations.Tests", "SourceGenerator.Foundations.Tests\SourceGenerator.Foundations.Tests.csproj", "{7D1F6C4F-2A50-4706-8ECF-BA8BCE3E1C81}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,14 @@ Global
 		{560C8028-2831-4697-9571-A9920FB972E7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{560C8028-2831-4697-9571-A9920FB972E7}.Release|x64.ActiveCfg = Release|Any CPU
 		{560C8028-2831-4697-9571-A9920FB972E7}.Release|x64.Build.0 = Release|Any CPU
+		{7D1F6C4F-2A50-4706-8ECF-BA8BCE3E1C81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D1F6C4F-2A50-4706-8ECF-BA8BCE3E1C81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D1F6C4F-2A50-4706-8ECF-BA8BCE3E1C81}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7D1F6C4F-2A50-4706-8ECF-BA8BCE3E1C81}.Debug|x64.Build.0 = Debug|Any CPU
+		{7D1F6C4F-2A50-4706-8ECF-BA8BCE3E1C81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D1F6C4F-2A50-4706-8ECF-BA8BCE3E1C81}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D1F6C4F-2A50-4706-8ECF-BA8BCE3E1C81}.Release|x64.ActiveCfg = Release|Any CPU
+		{7D1F6C4F-2A50-4706-8ECF-BA8BCE3E1C81}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
