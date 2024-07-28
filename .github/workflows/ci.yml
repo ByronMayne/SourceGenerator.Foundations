@@ -13,7 +13,7 @@ env:
   MSBUILDDISABLENODEREUSE: '1' # Stops MSBuild from locking MSBuild nuget package
 jobs:
   build:
-    name: Build
+    name: Build | All
     runs-on: windows-latest
     steps: 
       - uses: actions/checkout@v3
@@ -27,7 +27,7 @@ jobs:
         run: dotnet test src\SourceGenerator.Foundations.sln
 
   test: 
-    name: Test
+    name: Test | ${{ matrix.project.name }}
     runs-on: windows-latest
     needs: build
     strategy:
@@ -48,7 +48,7 @@ jobs:
         run: dotnet test src\${{ matrix.project.path }}${{ matrix.project.name }}\${{ matrix.project.name }}.csproj
 
   publish:
-    name: Publish
+    name: Publish | ${{ matrix.project.name }}
     runs-on: windows-latest
     needs: 
       - test
