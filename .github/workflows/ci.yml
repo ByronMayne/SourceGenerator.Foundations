@@ -12,18 +12,34 @@ env:
   SolutionPath: src\SourceGenerator.Foundations.sln
   MSBUILDDISABLENODEREUSE: '1' # Stops MSBuild from locking MSBuild nuget package
 jobs:
-  publish:
-    name: build, bundle & publish
+  test: 
+    name: Test
     runs-on: windows-latest
     strategy:
       matrix:
-        nuget_project: 
+        project: 
+          - name: SourceGenerator.Foundations.Tests
+    steps: 
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}   
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.0.x
+      - name: Test | ${{ matrix.project.name }}
+        run: dotnet test ${{ matrix.project.name }} 
+
+  publish:
+    name: build, bundle & publish
+    runs-on: windows-latest
+    needs: 
+      - test
+    strategy:
+      matrix:
+        project: 
             - name: SourceGenerator.Foundations
-              csproj: src\SourceGenerator.Foundations\SourceGenerator.Foundations.csproj
-              dir: src\SourceGenerator.Foundations\
             - name: SourceGenerator.Foundations.Contracts
-              csproj: src\SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj
-              dir: src\SourceGenerator.Foundations.Contracts\
     steps:
       - uses: actions/checkout@v3
         with:
@@ -37,18 +53,13 @@ jobs:
         run: dotnet tool restore 
       - name: GitVersion
         run: dotnet gitversion /output buildserver
-      # Build Dependencies  
-      - name: Build | SourceGenerator.Foundations.MSBuild 
-        run: dotnet build src\SourceGenerator.Foundations.MSBuild\SourceGenerator.Foundations.MSBuild.csproj -p:Version=${{env.GitVersion_AssemblySemVer}}
-      # Build Main 
-      - name: Build | SourceGenerator.Foundations\SourceGenerator.Foundations
+      # Build
+      - name: Build | ${{ matrix.project.name }}
         run: dotnet build src\SourceGenerator.Foundations\SourceGenerator.Foundations.csproj -p:Version=${{env.GitVersion_AssemblySemVer}} -p:PackageVersion=${{env.GitVersion_SemVer}} 
-      - name: Test | Solution
-        run: dotnet test ${{env.SolutionPath}}
-      #Pack 
+      # Pack 
       - name: Pack | ${{ matrix.project.name }}
-        run: dotnet pack ${{ matrix.project.csproj }} -p:Version=${{env.GitVersion_AssemblySemVer}}  -p:PackageVersion=${{env.GitVersion_FullSemVer}} 
-      # -- Release Only --
+        run: dotnet pack src\${{ matrix.project.name }}\${{ matrix.project.name }}.csproj -p:Version=${{env.GitVersion_AssemblySemVer}}  -p:PackageVersion=${{env.GitVersion_FullSemVer}} 
+      # Release 
       - name: Push | ${{ matrix.project.name }}
         if: github.event_name == 'release' 
-        run: dotnet nuget push ${{env.ProjectDir}}bin\${{env.Configuration}}\*.nupkg --skip-duplicate --api-key ${{secrets.NUGET_API_KEY}}  --source https://api.nuget.org/v3/index.json
+        run: dotnet nuget push src\${{ matrix.project.name }}\bin\${{env.Configuration}}\*.nupkg --skip-duplicate --api-key ${{secrets.NUGET_API_KEY}}  --source https://api.nuget.org/v3/index.json
