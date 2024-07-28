@@ -34,6 +34,8 @@ jobs:
       matrix:
         project: 
           - name: SourceGenerator.Foundations.Tests
+          - name: ConsoleApp.SourceGenerator.Tests
+            path: Sandbox/
     steps: 
       - uses: actions/checkout@v3
         with:
@@ -43,10 +45,10 @@ jobs:
         with:
           dotnet-version: 6.0.x
       - name: Test | ${{ matrix.project.name }}
-        run: dotnet test src\${{ matrix.project.name }}\${{ matrix.project.name }}.csproj
+        run: dotnet test src\${{ matrix.project.path }}${{ matrix.project.name }}\${{ matrix.project.name }}.csproj
 
   publish:
-    name: build, bundle & publish
+    name: Publish
     runs-on: windows-latest
     needs: 
       - test
