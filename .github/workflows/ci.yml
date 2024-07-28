@@ -15,6 +15,15 @@ jobs:
   publish:
     name: build, bundle & publish
     runs-on: windows-latest
+    strategy:
+      matrix:
+        nuget_project: 
+            - name: SourceGenerator.Foundations
+              csproj: src\SourceGenerator.Foundations\SourceGenerator.Foundations.csproj
+              dir: src\SourceGenerator.Foundations\
+            - name: SourceGenerator.Foundations.Contracts
+              csproj: src\SourceGenerator.Foundations.Contracts\SourceGenerator.Foundations.Contracts.csproj
+              dir: src\SourceGenerator.Foundations.Contracts\
     steps:
       - uses: actions/checkout@v3
         with:
@@ -36,9 +45,10 @@ jobs:
         run: dotnet build src\SourceGenerator.Foundations\SourceGenerator.Foundations.csproj -p:Version=${{env.GitVersion_AssemblySemVer}} -p:PackageVersion=${{env.GitVersion_SemVer}} 
       - name: Test | Solution
         run: dotnet test ${{env.SolutionPath}}
-      - name: Pack | SourceGenerator.Foundations\SourceGenerator.Foundations
-        run: dotnet pack src\SourceGenerator.Foundations\SourceGenerator.Foundations.csproj -p:Version=${{env.GitVersion_AssemblySemVer}}  -p:PackageVersion=${{env.GitVersion_FullSemVer}} 
+      #Pack 
+      - name: Pack | ${{ matrix.project.name }}
+        run: dotnet pack ${{ matrix.project.csproj }} -p:Version=${{env.GitVersion_AssemblySemVer}}  -p:PackageVersion=${{env.GitVersion_FullSemVer}} 
       # -- Release Only --
-      - name: Push NuGet
+      - name: Push | ${{ matrix.project.name }}
         if: github.event_name == 'release' 
         run: dotnet nuget push ${{env.ProjectDir}}bin\${{env.Configuration}}\*.nupkg --skip-duplicate --api-key ${{secrets.NUGET_API_KEY}}  --source https://api.nuget.org/v3/index.json
