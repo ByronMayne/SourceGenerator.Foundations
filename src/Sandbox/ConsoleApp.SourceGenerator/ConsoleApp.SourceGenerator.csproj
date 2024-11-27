@@ -7,7 +7,12 @@
     <Platforms>AnyCPU;x64</Platforms>
     <AssemblySearchPath_UseOutDir>true</AssemblySearchPath_UseOutDir>
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <!--Uncomment if bringing your own polyfills-->
+    <!--<SgfAddModuleInitializerAttribute>false</SgfAddModuleInitializerAttribute>-->
   </PropertyGroup>
+  <ItemGroup>
+    <CompilerVisibleProperty Include="SgfAddModuleInitializerAttribute" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.3.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
