@@ -33,7 +33,13 @@ namespace SGF
         private void AddCoreTypes(SourceProductionContext context, AnalyzerConfigOptionsProvider optionsProvider)
         {
             string @namespace = "SGF";
-            context.AddSource("System_Runtime_CompilerServices_ModuleInitializerAttribute.g.cs", ModuleInitializerTemplate.Render());
+            var includeModuleInitializer = true;
+            
+            if (optionsProvider.GlobalOptions.TryGetValue("build_property.SgfAddModuleInitializerAttribute", out var val))
+                if(!string.IsNullOrWhiteSpace(val)) bool.TryParse(val, out includeModuleInitializer);
+
+            if (includeModuleInitializer)
+                context.AddSource("System_Runtime_CompilerServices_ModuleInitializerAttribute.g.cs", ModuleInitializerTemplate.Render());
             context.AddSource("SgfSourceGeneratorHoist.g.cs", SourceGeneratorHoistBase.RenderTemplate(@namespace));
             context.AddSource("SgfAssemblyResolver.g.cs", AssemblyResolverTemplate.Render(@namespace));
         }
