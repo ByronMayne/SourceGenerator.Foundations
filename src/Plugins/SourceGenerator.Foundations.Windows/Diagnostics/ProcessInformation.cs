@@ -11,7 +11,7 @@ namespace SGF.Diagnostics
     internal struct ProcessInformation
     {
         /// <summary>
-        /// Contains the same value that GetExitCodeProcess returns. However the use of GetExitCodeProcess is preferable for clarity and safety.
+        /// Contains the same value that GetExitCodeProcess returns, however the use of GetExitCodeProcess is preferable for clarity and safety.
         /// </summary>
         public IntPtr ExitStatus;
 

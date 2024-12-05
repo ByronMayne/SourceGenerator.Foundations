@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
   <!-- ===================== Note =====================
    This file is include in all projects that reference 
-   the NuGet packages. Don't references varaibles 
+   the NuGet packages. Don't reference variables 
    from Directory.Build.[props|targets] as these files
    won't exist.
   ==================================================-->
@@ -35,7 +35,7 @@
         Visible="$(SgfShowImports)">
       <Link>SGF/Polyfills/Nullable/%(RecursiveDir)%(Filename)%(Extension)</Link>
     </Compile>
-    <!-- Polyfills: Init Properites-->
+    <!-- Polyfills: Init Properties-->
     <Compile 
         Include="$(MSBuildThisFileDirectory)..\sgf\src\Polyfills\InitProperties\**\*.cs"
         Condition="'$(SgfAddInitPropertyPolyfill.ToLower())' == 'true'"     

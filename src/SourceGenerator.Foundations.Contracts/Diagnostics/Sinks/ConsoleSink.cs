@@ -3,7 +3,7 @@
 namespace SGF.Diagnostics.Sinks
 {
     /// <summary>
-    /// Sink used for outputing events to the console 
+    /// Sink used for outputting events to the console 
     /// </summary>
     public class ConsoleSink : ILogSink
     {

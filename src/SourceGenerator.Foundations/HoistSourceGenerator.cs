@@ -51,10 +51,10 @@ namespace SGF
         private static SourceGeneratorDataModel? GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
         {
             // we know the node is a ClassDeclarationSyntax thanks to IsSyntaxTargetForGeneration
-            ClassDeclarationSyntax classDeclrationSyntax = (ClassDeclarationSyntax)context.Node;
+            ClassDeclarationSyntax classDeclarationSyntax = (ClassDeclarationSyntax)context.Node;
 
             // loop through all the attributes on the method
-            foreach (AttributeListSyntax attributeListSyntax in classDeclrationSyntax.AttributeLists)
+            foreach (AttributeListSyntax attributeListSyntax in classDeclarationSyntax.AttributeLists)
             {
                 foreach (AttributeSyntax attributeSyntax in attributeListSyntax.Attributes)
                 {
@@ -71,7 +71,7 @@ namespace SGF
                     if (fullName == "SGF.SgfGeneratorAttribute")
                     {
                         // return the enum. Implementation shown in section 7.
-                        return SourceGeneratorDataModel.Create(classDeclrationSyntax, context.SemanticModel);
+                        return SourceGeneratorDataModel.Create(classDeclarationSyntax, context.SemanticModel);
                     }
                 }
             }

@@ -5,7 +5,7 @@ using System.Text;
 namespace SGF.Diagnostics
 {
     /// <summary>
-    /// Implemention of a logger with custom sinks
+    /// Implementation of a logger with custom sinks
     /// </summary>
     public class Logger : ILogger
     {

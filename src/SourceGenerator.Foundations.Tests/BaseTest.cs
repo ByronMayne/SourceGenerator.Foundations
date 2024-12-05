@@ -13,7 +13,7 @@ namespace SourceGenerator.Foundations.Tests
 
         protected BaseTest(ITestOutputHelper outputHelper)
         {
-            TestMethodName = "Unkonwn";
+            TestMethodName = "Unknown";
             Type type = outputHelper.GetType();
             FieldInfo? testField = type.GetField("test", BindingFlags.Instance | BindingFlags.NonPublic);
             ITest? test = testField?.GetValue(outputHelper) as ITest;

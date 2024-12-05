@@ -12,8 +12,8 @@ namespace SGF
 {
     /// <summary>
     /// Used as a base class for creating your own source generator. This class provides some helper
-    /// methods and impoved debugging expereince. The generator that implements this must apply the 
-    /// <see cref="GeneratorAttribute"/> but not inheirt from <see cref="IIncrementalGenerator"/>
+    /// methods and improved debugging experience. The generator that implements this must apply the 
+    /// <see cref="GeneratorAttribute"/> but not inherit from <see cref="IIncrementalGenerator"/>
     /// </summary>
     public abstract class IncrementalGenerator : IDisposable
     {
@@ -60,18 +60,18 @@ namespace SGF
         }
 
         /// <summary>
-        /// Implement to initalize the incremental source generator
+        /// Implement to initialize the incremental source generator
         /// </ summary >
         public abstract void OnInitialize(SgfInitializationContext context);
 
         /// <summary>
         /// Override to add logic for disposing this instance and free resources
         /// </summary>
-        protected virtual void Dipose()
+        protected virtual void Dispose()
         { }
 
         /// <summary>
-        /// Attaches the debugger automtically if you are running from Visual Studio. You have the option
+        /// Attaches the debugger automatically if you are running from Visual Studio. You have the option
         /// to stop or just continue
         /// </summary>
         protected void AttachDebugger()
@@ -81,7 +81,7 @@ namespace SGF
         }
 
         /// <summary>
-        /// Raised when one of the generator functions throws an unhandle exception. Override this to define your own behaviour 
+        /// Raised when one of the generator functions throws an unhandled exception. Override this to define your own behavior 
         /// to handle the exception. 
         /// </summary>
         /// <param name="exception">The exception that was thrown</param>
@@ -146,7 +146,7 @@ namespace SGF
         /// <inheritdoc cref="IDisposable"/>
         void IDisposable.Dispose()
         {
-            Dipose();
+            Dispose();
         }
     }
 }

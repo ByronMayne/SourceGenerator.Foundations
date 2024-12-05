@@ -50,7 +50,7 @@ namespace SGF.Analyzer
         }
 
         /// <summary>
-        /// Returns back if the type inheirts from <see cref="IncrementalGenerator"/> or not
+        /// Returns back if the type inherits from <see cref="IncrementalGenerator"/> or not
         /// </summary>
         /// <param name="typeSymbol">The type to check</param>
         /// <returns>True if it does and false if it does not</returns>

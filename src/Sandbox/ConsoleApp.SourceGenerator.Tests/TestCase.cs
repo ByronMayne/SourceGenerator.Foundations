@@ -30,7 +30,7 @@ namespace ConsoleApp.SourceGenerator.Tests
             ConsoleAppSourceGeneratorHoist host = new ConsoleAppSourceGeneratorHoist(generator);
             // Parse the source into syntax trees
             SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(source);
-            // Setup the compilation settings
+            // Set up the compilation settings
             CSharpCompilation compilation = CSharpCompilation.Create(
               assemblyName: "UniTests",
               syntaxTrees: new[] { syntaxTree });

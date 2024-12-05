@@ -8,7 +8,7 @@ namespace SGF
 {
     /// <summary>
     /// Middleware wrapper around a <see cref="IncrementalGeneratorInitializationContext"/> to allow for
-    /// wraping with exception handling and provide a better user expereince 
+    /// wrapping with exception handling and provide a better user experience 
     /// </summary>
     public readonly struct SgfInitializationContext
     {

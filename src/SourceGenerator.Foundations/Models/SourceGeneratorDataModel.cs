@@ -9,14 +9,14 @@ namespace SGF.Models
         public string ClassName { get; }
         public string Namespace { get; }
         public string AccessModifier { get; }
-        public string QualifedName { get; }
+        public string QualifiedName { get; }
 
         public SourceGeneratorDataModel(string name, string @namespace, string accessModifier)
         {
             ClassName = name;
             Namespace = @namespace;
             AccessModifier = accessModifier;
-            QualifedName = string.IsNullOrEmpty(Namespace) ? ClassName : $"{Namespace}.{ClassName}";
+            QualifiedName = string.IsNullOrEmpty(Namespace) ? ClassName : $"{Namespace}.{ClassName}";
         }
 
         public static SourceGeneratorDataModel? Create(ClassDeclarationSyntax classDeclarationSyntax, SemanticModel semanticModel)

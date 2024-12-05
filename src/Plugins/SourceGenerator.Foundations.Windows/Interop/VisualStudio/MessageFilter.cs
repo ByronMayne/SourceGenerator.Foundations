@@ -27,7 +27,7 @@ namespace SGF.Interop.VisualStudio
             => CoRegisterMessageFilter(new MessageFilter());
 
         /// <summary>
-        /// Removes this assembly an a com message interceptor. 
+        /// Removes this assembly's com message interceptor. 
         /// </summary>
         public static void Revoke()
             => CoRegisterMessageFilter(null);

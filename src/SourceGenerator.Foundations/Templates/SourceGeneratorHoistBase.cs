@@ -84,7 +84,7 @@ namespace {{@namespace}}
         }
 
         /// <summary>
-        /// Adds an assembly to the veriuos collections used to keep track of loaded items
+        /// Adds an assembly to the various collections used to keep track of loaded items
         /// </summary>
         private static void AddAssembly(Assembly assembly)
         {
@@ -142,10 +142,10 @@ namespace {{@namespace}}
 
 
         /// <summary>
-        /// Attempts to load an assembly that is contained within aonther assembly as a resource
+        /// Attempts to load an assembly that is contained within another assembly as a resource
         /// </summary>
         /// <param name="assembly">The assembly that should contain the resource</param>
-        /// <param name="resourceName">The expected name of the reosurce</param>
+        /// <param name="resourceName">The expected name of the resource</param>
         /// <param name="loadedAssembly">The assembly if it was loaded</param>
         /// <returns>True if the assembly could be loaded otherwise false</returns>
         private static bool TryExtractingAssembly(Assembly assembly, string resourceName, out Assembly? loadedAssembly)
