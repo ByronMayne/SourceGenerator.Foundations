@@ -20,7 +20,7 @@ namespace SGF.Diagnostics
         void AddSink(ILogSink sink);
 
         /// <summary>
-        /// Logs an event the the logger
+        /// Logs an event to the logger
         /// </summary>
         /// <param name="logLevel">The level to log</param>
         /// <param name="exception">An optional exception that this log refers too</param>

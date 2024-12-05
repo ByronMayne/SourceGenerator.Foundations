@@ -4,9 +4,9 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 namespace SGF.Analyzer.Rules
 {
     /// <summary>
-    /// Ensures tha the <see cref="GeneratorAttribute"/> is not applied to 
+    /// Ensures that the <see cref="GeneratorAttribute"/> is not applied to 
     /// <see cref="IncrementalGenerator"/> as these types are not really <see cref="IIncrementalGenerator"/>
-    /// and won't be pickedup by Roslyn. 
+    /// and won't be picked up by Roslyn. 
     /// </summary>
     internal class ProhibitGeneratorAttributeRule : AnalyzerRule
     {
@@ -28,7 +28,7 @@ namespace SGF.Analyzer.Rules
         private static DiagnosticDescriptor CreateDescriptor()
             => new DiagnosticDescriptor("SGF1002",
                 "Prohibit GeneratorAttribute",
-                $"{{0}} has the {nameof(GeneratorAttribute)} which can't be applied to classes which are inheirting from the Generator Foundations type {nameof(IncrementalGenerator)}.",
+                $"{{0}} has the {nameof(GeneratorAttribute)} which can't be applied to classes which are inheriting from the Generator Foundations type {nameof(IncrementalGenerator)}.",
                 "SourceGeneration",
                 DiagnosticSeverity.Error,
                 true,

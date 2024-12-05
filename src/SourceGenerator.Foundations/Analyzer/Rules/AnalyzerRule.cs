@@ -8,7 +8,7 @@ namespace SGF.Analyzer.Rules
     internal abstract class AnalyzerRule
     {
         /// <summary>
-        /// Gets the descritor that this rule creates
+        /// Gets the descriptor that this rule creates
         /// </summary>
         public DiagnosticDescriptor Descriptor { get; }
 
@@ -68,7 +68,7 @@ namespace SGF.Analyzer.Rules
         {
             const string POSTFIX = "Attribute";
 
-            string alterntiveName = name.EndsWith(POSTFIX, StringComparison.Ordinal)
+            string alternativeName = name.EndsWith(POSTFIX, StringComparison.Ordinal)
                 ? name.Substring(0, name.Length - POSTFIX.Length)
                 : $"{name}{POSTFIX}";
 
@@ -79,7 +79,7 @@ namespace SGF.Analyzer.Rules
                     string attributeName = attribute.Name.ToString();
 
                     if (string.Equals(attributeName, name, stringComparison) ||
-                       string.Equals(attributeName, alterntiveName, stringComparison))
+                       string.Equals(attributeName, alternativeName, stringComparison))
                     {
                         return attribute;
                     }

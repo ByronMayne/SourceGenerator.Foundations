@@ -41,7 +41,7 @@ namespace SGF.Interop.VisualStudio
                     // Already have this process 
                     break;
                 case "MSBuild":
-                    // If it's msbuild we want to stup up
+                    // If it's msbuild we want to set up
                     parentDebugProcess = parentDebugProcess.GetParent();
                     if (parentDebugProcess != null)
                     {

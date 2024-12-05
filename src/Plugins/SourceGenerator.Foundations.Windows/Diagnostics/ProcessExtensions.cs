@@ -34,7 +34,7 @@ namespace SGF.Diagnostics
         /// Gets the parent of this given process if it exits and you have access
         /// </summary>
         /// <param name="process">The process to get the parent of</param>
-        /// <returns>The parent process or null if you don't have access or it does not exist </returns>
+        /// <returns>The parent process or null if you don't have access, or it does not exist </returns>
         public static Process? GetParent(this Process? process)
         {
             if (process == null) return null;

@@ -64,7 +64,7 @@ namespace {{dataModel.Namespace}}
             }
             catch (Exception exception)
             {
-                logger.Error(exception, $"Error! An unhandle exception was thrown while initializing the source generator '{{dataModel.QualifedName}}'.");
+                logger.Error(exception, $"Error! An unhandled exception was thrown while initializing the source generator '{{dataModel.QualifiedName}}'.");
             }
         }
 
@@ -74,7 +74,7 @@ namespace {{dataModel.Namespace}}
             Type[] typeArguments = new Type[] { };
             
             BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
-            Type generatorType = typeof(global::{{dataModel.QualifedName}});
+            Type generatorType = typeof(global::{{dataModel.QualifiedName}});
             ConstructorInfo? constructor = generatorType.GetConstructor(bindingFlags, null, typeArguments, Array.Empty<ParameterModifier>());
 
             if(constructor == null)
@@ -83,7 +83,7 @@ namespace {{dataModel.Namespace}}
             }
 
             object[] constructorArguments = new  object[]{};
-            IncrementalGenerator generator = (global::{{dataModel.QualifedName}})constructor.Invoke(constructorArguments);
+            IncrementalGenerator generator = (global::{{dataModel.QualifiedName}})constructor.Invoke(constructorArguments);
 
             return generator;
         }

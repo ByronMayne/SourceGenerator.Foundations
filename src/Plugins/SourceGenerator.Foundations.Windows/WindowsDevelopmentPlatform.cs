@@ -7,7 +7,7 @@ namespace SGF
 {
 
     /// <summary>
-    /// Represents a enviroment where the user is authoring code in Visual Studio 
+    /// Represents an environment where the user is authoring code in Visual Studio 
     /// </summary>
     internal class WindowsDevelopmentPlatform : IGeneratorEnvironment
     {

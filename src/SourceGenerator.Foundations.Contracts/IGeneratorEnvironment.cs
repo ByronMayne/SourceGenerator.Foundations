@@ -4,8 +4,8 @@ using System.Collections.Generic;
 namespace SGF
 {
     /// <summary>
-    /// Contains information about the enviroment that this source generator is running in. It allows you to 
-    /// star tthe debuggger and get the custom platform loggers based on the context. 
+    /// Contains information about the environment that this source generator is running in. It allows you to 
+    /// star the debugger and get the custom platform loggers based on the context. 
     /// </summary>
     public interface IGeneratorEnvironment
     {

@@ -15,7 +15,7 @@ namespace SGF.IO
         public const char WINDOWS_SEPARATOR = '\\';
 
         /// <summary>
-        /// The separator used in linux paths 
+        /// The separator used in Linux paths 
         /// </summary>
         public const char LINUX_SEPARATOR = '/';
 
@@ -59,7 +59,7 @@ namespace SGF.IO
         }
 
         /// <summary>
-        /// Determines whether a given path is rooted to linux.
+        /// Determines whether a given path is rooted to Linux.
         /// </summary>
         /// <param name="path">The path.</param>
         public static bool HasLinuxRoot(string? path)
@@ -183,7 +183,7 @@ namespace SGF.IO
         }
 
         /// <summary>
-        /// Gets the separator char based off the rooted directory, if the path is not rooted we just return the default for the current platofrm.
+        /// Gets the separator char based off the rooted directory, if the path is not rooted we just return the default for the current platform.
         /// </summary>
         /// <param name="path">The path.</param>
         /// <returns></returns>

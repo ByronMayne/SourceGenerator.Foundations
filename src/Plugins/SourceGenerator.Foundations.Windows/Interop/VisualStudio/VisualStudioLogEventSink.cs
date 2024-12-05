@@ -35,7 +35,7 @@ namespace SGF.Interop.VisualStudio
 
             try
             {
-                // TODO: Try to load DTE a at a later point
+                // TODO: Try to load DTE at a later point
                 m_dte = VisualStudioInterop.GetDTE();
                 if (m_dte != null)
                 {
@@ -61,7 +61,7 @@ namespace SGF.Interop.VisualStudio
     
                     m_sourceGeneratorOutput ??= m_outputWindow.OutputWindowPanes.Add(outputPanelName);
 
-                    // When adding a pane will will steal focus, we don't want this. So lets force it back to build
+                    // When adding a pane will steal focus, we don't want this. So lets force it back to build
                     foreach (OutputWindowPane pane in m_outputWindow.OutputWindowPanes)
                     {
                         if(string.Equals(BUILD_OUTPUT_PANE_GUID, pane.Guid))
@@ -119,7 +119,7 @@ namespace SGF.Interop.VisualStudio
             }
             catch(Exception exception)
             {
-                Console.WriteLine($"Exception was thrown while writing log. Please report this on gihub {exception}");
+                Console.WriteLine($"Exception was thrown while writing log. Please report this on github {exception}");
             }
         }
     }

@@ -23,7 +23,7 @@ namespace SGF
 
 
         /// <summary>
-        /// A token that will be cancelled when generation should stop
+        /// A token that will be canceled when generation should stop
         /// </summary>
         public CancellationToken CancellationToken => m_context.CancellationToken;
 
