@@ -11,7 +11,7 @@ namespace SGF
     /// <summary>
     /// Wrapper around a <see cref="SourceProductionContext"/> used to help capture errors and report logs
     /// </summary>
-    public struct SgfSourceProductionContext
+    public struct SgfSourceProductionContext : ISgfSourceProductionContext
     {
         private readonly ILogger m_logger;
         private readonly SourceProductionContext m_context;
