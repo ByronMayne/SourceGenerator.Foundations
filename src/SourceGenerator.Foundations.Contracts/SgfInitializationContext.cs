@@ -10,7 +10,7 @@ namespace SGF
     /// Middleware wrapper around a <see cref="IncrementalGeneratorInitializationContext"/> to allow for
     /// wrapping with exception handling and provide a better user experience 
     /// </summary>
-    public readonly struct SgfInitializationContext
+    public readonly struct SgfInitializationContext : ISgfInitializationContext
     {
         private readonly ILogger m_logger;
         private readonly IncrementalGeneratorInitializationContext m_context;
@@ -29,6 +29,18 @@ namespace SGF
             m_logger = logger;
             m_context = context;
         }
+
+        /// <summary>
+        /// Gets the underlying <see cref="ILogger"/> 
+        /// </summary>
+        /// <remarks>Provided as a convenience accessor to support advanced scenarios. Generally not needed but no harm if used.</remarks>
+        public ILogger Logger => m_logger;
+        /// <summary>
+        /// Gets the original <see cref="IncrementalGeneratorInitializationContext"/> 
+        /// </summary>
+        /// <remarks>Provided as a convenience accessor to support advanced scenarios. Generally should not be directly
+        /// interacted with as it may produce side effects in the sgf generators. Use at your own risk.</remarks>
+        public IncrementalGeneratorInitializationContext Context => m_context;
 
         public void RegisterSourceOutput<TSource>(IncrementalValueProvider<TSource> source, Action<SgfSourceProductionContext, TSource> action)
         {
@@ -83,8 +95,6 @@ namespace SGF
             }
             m_context.RegisterImplementationSourceOutput(source, wrappedAction);
         }
-
-  
 
         public void RegisterImplementationSourceOutput<TSource>(IncrementalValuesProvider<TSource> source, Action<SgfSourceProductionContext, TSource> action)
         {
