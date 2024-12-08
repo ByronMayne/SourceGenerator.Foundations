@@ -18,13 +18,11 @@ namespace SGF
     {
         public void Initialize(IncrementalGeneratorInitializationContext context)
         {
-            
             var provider = context.SyntaxProvider
                  .CreateSyntaxProvider(
                      predicate: static (s, _) => IsSyntaxTargetForGeneration(s),
                      transform: static (ctx, _) => GetSemanticTargetForGeneration(ctx))
                  .Where(static m => m is not null);
-
             context.RegisterSourceOutput(context.AnalyzerConfigOptionsProvider, AddCoreTypes);
             context.RegisterSourceOutput(provider,
                 static (spc, source) => Execute(source!, spc));
