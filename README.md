@@ -237,6 +237,15 @@ driver = driver.RunGenerators(compilation);
 ```
 The only unique feature is the wrapper class `{YourGeneratorName}Host`. This class is an internal feature of `SGF` and is used to make sure all dependencies are resolved before calling into your source generator. 
 
+
+## Advanced Features
+There are some features that are designed for more advanced users or niche cases. 
+
+### Debugger Attaching 
+When your source generator is being used in the wild it can happen there are exceptions that are thrown which can be hard to track down. There is no nice way to debug these issues besides logging. To get around this you can set the environment variable `SGF_DEBUGGER_LAUNCH=true` the debugger will be launched at the entrypoint of SGF. 
+
+
+
 ## Project Layout  
 
 This library is made up of quite a few different components leveraging various techniques to help

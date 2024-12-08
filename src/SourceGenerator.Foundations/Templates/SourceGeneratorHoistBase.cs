@@ -35,6 +35,13 @@ namespace {{@namespace}}
 
         static SourceGeneratorHoist()
         {
+            if(bool.TryParse(System.Environment.GetEnvironmentVariable("SGF_DEBUGGER_LAUNCH"), out bool launchDebugger)
+                && launchDebugger)
+            {
+                System.Diagnostics.Debugger.Launch();
+            }
+
+
             s_assembliesWithResources = new List<Assembly>();
             s_loadedAssemblies = new Dictionary<AssemblyName, Assembly>(new AssemblyNameComparer());
             Initialize();
