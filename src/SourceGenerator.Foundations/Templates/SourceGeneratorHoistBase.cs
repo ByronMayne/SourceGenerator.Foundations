@@ -35,11 +35,13 @@ namespace {{@namespace}}
 
         static SourceGeneratorHoist()
         {
+#pragma warning disable RS1035 // Do not use APIs banned for analyzers
             if(bool.TryParse(System.Environment.GetEnvironmentVariable("SGF_DEBUGGER_LAUNCH"), out bool launchDebugger)
                 && launchDebugger)
             {
                 System.Diagnostics.Debugger.Launch();
             }
+#pragma warning restore RS1035 // Do not use APIs banned for analyzers
 
 
             s_assembliesWithResources = new List<Assembly>();
