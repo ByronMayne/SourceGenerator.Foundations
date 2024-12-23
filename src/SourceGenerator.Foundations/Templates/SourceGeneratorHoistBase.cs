@@ -116,7 +116,9 @@ namespace {{@namespace}}
             foreach (string resource in resources)
             {
 
+#pragma warning disable RS1035 // Do not use APIs banned for analyzers
                 System.Console.WriteLine($"Extracting {resource} assembly from {assemblyName.Name}'s resources.");
+#pragma warning restore RS1035 // Do not use APIs banned for analyzers
                 if (TryExtractingAssembly(assembly, resource, out Assembly? loadedAssembly))
                 {
                     AddAssembly(loadedAssembly!);
