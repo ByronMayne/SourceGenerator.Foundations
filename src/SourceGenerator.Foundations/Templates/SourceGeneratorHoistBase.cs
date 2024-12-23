@@ -115,7 +115,8 @@ namespace {{@namespace}}
 
             foreach (string resource in resources)
             {
-                Console.WriteLine($"Extracting {resource} assembly from {assemblyName.Name}'s resources.");
+
+                System.Console.WriteLine($"Extracting {resource} assembly from {assemblyName.Name}'s resources.");
                 if (TryExtractingAssembly(assembly, resource, out Assembly? loadedAssembly))
                 {
                     AddAssembly(loadedAssembly!);

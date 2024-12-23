@@ -2,13 +2,14 @@
   <PropertyGroup>
     <!-- Common Settings -->
     <Nullable>enable</Nullable>
-    <LangVersion>10</LangVersion>
+    <LangVersion>12</LangVersion>
     <RootNamespace>SGF</RootNamespace>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     <SGFSourceDir>$(MSBuildThisFileDirectory)</SGFSourceDir>
     <LibsDir>$(SGFSourceDir)libs\</LibsDir>
     <ImgDir>$(MSBuildThisFileDirectory)..\img\</ImgDir>
     <SGfIco>$(MSBuildThisFileDirectory)..\img\icon.png</SGfIco>
+    <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     <!-- Icons -->
     <ApplicationIcon>$(MSBuildThisFileDirectory)..\img\icon.ico</ApplicationIcon>
 
