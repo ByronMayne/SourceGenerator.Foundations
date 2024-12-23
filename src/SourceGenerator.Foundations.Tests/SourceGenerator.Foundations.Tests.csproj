@@ -23,7 +23,11 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
 
-    <!-- This would normally include the analyzer but we want the assemblies for unit tests -->
+    <!-- ==== Referencing Analyzers ====
+      Normally you never actually reference the analyzer they just get used by the compiler internally.
+      When adding a NuGet reference it just does that behind the scenes. For these unit tests I needed
+      to reference the type, so that is this weird workaround of using the path and navigating to the dll
+    -->
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0" GeneratePathProperty="true" />
     <Reference Include="$(PkgMicrosoft_CodeAnalysis_Analyzers)\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
     <Reference Include="$(PkgMicrosoft_CodeAnalysis_Analyzers)\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
