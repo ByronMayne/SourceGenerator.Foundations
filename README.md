@@ -246,28 +246,11 @@ When your source generator is being used in the wild it can happen there are exc
 
 
 
-## Project Layout  
+## Projects Using SGF
+ * [ByronMayne.AutoFactories](https://github.com/ByronMayne/AutoFactories)
+ * [AssetRipper.AssetRipper](https://github.com/AssetRipper/AssetRipper)
 
-This library is made up of quite a few different components leveraging various techniques to help
-make the experience of integrating the library simple. Below I break down the purpose of each project and what they provide to you as the end users.
-
-### Source.Generator.Foundations 
-
-A very small library that only appears to contain a C# analyzer for adding errors and warnings when trying to use this library. However once compiled this dll will have embedded as a resource every other project that is needed during compilation. 
-
-
-### Source.Generator.Foundations.Contracts
-
-Contains common classes and utility methods that can be leveraged by source generators. 
-
-### Source.Generator.Foundations.MSBuild 
-
-Contains a custom MSBuild C# target implementation used to figure out which assemblies should be embedded as resources and which should be ignored. For example this will not embed any resources that are part of `.netstandard`.
-
-### Source.Generator.Foundations.Shared 
-
-A shared project that every project that references this will have the files copied to it. 
-
+*Want to add your project here? Just make a PR*
 
 ## Attribution 
 Icon by <a href="https://www.flaticon.com/free-icons/drywall" title="drywall icons">Drywall icons created by HAJICON - Flaticon</a>
