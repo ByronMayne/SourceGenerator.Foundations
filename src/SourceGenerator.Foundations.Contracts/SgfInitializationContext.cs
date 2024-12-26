@@ -6,21 +6,36 @@ using System.Reflection;
 
 namespace SGF
 {
+
     /// <summary>
     /// Middleware wrapper around a <see cref="IncrementalGeneratorInitializationContext"/> to allow for
     /// wrapping with exception handling and provide a better user experience 
     /// </summary>
-    public readonly struct SgfInitializationContext
+    public readonly struct SgfInitializationContext : ISgfInitializationContext
     {
         private readonly ILogger m_logger;
         private readonly IncrementalGeneratorInitializationContext m_context;
 
+        /// <inheritdoc/>
         public SyntaxValueProvider SyntaxProvider => m_context.SyntaxProvider;
+
+        /// <inheritdoc/>
         public IncrementalValueProvider<Compilation> CompilationProvider => m_context.CompilationProvider;
+
+        /// <inheritdoc/>
         public IncrementalValueProvider<ParseOptions> ParseOptionsProvider => m_context.ParseOptionsProvider;
+
+        /// <inheritdoc  />
         public IncrementalValuesProvider<AdditionalText> AdditionalTextsProvider => m_context.AdditionalTextsProvider;
+
+        /// <inheritdoc/>
         public IncrementalValueProvider<AnalyzerConfigOptionsProvider> AnalyzerConfigOptionsProvider => m_context.AnalyzerConfigOptionsProvider;
+
+        /// <inheritdoc/>
         public IncrementalValuesProvider<MetadataReference> MetadataReferencesProvider => m_context.MetadataReferencesProvider;
+
+        /// <inheritdoc/>
+        IncrementalGeneratorInitializationContext ISgfInitializationContext.OriginalContext => m_context;
 
         public SgfInitializationContext(
             IncrementalGeneratorInitializationContext context,
@@ -30,6 +45,7 @@ namespace SGF
             m_context = context;
         }
 
+        ///  <inheritdoc/>
         public void RegisterSourceOutput<TSource>(IncrementalValueProvider<TSource> source, Action<SgfSourceProductionContext, TSource> action)
         {
             ILogger logger = m_logger;
@@ -48,6 +64,7 @@ namespace SGF
             m_context.RegisterSourceOutput(source, wrappedAction);
         }
 
+        ///  <inheritdoc/>
         public void RegisterSourceOutput<TSource>(IncrementalValuesProvider<TSource> source, Action<SgfSourceProductionContext, TSource> action)
         {
             ILogger logger = m_logger;
@@ -65,6 +82,7 @@ namespace SGF
             m_context.RegisterSourceOutput(source, wrappedAction);
         }
 
+        ///  <inheritdoc/>
         public void RegisterImplementationSourceOutput<TSource>(IncrementalValueProvider<TSource> source, Action<SgfSourceProductionContext, TSource> action)
         {
             ILogger logger = m_logger;
@@ -84,8 +102,7 @@ namespace SGF
             m_context.RegisterImplementationSourceOutput(source, wrappedAction);
         }
 
-  
-
+        ///  <inheritdoc/>
         public void RegisterImplementationSourceOutput<TSource>(IncrementalValuesProvider<TSource> source, Action<SgfSourceProductionContext, TSource> action)
         {
             ILogger logger = m_logger;
@@ -104,9 +121,10 @@ namespace SGF
             m_context.RegisterImplementationSourceOutput(source, wrappedAction);
         }
 
+        ///  <inheritdoc/>
         public void RegisterPostInitializationOutput(Action<IncrementalGeneratorPostInitializationContext> callback)
         {
-            ILogger logger = m_logger; 
+            ILogger logger = m_logger;
             void wrappedCallback(IncrementalGeneratorPostInitializationContext context)
             {
                 try
@@ -121,6 +139,9 @@ namespace SGF
             m_context.RegisterPostInitializationOutput(wrappedCallback);
         }
 
+        /// <summary>
+        /// Logs an exception to the lagger to be presented in the IDE.
+        /// </summary>
         private static void LogException(ILogger logger, Exception exception, MethodInfo actionInfo)
         {
             string methodName = actionInfo.Name;
