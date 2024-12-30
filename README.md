@@ -9,10 +9,12 @@ Source Generators are awesome but working with them can be a bit painful. This l
 To get started all you need to do is add the NuGet package reference. You may or may not have to restart Visual Studio for the new types to show up. Then implement the base class `IncrementalGenerator` and apply the `[SgfGenerator]` attribute to your type;
 
 ```cs
+using SGF;
+
 namespace Example
 {
     // IncrementalGenerator, is a generated type from `SourceGenerator.Foundations'
-    [SgfGenerator]
+    [IncrementalGenerator]
     public class ExampleSourceGenerator : IncrementalGenerator 
     {
         public ExampleSourceGenerator() : base("ExampleSourceGenerator")
@@ -148,7 +150,7 @@ To fix the error just apply the attribute.
 
 ```cs 
 // Fixed 
-[SgfGeneratorAttribute]
+[IncrementalGenerator]
 public class MyGenerator : IncrementalGenerator 
 {
     public MyGenerator() : base("MyGenerator")

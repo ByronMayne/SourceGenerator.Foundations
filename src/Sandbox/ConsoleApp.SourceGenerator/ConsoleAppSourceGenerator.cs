@@ -7,7 +7,7 @@ using System.Text;
 
 namespace ConsoleApp.SourceGenerator
 {
-    [SgfGenerator]
+    [IncrementalGenerator]
     internal class ConsoleAppSourceGenerator : IncrementalGenerator
     {
         public class Payload

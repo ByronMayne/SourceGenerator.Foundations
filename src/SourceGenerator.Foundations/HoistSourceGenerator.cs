@@ -66,11 +66,14 @@ namespace SGF
                     string fullName = attributeContainingTypeSymbol.ToDisplayString();
 
                     // Is the attribute the [EnumExtensions] attribute?
-                    if (fullName == "SGF.SgfGeneratorAttribute")
+#pragma warning disable CS0618 // Type or member is obsolete
+                    switch (fullName)
                     {
-                        // return the enum. Implementation shown in section 7.
-                        return SourceGeneratorDataModel.Create(classDeclarationSyntax, context.SemanticModel);
+                        case $"SGF.{nameof(IncrementalGeneratorAttribute)}":
+                        case $"SGF.{nameof(SgfGeneratorAttribute)}":
+                           return SourceGeneratorDataModel.Create(classDeclarationSyntax, context.SemanticModel);
                     }
+#pragma warning restore CS0618 // Type or member is obsolete
                 }
             }
 
