@@ -30,6 +30,12 @@ namespace SGF
         /// </summary>
         public ILogger Logger { get; private set; } // Set with reflection, don't change 
 
+        /// <summary>
+        /// Allows you to set a custom exception handler for capturing exceptions
+        /// that are thrown by the generator
+        /// </summary>
+        public event Action<Exception>? ExceptionHandler;
+
 
         static IncrementalGenerator()
         {
@@ -44,7 +50,8 @@ namespace SGF
         {
             Name = name ?? GetType().Name;
             Logger = new Logger(Name);
-            if(s_environment != null)
+            ExceptionHandler += OnException;
+            if (s_environment != null)
             {
                 foreach(ILogSink sink in s_environment.GetLogSinks())
                 {
@@ -97,7 +104,7 @@ namespace SGF
         {
             if (e.ExceptionObject is Exception exception)
             {
-                OnException(exception);
+                ExceptionHandler?.Invoke(exception);
             }
         }
 
