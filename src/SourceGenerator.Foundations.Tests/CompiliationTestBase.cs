@@ -1,4 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
@@ -64,7 +64,7 @@ namespace SGF
             CSharpCompilationOptions compilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
 
             CompilationWithAnalyzersOptions analyzerOptions = new CompilationWithAnalyzersOptions(
-                new AnalyzerOptions([], new SgfAnalyzerConfigOptionsProvider(AnalyzerOptions)),
+                new AnalyzerOptions(ImmutableArray<AdditionalText>.Empty, new SgfAnalyzerConfigOptionsProvider(AnalyzerOptions)),
                 null, true, false);
 
             // Create a Roslyn compilation for the syntax tree.
@@ -83,7 +83,7 @@ namespace SGF
             driver = driver.RunGenerators(compilation)
                 .RunGeneratorsAndUpdateCompilation(compilation, out compilation, out var _);
 
-            CompilationWithAnalyzers analysis = compilation.WithAnalyzers([.. m_analyzers], analyzerOptions);
+            CompilationWithAnalyzers analysis = compilation.WithAnalyzers(m_analyzers.ToImmutableArray(), analyzerOptions);
 
             ImmutableArray<Diagnostic> diagnostics = await analysis.GetAllDiagnosticsAsync();
             if (assertDiagnostics is not null)
@@ -147,7 +147,7 @@ namespace SGF
         protected static SyntaxTree ParseSyntaxTree(string source, string fileName = "TestClass.cs")
         {
             SourceText sourceText = SourceText.From(source, Encoding.UTF8);
-            CSharpParseOptions parseOptions = new CSharpParseOptions(LanguageVersion.CSharp12);
+            CSharpParseOptions parseOptions = new CSharpParseOptions(LanguageVersion.CSharp10);
             SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(source, path: fileName);
             return syntaxTree;
         }
