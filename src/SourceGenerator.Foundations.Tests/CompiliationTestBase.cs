@@ -1,4 +1,4 @@
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
@@ -48,7 +48,7 @@ namespace SGF
             AddAssemblyReference("Microsoft.CodeAnalysis");
             AddAssemblyReference("System.Linq");
             AddMetadataReference<object>();
-            AddMetadataReference<SgfGeneratorAttribute>();
+            AddMetadataReference<IncrementalGenerator>();
         }
 
 
