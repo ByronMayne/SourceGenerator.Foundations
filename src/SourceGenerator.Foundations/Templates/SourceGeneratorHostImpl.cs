@@ -55,17 +55,8 @@ namespace {{dataModel.Namespace}}
                 return;
             }
 
-            ILogger logger = generator.Logger;
-            try
-            {
-                SgfInitializationContext sgfContext = new(context, logger);
-
-                generator.OnInitialize(sgfContext);
-            }
-            catch (Exception exception)
-            {
-                logger.Error(exception, $"Error! An unhandled exception was thrown while initializing the source generator '{{dataModel.QualifiedName}}'.");
-            }
+            SgfInitializationContext sgfContext = new(generator, context);
+            generator.OnInitialize(sgfContext);
         }
 
         private object? CreateInstance()
