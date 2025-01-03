@@ -11,7 +11,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all" />
     <PackageReference Include="Microsoft.SourceLink.GitHub"  PrivateAssets="all"/>
-    <None Include="..\..\README.md" Pack="True" PackagePath="/" />
     <None Update="SourceGenerator.Foundations.props" Pack="True" PackagePath="build/$(AssemblyName).props" />
     <None Update="SourceGenerator.Foundations.targets" Pack="True" PackagePath="build/$(AssemblyName).targets" />
     <ProjectReference Include="$(SGFContractsProjectPath)" PrivateAssets="All" />
@@ -24,6 +23,15 @@
     <ItemGroup>
       <TfmSpecificPackageFile Include="$(SGFMsBuildPath)">
         <PackagePath>build/</PackagePath>
+      </TfmSpecificPackageFile>
+      <TfmSpecificPackageFile Include="$(SGFContractsProjectDir)bin\$(Configuration)\netstandard2.0\SourceGenerator.Foundations.Contracts.dll">
+        <PackagePath>lib/netstandard2.0/SourceGenerator.Foundations.Contracts.dll</PackagePath>
+      </TfmSpecificPackageFile>
+      <TfmSpecificPackageFile Include="$(SGFWindowsPluginProjectDir)bin\$(Configuration)\netstandard2.0\SourceGenerator.Foundations.Windows.dll">
+        <PackagePath>lib/netstandard2.0/SourceGenerator.Foundations.Windows.dll</PackagePath>
+      </TfmSpecificPackageFile>
+      <TfmSpecificPackageFile Include="$(LibsDir)SourceGenerator.Foundations.MSBuild\*.*">
+        <PackagePath>sgf/injector/</PackagePath>
       </TfmSpecificPackageFile>
     </ItemGroup>
   </Target>
