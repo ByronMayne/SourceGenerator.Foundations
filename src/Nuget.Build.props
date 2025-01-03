@@ -16,24 +16,9 @@
     <PackageTags>source;generator;csharp</PackageTags>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <NoWarn>$(NoWarn);NU5128;NU5100</NoWarn>
-    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);AppendNugetContent</TargetsForTfmSpecificContentInPackage>
   </PropertyGroup>
-
-  <!-- Changes the content of the nuget package by manually adding files-->
-  <Target Name="AppendNugetContent">
-    <ItemGroup>
-      <TfmSpecificPackageFile Include="$(ImgDir)icon.png">
-        <PackagePath>/$(PackageIcon)</PackagePath>
-      </TfmSpecificPackageFile>
-      <TfmSpecificPackageFile Include="$(SGFContractsProjectDir)bin\$(Configuration)\netstandard2.0\SourceGenerator.Foundations.Contracts.dll">
-        <PackagePath>lib/netstandard2.0/SourceGenerator.Foundations.Contracts.dll</PackagePath>
-      </TfmSpecificPackageFile>
-      <TfmSpecificPackageFile Include="$(SGFWindowsPluginProjectDir)bin\$(Configuration)\netstandard2.0\SourceGenerator.Foundations.Windows.dll">
-        <PackagePath>lib/netstandard2.0/SourceGenerator.Foundations.Windows.dll</PackagePath>
-      </TfmSpecificPackageFile>
-      <TfmSpecificPackageFile Include="$(LibsDir)SourceGenerator.Foundations.MSBuild\*.*">
-        <PackagePath>sgf/injector/</PackagePath>
-      </TfmSpecificPackageFile>
-    </ItemGroup>
-  </Target>
+  <ItemGroup>
+      <None Include="..\..\README.md" Pack="True" PackagePath="/" />
+      <None Include="$(ImgDir)icon.png" Pack="True" PackagePath="/$(PackageIcon)" />
+  </ItemGroup>
 </Project>
