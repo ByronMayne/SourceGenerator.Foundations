@@ -11,9 +11,7 @@
     <SGfIco>$(MSBuildThisFileDirectory)..\img\icon.png</SGfIco>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     <!-- Icons -->
-    <ApplicationIcon>$(MSBuildThisFileDirectory)..\img\icon.ico</ApplicationIcon>
-
-    
+    <ApplicationIcon>$(MSBuildThisFileDirectory)..\img\icon.ico</ApplicationIcon>    
     <!-- Paths | SGF Core -->
     <SGFProjectDir>$(SGFSourceDir)SourceGenerator.Foundations\</SGFProjectDir>
     <SGFProjectPath>$(SGFProjectDir)SourceGenerator.Foundations.csproj</SGFProjectPath>
@@ -35,6 +33,10 @@
     <!-- Local Path Overrides | Both a local build and the nuget package use the same logic. This is used to override the paths when building locally -->
     <SGFMsBuildPath>$(LibsDir)SourceGenerator.Foundations.MSBuild\SourceGenerator.Foundations.MSBuild.dll</SGFMsBuildPath>
   </PropertyGroup>
+  <ItemGroup>
+      <!-- Powershell NuGet scripts-->
+    <None Include="$(MSBuildThisFileDirectory)Scripts/*.ps1" Pack="True" PackagePath="tools\%(FileName)%(Extension)" Visible="Visible" />
+  </ItemGroup>
   <!-- Debug Targets -->
   <Target Name="PrintSGFPaths">
     <Message Importance="high" Text="SGFProjectDir: $(SGFProjectDir)"/>
