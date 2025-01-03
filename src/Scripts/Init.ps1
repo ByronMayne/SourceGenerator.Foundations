@@ -4,6 +4,8 @@
 
 param($installPath, $toolsPath, $package, $project)
 
+$package = @{Id ="SourceGenerator.Foundations"; Version="2.0.11" }
+
 
 function Get-BuildAgent {
 
@@ -101,7 +103,7 @@ $tracePayload = @{
         "ai.cloud.role" = "NuGetScript"
     }
     data = @{
-        baseType = "MessageData"
+        baseType = "EventData"
         baseData = @{
             name = "package_init"
             properties = @{
@@ -114,4 +116,4 @@ $tracePayload = @{
     }
 }
 $traceJson = $tracePayload | ConvertTo-Json -Depth 10 
-_ = Invoke-WebRequest -Uri $applicationInsightsUrl -Method Post -Body $traceJson -ContentType "application/json"
+Invoke-WebRequest -Uri $applicationInsightsUrl -Method Post -Body $traceJson -ContentType "application/json" | Out-Null
