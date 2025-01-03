@@ -4,6 +4,8 @@
 
 param($installPath, $toolsPath, $package, $project)
 
+$package = @{Id ="SourceGenerator.Foundations"; Version="2.0.11" }
+
 
 function Get-BuildAgent {
 
@@ -71,36 +73,47 @@ function Get-BuildAgent {
     return $agentKind;
 }
 
+function Get-MachineHash {
+      $machineName = [Environment]::MachineName
+      $userName = [Environment]::UserName
+      $processorCount = [Environment]::ProcessorCount
+      $osVersion = [System.Environment]::OSVersion;
+      $data = "$machineName|$userName|$processorCount|$osVersion"
+      $bytes = [System.Text.Encoding]::UTF8.GetBytes($data)
+      $sha256 = [System.Security.Cryptography.SHA256]::Create()
+      $hashBytes = $sha256.ComputeHash($bytes)
+      $hashString = -join ($hashBytes | ForEach-Object { $_.ToString("x2") })
+      return $hashString
+}
+
+
 $packageName = $package.Id;
 $packageVersion = $package.Version;
-$instrumentationKey = "43813c6c-bcf0-4610-bd97-9f6933a02b44"
 $applicationInsightsUrl = "https://dc.services.visualstudio.com/v2/track"
-$operationId = [guid]::NewGuid()
+$operationId = 
 $buildAgent = Get-BuildAgent
-$machineId = Get-ItemProperty HKLM:SOFTWARE\Microsoft\SQMClient | Select -ExpandProperty MachineID
-$machineId = $machineId.Substring(1, 36);
+$machineHash =  Get-MachineHash
 
 $tracePayload = @{
-    name = "Microsoft.ApplicationInsights.Trace"
+    name = "Microsoft.ApplicationInsights.Event"
     time = (Get-Date).ToString("o") 
-    iKey = $instrumentationKey
+    iKey = "43813c6c-bcf0-4610-bd97-9f6933a02b44"
     tags = @{
         "ai.operation.id" = $operationId
         "ai.cloud.role" = "NuGetScript"
     }
     data = @{
-        baseType = "MessageData"
+        baseType = "EventData"
         baseData = @{
-            message = "package_init"
-            severityLevel = 1 # Verbose=0, Information=1, Warning=2, Error=3, Critical=4
+            name = "package_init"
             properties = @{
                 "PackageName" = "$packageName"
                 "PackageVersion" = "$packageVersion"
                 "BuildAgent" = "$buildAgent"
-                "MachineId" = $machineId
+                "MachineId" = $machineHash
             }
         }
     }
 }
 $traceJson = $tracePayload | ConvertTo-Json -Depth 10 
-_ = Invoke-WebRequest -Uri $applicationInsightsUrl -Method Post -Body $traceJson -ContentType "application/json"
+Invoke-WebRequest -Uri $applicationInsightsUrl -Method Post -Body $traceJson -ContentType "application/json" | Out-Null
