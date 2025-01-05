@@ -9,7 +9,7 @@ namespace SourceGenerator.Foundations.Tests
     /// by the <see cref="HoistSourceGenerator"/> does not cause 
     /// errors due to `EnforceExtendedAnalyzerRules`
     /// </summary>
-    public class ExtendedAnalyzerRuleTests : CompiliationTestBase
+    public class ExtendedAnalyzerRuleTests : CompilationTestBase
     {
         public ExtendedAnalyzerRuleTests(ITestOutputHelper outputHelper) : base(outputHelper)
         {

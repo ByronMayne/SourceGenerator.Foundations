@@ -13,7 +13,7 @@ namespace SGF
     /// There is an attribute called `ExtendedAnalyzerRules` which are applied to source generators. Since
     /// SGF injects code into their projects we want to make sure we don't add warnings or errors.
     /// </summary>
-    public class CompiliationTestBase
+    public class CompilationTestBase
     {
         public SgfAnalyzerConfigOptions AnalyzerOptions { get; }
 
@@ -26,14 +26,14 @@ namespace SGF
         private readonly List<DiagnosticAnalyzer> m_analyzers;
         protected readonly List<IIncrementalGenerator> m_incrementalGenerators;
 
-        protected CompiliationTestBase(ITestOutputHelper outputHelper)
+        protected CompilationTestBase(ITestOutputHelper outputHelper)
         {
             m_analyzers = new List<DiagnosticAnalyzer>();
             m_references = new List<MetadataReference>();
             m_incrementalGenerators = new List<IIncrementalGenerator>();
 
             AnalyzerOptions = new SgfAnalyzerConfigOptions();
-            TestMethodName = "Unkonwn";
+            TestMethodName = "Unknown";
             Type type = outputHelper.GetType();
             FieldInfo? testField = type.GetField("test", BindingFlags.Instance | BindingFlags.NonPublic);
             ITest? test = testField?.GetValue(outputHelper) as ITest;
