@@ -21,5 +21,6 @@
       <PackageVersion Include="System.Text.RegularExpressions" Version="4.3.1" />
       <PackageVersion Include="xunit" Version="2.5.3" />
       <PackageVersion Include="xunit.runner.visualstudio" Version="2.5.3" />
+      <PackageVersion Include="NugetInsights.Connector" Version="1.0.*"/>
   </ItemGroup>
 </Project>
