@@ -11,10 +11,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="all" />
-    <PackageReference Include="NugetInsights.Connector">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <None Update="SourceGenerator.Foundations.props" Pack="True" PackagePath="build/$(AssemblyName).props" />
     <None Update="SourceGenerator.Foundations.targets" Pack="True" PackagePath="build/$(AssemblyName).targets" />
     <ProjectReference Include="$(SGFContractsProjectPath)" PrivateAssets="All" />
