@@ -29,7 +29,7 @@ namespace Example
             AttachDebugger();
 
             // Writes output to Visual Studios output window
-            WriteLine("Hello World");
+            Logger.Information("Hello World");
        }
     }
 }
