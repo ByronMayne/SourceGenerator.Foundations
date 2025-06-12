@@ -211,7 +211,7 @@ public class MyGenerator : IncrementalGenerator
 ```
 
 ## Unit Tests 
-You can write unit test to validate that your source generators are working as expected. To do this for this library requires a very tiny amount of extra work. You can also look at the [example project](src\Sandbox\ConsoleApp.SourceGenerator.Tests\TestCase.cs) to see how it works. 
+You can write unit test to validate that your source generators are working as expected. To do this for this library requires a very tiny amount of extra work. You can also look at the [example project](src/Sandbox/ConsoleApp.SourceGenerator.Tests/TestCase.cs) to see how it works. 
 
 The generated class will all be internal so your unit test assembly will need to have viability.
 
