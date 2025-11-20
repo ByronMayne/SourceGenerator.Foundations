@@ -11,7 +11,7 @@ namespace SGF.Diagnostics.Sinks
 
         public void Write(LogLevel logLevel, string message)
         {
-            if (Level >= logLevel)
+            if (logLevel >= Level)
             {
                 switch (logLevel)
                 {
@@ -30,7 +30,6 @@ namespace SGF.Diagnostics.Sinks
             }
 
             Console.ResetColor();
-
         }
     }
 }
