@@ -25,7 +25,7 @@ namespace {{@namespace}}
 {
     /// <summary>
     /// Provides logic for hooking into the app domain to resolve assemblies as well
-    // as capture exceptions and handle shutdown events 
+    /// as capture exceptions and handle shutdown events 
     /// </summary>
     internal abstract class SourceGeneratorHoist
     {
