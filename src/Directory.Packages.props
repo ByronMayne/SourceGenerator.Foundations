@@ -16,7 +16,6 @@
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="1.1.1" />
     <PackageVersion Include="Microsoft.VisualStudio.Interop" Version="17.4.33103.184" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.2" />
-    <PackageVersion Include="NugetInsights.Connector" Version="1.0.*" />
     <PackageVersion Include="System.Management" Version="7.0.0" />
     <PackageVersion Include="System.Net.Http" Version="4.3.4" />
     <PackageVersion Include="System.Text.RegularExpressions" Version="4.3.1" />

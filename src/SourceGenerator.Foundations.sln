@@ -26,8 +26,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp", "Sandbox\Conso
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp.SourceGenerator", "Sandbox\ConsoleApp.SourceGenerator\ConsoleApp.SourceGenerator.csproj", "{594AACB5-B550-46CF-B6E2-16EF826D655A}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{F0124C8F-B8FB-4832-9D65-D0F13E4308AE}"
-EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SourceGenerator.Foundations.Shared", "SourceGenerator.Foundations.Shared\SourceGenerator.Foundations.Shared.shproj", "{8AF3630C-2BF5-4854-A45D-0074C2787964}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp.SourceGenerator.Tests", "Sandbox\ConsoleApp.SourceGenerator.Tests\ConsoleApp.SourceGenerator.Tests.csproj", "{560C8028-2831-4697-9571-A9920FB972E7}"
