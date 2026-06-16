@@ -16,6 +16,7 @@
     <SgfAddNullablePolyfill Condition="'$(SgfAddNullablePolyfill)' == ''">true</SgfAddNullablePolyfill>
     <SgfAddInitPropertyPolyfill Condition="'$(SgfAddInitPropertyPolyfill)' == ''">true</SgfAddInitPropertyPolyfill>
     <SgfAddRequiredMemberPolyfill Condition="'$(SgfAddRequiredMemberPolyfill)' == ''">true</SgfAddRequiredMemberPolyfill>
+    <SGFEmbedCodeAnalysis Condition="'$(SGFEmbedCodeAnalysis)' == ''">false</SGFEmbedCodeAnalysis>
   </PropertyGroup>
   <ItemGroup>
     <CompilerVisibleProperty Include="RootNamespace" />
