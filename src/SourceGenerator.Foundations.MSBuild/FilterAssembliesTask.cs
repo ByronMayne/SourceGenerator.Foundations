@@ -15,6 +15,7 @@ namespace SourceGenerator.Foundations.MSBuild
     public class FilterAssembliesTask : Task, ITask
     {
         private readonly string m_netStandardPatttern;
+        private const string m_codeAnalysisAssemblyPrefix = "Microsoft.CodeAnalysis";
         private readonly ISet<string> m_ignoredAssemblies;
 
         /// <summary>
@@ -29,6 +30,12 @@ namespace SourceGenerator.Foundations.MSBuild
         [Output]
         public ITaskItem[] FilteredAssemblies { get; set; }
 
+        /// <summary>
+        /// By default all Microsoft.CodeAnalysis.* assemblies are excluded as they are provided by the host.
+        /// Set to true to include them.
+        /// </summary>
+        public bool EmbedCodeAnalysis { get; set; }
+
 
         public FilterAssembliesTask()
         {
@@ -38,7 +45,6 @@ namespace SourceGenerator.Foundations.MSBuild
 			m_netStandardPatttern = $"{Path.DirectorySeparatorChar}netstandard.library{Path.DirectorySeparatorChar}";
             m_ignoredAssemblies = new HashSet<string>()
             {
-                "Microsoft.CodeAnalysis.CSharp.dll",
                 "Microsoft.CSharp.dll",
                 "Microsoft.Win32.Primitives.dll",
                 "mscorlib.dll",
@@ -98,6 +104,11 @@ namespace SourceGenerator.Foundations.MSBuild
         /// </summary>
         private bool Include(string assemblyPath)
         {
+            if (!EmbedCodeAnalysis && Path.GetFileName(assemblyPath).StartsWith(m_codeAnalysisAssemblyPrefix, StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
             foreach (string ignoredAssembly in m_ignoredAssemblies)
             {
                 if (assemblyPath.IndexOf(m_netStandardPatttern, StringComparison.OrdinalIgnoreCase) > 0) return false;
