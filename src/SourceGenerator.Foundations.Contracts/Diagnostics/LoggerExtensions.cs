@@ -12,6 +12,38 @@ public static class LoggerExtensions
     }
 
     /// <summary>
+    /// Adds a new trace log entry 
+    /// </summary>
+    public static void Trace(this ILogger logger, string message)
+    {
+        logger.Log(LogLevel.Trace, null, message);
+    }
+
+    /// <summary>
+    /// Adds a new trace log entry with an exception 
+    /// </summary>
+    public static void Trace(this ILogger logger, Exception exception, string message)
+    {
+        logger.Log(LogLevel.Trace, exception, message);
+    }
+
+    /// <summary>
+    /// Adds a new debug log entry 
+    /// </summary>
+    public static void Debug(this ILogger logger, string message)
+    {
+        logger.Log(LogLevel.Debug, null, message);
+    }
+
+    /// <summary>
+    /// Adds a new debug log entry with an exception 
+    /// </summary>
+    public static void Debug(this ILogger logger, Exception exception, string message)
+    {
+        logger.Log(LogLevel.Debug, exception, message);
+    }
+
+    /// <summary>
     /// Adds a new info log entry 
     /// </summary>
     public static void Information(this ILogger logger, string message)
@@ -58,4 +90,5 @@ public static class LoggerExtensions
     {
         logger.Log(LogLevel.Error, exception, message);
     }
+
 }

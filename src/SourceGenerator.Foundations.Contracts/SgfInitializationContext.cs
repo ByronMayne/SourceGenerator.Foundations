@@ -15,6 +15,7 @@ namespace SGF
     {
         private readonly IncrementalGeneratorInitializationContext m_context;
         public readonly IncrementalGenerator m_generator;
+        private readonly ILogger m_logger;
 
         /// <inheritdoc/>
         public SyntaxValueProvider SyntaxProvider => m_context.SyntaxProvider;
@@ -43,6 +44,7 @@ namespace SGF
         {
             m_context = context;
             m_generator = generator;
+            m_logger = generator.Logger.ForContext<SgfInitializationContext>();
         }
 
         ///  <inheritdoc/>

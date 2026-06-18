@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
+using SGF.Diagnostics;
 using System.Text;
 using System.Threading;
 
@@ -12,6 +13,7 @@ namespace SGF
     {
         private readonly SourceProductionContext m_context;
         private readonly IncrementalGenerator m_generator;
+        private readonly ILogger m_logger;
 
         /// <inheritdoc/>
         public int SourceCount { get; private set; }
@@ -29,7 +31,7 @@ namespace SGF
             SourceCount = 0;
             m_generator = generator;
             m_context = context;
-
+            m_logger = generator.Logger.ForContext<SgfSourceProductionContext>();
         }
 
         /// <inheritdoc/>
@@ -40,7 +42,7 @@ namespace SGF
         public void AddSource(string hintName, SourceText sourceText)
         {
             SourceCount++;
-            m_generator.Logger.Information($" SourceAdded: {SourceCount}. {hintName}");
+            m_logger.Information($" SourceAdded: {SourceCount}. {hintName}");
             m_context.AddSource(hintName, sourceText);
         }
 

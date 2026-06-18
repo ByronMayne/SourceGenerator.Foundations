@@ -50,6 +50,14 @@ namespace SGF
         {
             Name = name ?? GetType().Name;
             Logger = new Logger(Name);
+
+            // Configure log level from attribute if present
+            var logLevelAttr = GetType().GetCustomAttribute<LogLevelAttribute>();
+            if (logLevelAttr != null)
+            {
+                Logger.Configuration.GeneratorLevel = logLevelAttr.Level;
+            }
+
             ExceptionHandler += OnException;
             if (s_environment != null)
             {
