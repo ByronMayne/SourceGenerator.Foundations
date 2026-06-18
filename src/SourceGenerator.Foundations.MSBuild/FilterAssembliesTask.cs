@@ -3,6 +3,7 @@ using Microsoft.Build.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace SourceGenerator.Foundations.MSBuild
 {
@@ -15,8 +16,6 @@ namespace SourceGenerator.Foundations.MSBuild
     public class FilterAssembliesTask : Task, ITask
     {
         private readonly string m_netStandardPatttern;
-        private const string m_codeAnalysisAssemblyPrefix = "Microsoft.CodeAnalysis";
-        private readonly ISet<string> m_ignoredAssemblies;
 
         /// <summary>
         /// The list of assemblies that we can filter out 
@@ -25,51 +24,23 @@ namespace SourceGenerator.Foundations.MSBuild
         public ITaskItem[] Assemblies { get; set; }
 
         /// <summary>
+        /// Assembly names or wildcard patterns that should not be embedded.
+        /// </summary>
+        public ITaskItem[] IgnoredAssemblies { get; set; }
+
+        /// <summary>
         /// The filtered version of <see cref="Assemblies"/>
         /// </summary>
         [Output]
         public ITaskItem[] FilteredAssemblies { get; set; }
 
-        /// <summary>
-        /// By default all Microsoft.CodeAnalysis.* assemblies are excluded as they are provided by the host.
-        /// Set to true to include them.
-        /// </summary>
-        public bool EmbedCodeAnalysis { get; set; }
-
-
         public FilterAssembliesTask()
         {
 			Assemblies = Array.Empty<ITaskItem>();
+            IgnoredAssemblies = Array.Empty<ITaskItem>();
             FilteredAssemblies = Array.Empty<ITaskItem>();
 
 			m_netStandardPatttern = $"{Path.DirectorySeparatorChar}netstandard.library{Path.DirectorySeparatorChar}";
-            m_ignoredAssemblies = new HashSet<string>()
-            {
-                "Microsoft.CSharp.dll",
-                "Microsoft.Win32.Primitives.dll",
-                "mscorlib.dll",
-                "netstandard.dll",
-                "System.AppContext.dll",
-                "System.Buffers.dll",
-                "System.CodeDom.dll",
-                "System.Collections.Immutable.dll",
-                "System.Console.dll",
-                "System.Diagnostics.dll",
-                "System.dll",
-                "System.Memory.dll",
-                "System.Numerics.Vectors.dll",
-                "System.ObjectModel.dll",
-                "System.Reflection.Metadata.dll",
-                "System.Runtime.CompilerServices.Unsafe.dll",
-                "System.ServiceModel.dll",
-                "System.Text.Encoding.CodePages.dll",
-                "System.Threading.Tasks.Extensions.dll",
-                "System.Transactions.dll",
-                "System.ValueTuple.dll",
-                "System.Web.dll",
-                "System.Windows.dll",
-                "System.Collections.dll",
-            };
         }
 
         /// <inheritdoc cref="Task"/>
@@ -104,20 +75,54 @@ namespace SourceGenerator.Foundations.MSBuild
         /// </summary>
         private bool Include(string assemblyPath)
         {
-            if (!EmbedCodeAnalysis && Path.GetFileName(assemblyPath).StartsWith(m_codeAnalysisAssemblyPrefix, StringComparison.OrdinalIgnoreCase))
+            if (assemblyPath.IndexOf(m_netStandardPatttern, StringComparison.OrdinalIgnoreCase) > 0)
             {
                 return false;
             }
 
-            foreach (string ignoredAssembly in m_ignoredAssemblies)
+            string assemblyFileName = Path.GetFileName(assemblyPath);
+            string assemblyName = Path.GetFileNameWithoutExtension(assemblyPath);
+
+            foreach (ITaskItem ignoredAssembly in IgnoredAssemblies)
             {
-                if (assemblyPath.IndexOf(m_netStandardPatttern, StringComparison.OrdinalIgnoreCase) > 0) return false;
-                if (assemblyPath.EndsWith(ignoredAssembly))
+                if (IsMatch(assemblyFileName, assemblyName, ignoredAssembly.ItemSpec))
                 {
                     return false;
                 }
             }
             return true;
+        }
+
+        private static bool IsMatch(string assemblyFileName, string assemblyName, string pattern)
+        {
+            if (string.IsNullOrWhiteSpace(pattern))
+            {
+                return false;
+            }
+
+            if (pattern.IndexOfAny(new[] { '*', '?' }) >= 0)
+            {
+                return WildcardMatch(assemblyFileName, pattern)
+                    || WildcardMatch(assemblyName, pattern);
+            }
+
+            if (Path.HasExtension(pattern))
+            {
+                return string.Equals(assemblyFileName, pattern, StringComparison.OrdinalIgnoreCase);
+            }
+
+            return string.Equals(assemblyName, pattern, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool WildcardMatch(string value, string pattern)
+        {
+            string regexPattern = "^"
+                + Regex.Escape(pattern)
+                    .Replace("\\*", ".*")
+                    .Replace("\\?", ".")
+                + "$";
+
+            return Regex.IsMatch(value, regexPattern, RegexOptions.IgnoreCase);
         }
     }
 }

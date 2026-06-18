@@ -12,6 +12,10 @@ namespace ConsoleApp.SourceGenerator.Tests
             FilterAssembliesTask task = new FilterAssembliesTask
             {
                 BuildEngine = new TestBuildEngine(),
+                IgnoredAssemblies = new TaskItem[]
+                {
+                    new("Microsoft.CodeAnalysis*"),
+                },
                 Assemblies = new TaskItem[]
                 {
                     new("/tmp/Microsoft.CodeAnalysis.dll"),
@@ -28,12 +32,39 @@ namespace ConsoleApp.SourceGenerator.Tests
         }
 
         [Fact]
-        public void IncludesCodeAnalysisAssembliesWhenEnabled()
+        public void ExcludesNamedAssemblyWithoutExtension()
         {
             FilterAssembliesTask task = new FilterAssembliesTask
             {
                 BuildEngine = new TestBuildEngine(),
-                EmbedCodeAnalysis = true,
+                IgnoredAssemblies = new TaskItem[]
+                {
+                    new("MyDependency"),
+                },
+                Assemblies = new TaskItem[]
+                {
+                    new("/tmp/MyDependency.dll"),
+                    new("/tmp/OtherDependency.dll"),
+                }
+            };
+
+            bool result = task.Execute();
+
+            Assert.True(result);
+            Assert.Single(task.FilteredAssemblies);
+            Assert.Equal("/tmp/OtherDependency.dll", task.FilteredAssemblies[0].ItemSpec);
+        }
+
+        [Fact]
+        public void IncludesAssembliesWhenNoIgnoredPatternMatches()
+        {
+            FilterAssembliesTask task = new FilterAssembliesTask
+            {
+                BuildEngine = new TestBuildEngine(),
+                IgnoredAssemblies = new TaskItem[]
+                {
+                    new("Does.Not.Match*"),
+                },
                 Assemblies = new TaskItem[]
                 {
                     new("/tmp/Microsoft.CodeAnalysis.dll"),
