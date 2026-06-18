@@ -16,6 +16,7 @@
     <SgfAddNullablePolyfill Condition="'$(SgfAddNullablePolyfill)' == ''">true</SgfAddNullablePolyfill>
     <SgfAddInitPropertyPolyfill Condition="'$(SgfAddInitPropertyPolyfill)' == ''">true</SgfAddInitPropertyPolyfill>
     <SgfAddRequiredMemberPolyfill Condition="'$(SgfAddRequiredMemberPolyfill)' == ''">true</SgfAddRequiredMemberPolyfill>
+    <SgfLogLevel Condition="'$(SgfLogLevel)' == ''">Information</SgfLogLevel>
     <SGFEmbedCodeAnalysis Condition="'$(SGFEmbedCodeAnalysis)' == ''">false</SGFEmbedCodeAnalysis>
   </PropertyGroup>
   <ItemGroup>
@@ -49,6 +50,7 @@
     <CompilerVisibleProperty Include="RootNamespace" />
     <CompilerVisibleProperty Include="AssemblyName" />
     <CompilerVisibleProperty Include="BaseOutputPath "/>
+    <CompilerVisibleProperty Include="SgfLogLevel" />
   </ItemGroup>
   <ItemGroup Condition="'$(IsNuGetPackage.ToLower())' == 'true'">
     <SGF_EmbeddedAssembly Include="$(MSBuildThisFileDirectory)..\sgf\embedded\assemblies\*.*"/>

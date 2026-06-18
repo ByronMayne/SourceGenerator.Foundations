@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="SourceGenerator.Foundations.MSBuild.Tests/SourceGenerator.Foundations.MSBuild.Tests.csproj" Id="7eb0f850-a7e2-46a7-91bb-5e410382a484" />
+  <Project Path="SourceGenerator.Foundations.MSBuild/SourceGenerator.Foundations.MSBuild.csproj" />
+</Solution>

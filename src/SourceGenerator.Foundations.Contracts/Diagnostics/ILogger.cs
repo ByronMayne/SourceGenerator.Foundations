@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace SGF.Diagnostics
 {
@@ -7,6 +8,17 @@ namespace SGF.Diagnostics
     /// </summary>
     public interface ILogger
     {
+        /// <summary>
+        /// Gets the log level configuration
+        /// </summary>
+        LogLevelConfiguration Configuration { get; }
+
+
+        /// <summary>
+        /// Gets the list of sinks that this logger writes to
+        /// </summary>
+        IReadOnlyList<ILogSink> Sinks { get; }
+
         /// <summary>
         /// Gets if the log level is enabled or not
         /// </summary>
@@ -26,5 +38,10 @@ namespace SGF.Diagnostics
         /// <param name="exception">An optional exception that this log refers too</param>
         /// <param name="message">The message to output</param>
         void Log(LogLevel logLevel, Exception? exception, string message);
+
+        /// <summary>
+        /// Creates a new logger with the context of the type T, this is used to provide more information about where the log is coming from
+        /// </summary>
+        ILogger ForContext<T>();
     }
 }

@@ -22,7 +22,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ConsoleApp.SourceGenerator\ConsoleApp.SourceGenerator.csproj" />
-    <ProjectReference Include="..\..\SourceGenerator.Foundations.MSBuild\SourceGenerator.Foundations.MSBuild.csproj" />
   </ItemGroup>
 
   <ItemGroup>

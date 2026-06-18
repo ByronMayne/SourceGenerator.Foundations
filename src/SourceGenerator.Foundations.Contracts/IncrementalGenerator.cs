@@ -50,6 +50,7 @@ namespace SGF
         {
             Name = name ?? GetType().Name;
             Logger = new Logger(Name);
+
             ExceptionHandler += OnException;
             if (s_environment != null)
             {

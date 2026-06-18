@@ -55,8 +55,32 @@ namespace {{dataModel.Namespace}}
                 return;
             }
 
+            // Configure log level from MSBuild properties
+            context.RegisterSourceOutput(
+                context.AnalyzerConfigOptionsProvider,
+                (spc, options) => ConfigureLogLevel(generator, options));
+
             SgfInitializationContext sgfContext = new(generator, context);
             generator.OnInitialize(sgfContext);
+        }
+
+        private static void ConfigureLogLevel(IncrementalGenerator generator, Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptionsProvider optionsProvider)
+        {
+            // Read global log level from MSBuild property
+            if (optionsProvider.GlobalOptions.TryGetValue("build_property.SgfLogLevel", out var globalLevel))
+            {
+                var parsedLevel = LogLevelParser.Parse(globalLevel);
+                generator.Logger.Configuration.GlobalLevel = parsedLevel;
+            }
+
+            // Read generator-specific log level from MSBuild property
+            // Format: build_property.SgfLogLevel_<GeneratorName>
+            var generatorKey = $"build_property.SgfLogLevel_{generator.Name}";
+            if (optionsProvider.GlobalOptions.TryGetValue(generatorKey, out var generatorLevel))
+            {
+                var parsedLevel = LogLevelParser.Parse(generatorLevel);
+                generator.Logger.Configuration.GeneratorLevel = parsedLevel;
+            }
         }
 
         private object? CreateInstance()
