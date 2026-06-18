@@ -66,6 +66,11 @@ namespace SGF.Diagnostics
         /// <returns>The effective log level for this context</returns>
         public LogLevel GetContextLevel(string? context)
         {
+            if (context == null)
+            {
+                return m_globalLevel;
+            }
+
             // Priority: Context-specific > Generator-specific > Global
             if (!string.IsNullOrWhiteSpace(context) && m_contextLevels.TryGetValue(context, out var contextLevel))
                 return contextLevel;
