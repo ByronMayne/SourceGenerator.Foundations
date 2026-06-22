@@ -137,6 +137,15 @@ You can embed any assemblies you want by adding them to `<SGF_EmbeddedAssembly I
 </PropertyGroup>
 ```
 
+You can also exclude additional assemblies by name (with optional wildcard support):
+
+```xml
+<ItemGroup>
+  <SGFExcludedAssembly Include="My.Host.Provided.Dependency" />
+  <SGFExcludedAssembly Include="Company.Shared.*" />
+</ItemGroup>
+```
+
 ## Diagnostic Analyzer
 
 Included with this package is a code analyzer that will be used to catch common mistakes when working with this library.

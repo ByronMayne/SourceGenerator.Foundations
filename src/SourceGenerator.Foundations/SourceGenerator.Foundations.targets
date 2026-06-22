@@ -9,7 +9,7 @@
   <UsingTask TaskName="FilterAssembliesTask" AssemblyFile="$(SGFMsBuildPath)" TaskFactory="TaskHostFactory"/>
   <Target Name="SGF_EmbedDependencies" AfterTargets="ResolveAssemblyReferences">
     <FilterAssembliesTask Assemblies="@(ReferencePath->'%(RootDir)%(Directory)%(Filename)%(Extension)')"
-                          EmbedCodeAnalysis="$(SGFEmbedCodeAnalysis)">
+                          IgnoredAssemblies="@(SGFDefaultExcludedAssembly);@(SGFExcludedAssembly)">
       <Output TaskParameter="FilteredAssemblies" ItemName="SGF_FilteredAssembly" />
     </FilterAssembliesTask>
     <!-- Embedded Assemblies -->
