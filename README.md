@@ -6,7 +6,7 @@ Source Generators are awesome but working with them can be a bit painful. This l
 
 ## Quick Start
 
-To get started all you need to do is add the NuGet package reference. You may or may not have to restart Visual Studio for the new types to show up. Then implement the base class `IncrementalGenerator` and apply the `[SgfGenerator]` attribute to your type;
+To get started all you need to do is add the NuGet package reference. You may or may not have to restart Visual Studio for the new types to show up. Then implement the base class `IncrementalGenerator` and apply the `[IncrementalGenerator]` attribute to your type;
 
 ```cs
 using SGF;
@@ -28,7 +28,7 @@ namespace Example
             // Attaches Visual Studio debugger without prompt 
             AttachDebugger();
 
-            // Writes output to Visual Studios output window
+            // Writes output to Visual Studio's output window
             Logger.Information("Hello World");
        }
     }
@@ -67,7 +67,71 @@ By default, SGF does **not** embed `Microsoft.CodeAnalysis.*` assemblies. Roslyn
 ## Logging Framework
 Source generator run in the background and it can be very hard to debug. If you want to make a log you have to write the files to disk and open to read them. 
 
-With this library we leverage the existing Output window and create an entry for each source generator. This is all done by using some Visaul Studio api. Internally this uses a custom Skin for [Serilog.net](https://serilog.net/). Every generator comes with a `Logger` property allowing you to output any information
+With this library we leverage the existing Output window and create an entry for each source generator. This is all done by using some Visual Studio api. Internally this uses a custom Sink for [Serilog.net](https://serilog.net/). Every generator comes with a `Logger` property allowing you to output any information
+
+### Log Levels
+
+Every generator includes configurable log levels for fine-grained control over diagnostic output:
+
+- **None** - Disables all logging
+- **Trace** - Very detailed diagnostic information  
+- **Debug** - Detailed debugging information
+- **Information** - General informational messages (default)
+- **Warning** - Warning messages
+- **Error** - Error messages only
+
+### Configuring Log Levels
+
+**Via MSBuild (Global):**
+```xml
+<PropertyGroup>
+  <SgfLogLevel>Debug</SgfLogLevel>
+</PropertyGroup>
+```
+
+**Via MSBuild (Per-Generator):**
+```xml
+<PropertyGroup>
+  <!-- Set specific log level for MyGenerator -->
+  <SgfLogLevel_MyGenerator>Trace</SgfLogLevel_MyGenerator>
+
+  <!-- All other generators use Warning -->
+  <SgfLogLevel>Warning</SgfLogLevel>
+</PropertyGroup>
+```
+
+**Create Context-Specific Loggers:**
+```csharp
+public class MyGenerator : IncrementalGenerator
+{
+    private readonly ILogger parsingLogger;
+    private readonly ILogger codeGenLogger;
+
+    public MyGenerator() : base(nameof(MyGenerator))
+    {
+        // Each aspect gets its own logger with its own level
+        parsingLogger = Logger.ForContext<SyntaxParser>();
+        Logger.Configuration.SetContextLevel<SyntaxParser>(LogLevel.Trace);
+
+        codeGenLogger = Logger.ForContext<CodeGenerator>();
+        Logger.Configuration.SetContextLevel<CodeGenerator>(LogLevel.Debug);
+    }
+
+    public override void OnInitialize(SgfInitializationContext context)
+    {
+        parsingLogger.Trace("Very detailed parsing info");
+        codeGenLogger.Debug("Code generation details");
+        Logger.Information("General generator info");
+    }
+}
+```
+
+### Available Logging Methods
+- `Logger.Trace("message")` / `Logger.Trace(exception, "message")`
+- `Logger.Debug("message")` / `Logger.Debug(exception, "message")`
+- `Logger.Information("message")` / `Logger.Information(exception, "message")`
+- `Logger.Warning("message")` / `Logger.Warning(exception, "message")`
+- `Logger.Error("message")` / `Logger.Error(exception, "message")`
 
 ![output](./img/OutputWindow.png)
 
@@ -96,15 +160,36 @@ This is done by implementing a wrapper around `IncrementalGeneratorInitializatio
 
 ### Debugging 
 
-To be able to debug a source generators one of the suggested methods is to add the following.
+Traditional debugging of source generators requires boilerplate code that shows an annoying prompt:
 
-```cs
+```csharp
 static CustomSourceGenerator()
 {
-    Debugger.Launch();
+    Debugger.Launch(); // Shows dialog every time
 }
 ```
-This will popup the following window and you have to select your visual studio instance. Instaed with foundations you can just call a single method and break points work from that point on.
+
+This shows a debugger selection dialog every time the generator runs, which is disruptive during development.
+
+**With SGF, just call `AttachDebugger()`:**
+
+```csharp
+[IncrementalGenerator]
+public class MyGenerator : IncrementalGenerator
+{
+    public MyGenerator() : base(nameof(MyGenerator)) { }
+
+    public override void OnInitialize(SgfInitializationContext context)
+    {
+        AttachDebugger(); // Automatically attaches to current VS instance - no prompt!
+
+        // Set breakpoints here - they now work!
+        Logger.Debug("Debugging is now active");
+    }
+}
+```
+
+The debugger will automatically attach to the current Visual Studio instance without any prompts or dialogs.
 
 ![AutoAttach](./img/DebuggerAttach.gif)
 
@@ -229,7 +314,32 @@ public class MyGenerator : IncrementalGenerator
 }
 ```
 
-## Unit Tests 
+### `SGF1004`
+**ModuleInitializerAttribute Conflict**
+
+SGF adds the `ModuleInitializerAttribute` by default for .NET Standard 2.0 compatibility. If your project already defines this attribute or references a library that provides it, you must disable SGF's version to avoid duplicate definition errors.
+
+```csharp
+// Error - ModuleInitializerAttribute is already defined in the compilation
+[IncrementalGenerator]
+public class MyGenerator : IncrementalGenerator 
+{
+    public MyGenerator() : base("MyGenerator") {}
+
+    public override void OnInitialize(SgfInitializationContext context) {}
+}
+```
+
+**Fix:** Add this property to your `.csproj` file:
+```xml
+<PropertyGroup>
+  <SgfAddModuleInitializerAttribute>false</SgfAddModuleInitializerAttribute>
+</PropertyGroup>
+```
+
+After adding this property, the error will be resolved and your generator will compile successfully.
+
+## Unit Tests
 You can write unit test to validate that your source generators are working as expected. To do this for this library requires a very tiny amount of extra work. You can also look at the [example project](src/Sandbox/ConsoleApp.SourceGenerator.Tests/TestCase.cs) to see how it works. 
 
 The generated class will all be internal so your unit test assembly will need to have viability.
@@ -242,19 +352,23 @@ using System.Runtime.CompilerServices;
 
 Then for your unit test functions the only difference will be that instead of creating an instance of your class you create an instance of the `Hoist` class.
 
-```c#
+```csharp
 // Create the instance of our generator and set whatever properties 
 ConsoleAppSourceGenerator generator = new ConsoleAppSourceGenerator()
 {
     Explode = true
 };
-// Build the instance of the wrapper `Host` which takes in your generator.
-ConsoleAppSourceGeneratorHoist host = new
+
+// Build the instance of the wrapper `Hoist` which takes in your generator
+ConsoleAppSourceGeneratorHoist host = new ConsoleAppSourceGeneratorHoist(generator);
 
 // From here it's just like testing any other generator
-ConsoleAppSourceGeneratorHoist(generator);
 GeneratorDriver driver = CSharpGeneratorDriver.Create(host);
 driver = driver.RunGenerators(compilation);
+
+// Assert on the results
+GeneratorDriverRunResult runResult = driver.GetRunResult();
+Assert.NotEmpty(runResult.GeneratedTrees);
 ```
 The only unique feature is the wrapper class `{YourGeneratorName}Host`. This class is an internal feature of `SGF` and is used to make sure all dependencies are resolved before calling into your source generator. 
 
