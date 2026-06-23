@@ -91,4 +91,4 @@ jobs:
         # Release 
       - name: Push | ${{ matrix.project.name }}
         if: github.event_name == 'release' 
-        run: dotnet nuget push src\${{ matrix.project.name }}\bin\${{env.Configuration}}\*.nupkg --skip-duplicate -api-key ${{steps.login.outputs.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
+        run: dotnet nuget push src\${{ matrix.project.name }}\bin\${{env.Configuration}}\*.nupkg --skip-duplicate --api-key ${{steps.login.outputs.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
