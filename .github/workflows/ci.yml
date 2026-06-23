@@ -51,6 +51,8 @@ jobs:
   publish:
     name: Publish | ${{ matrix.project.name }}
     runs-on: windows-latest
+    permissions:
+      id-token: write
     needs: 
       - test
     strategy:
@@ -77,7 +79,15 @@ jobs:
       # Pack 
       - name: Pack | ${{ matrix.project.name }}
         run: dotnet pack src\${{ matrix.project.name }}\${{ matrix.project.name }}.csproj -p:Version=${{env.GitVersion_AssemblySemVer}}  -p:PackageVersion=${{env.GitVersion_FullSemVer}} 
-      # Release 
+      
+    # Get a short-lived NuGet API key
+      - name: NuGet login (OIDC → temp API key)
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: sgf-bot 
+    
+        # Release 
       - name: Push | ${{ matrix.project.name }}
         if: github.event_name == 'release' 
-        run: dotnet nuget push src\${{ matrix.project.name }}\bin\${{env.Configuration}}\*.nupkg --skip-duplicate --api-key ${{secrets.NUGET_API_KEY}}  --source https://api.nuget.org/v3/index.json
+        run: dotnet nuget push src\${{ matrix.project.name }}\bin\${{env.Configuration}}\*.nupkg --skip-duplicate -api-key ${{steps.login.outputs.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
