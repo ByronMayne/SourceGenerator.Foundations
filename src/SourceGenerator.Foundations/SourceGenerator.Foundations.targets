@@ -8,8 +8,9 @@
   <!-- TaskFactory is set to 'TaskHostFactory' so that we don't get the 'dll' is locked error -->
   <UsingTask TaskName="FilterAssembliesTask" AssemblyFile="$(SGFMsBuildPath)" TaskFactory="TaskHostFactory"/>
   <Target Name="SGF_EmbedDependencies" AfterTargets="ResolveAssemblyReferences">
-    <FilterAssembliesTask Assemblies="@(ReferencePath->'%(RootDir)%(Directory)%(Filename)%(Extension)')"
-                          IgnoredAssemblies="@(SGFDefaultExcludedAssembly);@(SGFExcludedAssembly)">
+    <FilterAssembliesTask 
+      Assemblies="@(ReferencePath->'%(RootDir)%(Directory)%(Filename)%(Extension)')"
+      ExcludedAssemblyNames="@(SGFExcludeAssemblyName)">
       <Output TaskParameter="FilteredAssemblies" ItemName="SGF_FilteredAssembly" />
     </FilterAssembliesTask>
     <!-- Embedded Assemblies -->

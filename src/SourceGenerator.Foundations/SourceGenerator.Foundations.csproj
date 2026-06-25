@@ -20,6 +20,15 @@
   <Import Project="$(SGFTargetsPath)" />
 
   <Target Name="CustomNugetPack">
+    <PropertyGroup>
+      <MSBuildOutputDir>$(MSBuildThisFileDirectory)bin/$(Configuration)/$(TargetFramework)/MSBuild/</MSBuildOutputDir>
+    </PropertyGroup>
+    
+    <Message Text="Building SourceGenerator.Foundations.MSBuild project to $(MSBuildOutputDir)" Importance="high" />
+    <MSBuild Projects="$(SGFSourceDir)SourceGenerator.Foundations.MSBuild\SourceGenerator.Foundations.MSBuild.csproj" 
+      Targets="Build" 
+      Properties="Configuration=$(Configuration);OutDir=$(MSBuildOutputDir)" />
+
     <ItemGroup>
       <TfmSpecificPackageFile Include="$(SGFMsBuildPath)">
         <PackagePath>build/</PackagePath>
@@ -30,7 +39,7 @@
       <TfmSpecificPackageFile Include="$(SGFWindowsPluginProjectDir)bin\$(Configuration)\netstandard2.0\SourceGenerator.Foundations.Windows.dll">
         <PackagePath>lib/netstandard2.0/SourceGenerator.Foundations.Windows.dll</PackagePath>
       </TfmSpecificPackageFile>
-      <TfmSpecificPackageFile Include="$(LibsDir)SourceGenerator.Foundations.MSBuild\*.*">
+      <TfmSpecificPackageFile Include="$(MSBuildOutputDir)*.*">
         <PackagePath>sgf/injector/</PackagePath>
       </TfmSpecificPackageFile>
     </ItemGroup>

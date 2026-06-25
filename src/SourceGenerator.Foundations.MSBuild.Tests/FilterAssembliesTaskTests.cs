@@ -12,7 +12,7 @@ namespace SourceGenerator.Foundations.MSBuild.Tests
             FilterAssembliesTask task = new FilterAssembliesTask
             {
                 BuildEngine = new BuildEngineShim(),
-                IgnoredAssemblies = new TaskItem[]
+                ExcludedAssemblyNames = new TaskItem[]
                 {
                     new("Microsoft.CodeAnalysis*"),
                 },
@@ -37,7 +37,7 @@ namespace SourceGenerator.Foundations.MSBuild.Tests
             FilterAssembliesTask task = new FilterAssembliesTask
             {
                 BuildEngine = new BuildEngineShim(),
-                IgnoredAssemblies = new TaskItem[]
+                ExcludedAssemblyNames = new TaskItem[]
                 {
                     new("MyDependency"),
                 },
@@ -61,7 +61,7 @@ namespace SourceGenerator.Foundations.MSBuild.Tests
             FilterAssembliesTask task = new FilterAssembliesTask
             {
                 BuildEngine = new BuildEngineShim(),
-                IgnoredAssemblies = new TaskItem[]
+                ExcludedAssemblyNames = new TaskItem[]
                 {
                     new("Does.Not.Match*"),
                 },
@@ -85,13 +85,37 @@ namespace SourceGenerator.Foundations.MSBuild.Tests
             FilterAssembliesTask task = new FilterAssembliesTask
             {
                 BuildEngine = new BuildEngineShim(),
-                IgnoredAssemblies = new TaskItem[]
+                ExcludedAssemblyNames = new TaskItem[]
                 {
                     new("System.Collections.Immutable.dll"),
                 },
                 Assemblies = new TaskItem[]
                 {
                     new("/tmp/System.Collections.Immutable.dll"),
+                    new("/tmp/MyLibrary.dll"),
+                }
+            };
+
+            bool result = task.Execute();
+
+            Assert.True(result);
+            Assert.Single(task.FilteredAssemblies);
+            Assert.Equal("/tmp/MyLibrary.dll", task.FilteredAssemblies[0].ItemSpec);
+        }
+
+        [Fact]
+        public void ExcludesDottedAssemblyNameWithoutExtension()
+        {
+            FilterAssembliesTask task = new FilterAssembliesTask
+            {
+                BuildEngine = new BuildEngineShim(),
+                ExcludedAssemblyNames = new TaskItem[]
+                {
+                    new("Microsoft.CodeAnalysis.CSharp"),
+                },
+                Assemblies = new TaskItem[]
+                {
+                    new("/tmp/Microsoft.CodeAnalysis.CSharp.dll"),
                     new("/tmp/MyLibrary.dll"),
                 }
             };

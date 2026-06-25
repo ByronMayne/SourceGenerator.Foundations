@@ -2,7 +2,9 @@
 using Microsoft.Build.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace SourceGenerator.Foundations.MSBuild
@@ -15,7 +17,7 @@ namespace SourceGenerator.Foundations.MSBuild
     /// </summary>
     public class FilterAssembliesTask : Task, ITask
     {
-        private readonly string m_netStandardPatttern;
+        private readonly string m_netStandardPattern;
 
         /// <summary>
         /// The list of assemblies that we can filter out 
@@ -24,9 +26,12 @@ namespace SourceGenerator.Foundations.MSBuild
         public ITaskItem[] Assemblies { get; set; }
 
         /// <summary>
-        /// Assembly names or wildcard patterns that should not be embedded.
+        /// Gets the list of assemblies that have been excluded from the <see cref="Assemblies"/> list. 
+        /// This is used to filter out assemblies that should not be embedded. This are based on the assembly name 
+        /// not the full path
         /// </summary>
-        public ITaskItem[] IgnoredAssemblies { get; set; }
+        [Required]
+        public ITaskItem[] ExcludedAssemblyNames { get; set; }
 
         /// <summary>
         /// The filtered version of <see cref="Assemblies"/>
@@ -36,11 +41,10 @@ namespace SourceGenerator.Foundations.MSBuild
 
         public FilterAssembliesTask()
         {
-			Assemblies = Array.Empty<ITaskItem>();
-            IgnoredAssemblies = Array.Empty<ITaskItem>();
+            Assemblies = Array.Empty<ITaskItem>();
+            ExcludedAssemblyNames = Array.Empty<ITaskItem>();
             FilteredAssemblies = Array.Empty<ITaskItem>();
-
-			m_netStandardPatttern = $"{Path.DirectorySeparatorChar}netstandard.library{Path.DirectorySeparatorChar}";
+            m_netStandardPattern = $"{Path.DirectorySeparatorChar}netstandard.library{Path.DirectorySeparatorChar}";
         }
 
         /// <inheritdoc cref="Task"/>
@@ -48,81 +52,55 @@ namespace SourceGenerator.Foundations.MSBuild
         {
             List<ITaskItem> filtered = new List<ITaskItem>(Assemblies.Length);
 
-            foreach (ITaskItem assembly in Assemblies)
+            HashSet<string> excludedAssemblyNames = new HashSet<string>(ExcludedAssemblyNames
+                .Select(GetAssemblyName),
+                StringComparer.OrdinalIgnoreCase);
+
+
+            foreach (ITaskItem sourceAssembly in Assemblies)
             {
-                string assemblyPath = assembly.ItemSpec;
+                string assemblyPath = sourceAssembly.ItemSpec;
+                string assemblyName = GetAssemblyName(sourceAssembly);
+
                 if (string.IsNullOrWhiteSpace(assemblyPath))
                 {
                     continue;
                 }
 
-                if (Include(assemblyPath))
+                if (assemblyPath.IndexOf(m_netStandardPattern, StringComparison.OrdinalIgnoreCase) > 0)
                 {
-                    filtered.Add(assembly);
-                    Log.LogMessage(MessageImportance.Normal, "Added: {0}", assemblyPath);
+                    // Skipping netstandard.library assemblies as they are part of the .NET Standard framework and should not be embedded.
+                    continue;
                 }
-                else
+
+                if (excludedAssemblyNames.Contains(assemblyName))
                 {
                     Log.LogMessage(MessageImportance.Normal, "Skipping: {0}", assemblyPath);
+                    continue;
                 }
+
+                filtered.Add(sourceAssembly);
+                Log.LogMessage(MessageImportance.Normal, "Added: {0}", assemblyPath);
             }
             FilteredAssemblies = filtered.ToArray();
             return true;
         }
 
-        /// <summary>
-        /// Returns true if the assembly at the given path should be included otherwise false
-        /// </summary>
-        private bool Include(string assemblyPath)
+        private static string GetAssemblyName(ITaskItem taskItem)
         {
-            if (assemblyPath.IndexOf(m_netStandardPatttern, StringComparison.OrdinalIgnoreCase) > 0)
+            string assemblyPath = taskItem.ItemSpec;
+            string fileName = Path.GetFileName(assemblyPath);
+
+            // Only strip known assembly file extensions. Names like
+            // "Microsoft.CodeAnalysis.CSharp" are assembly identities, not file paths.
+            if (fileName.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) ||
+                fileName.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
             {
-                return false;
+                return Path.GetFileNameWithoutExtension(fileName);
             }
 
-            string assemblyFileName = Path.GetFileName(assemblyPath);
-            string assemblyName = Path.GetFileNameWithoutExtension(assemblyPath);
-
-            foreach (ITaskItem ignoredAssembly in IgnoredAssemblies)
-            {
-                if (IsMatch(assemblyFileName, assemblyName, ignoredAssembly.ItemSpec))
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        private static bool IsMatch(string assemblyFileName, string assemblyName, string pattern)
-        {
-            if (string.IsNullOrWhiteSpace(pattern))
-            {
-                return false;
-            }
-
-            if (pattern.IndexOfAny(new[] { '*', '?' }) >= 0)
-            {
-                return WildcardMatch(assemblyFileName, pattern)
-                    || WildcardMatch(assemblyName, pattern);
-            }
-
-            if (Path.HasExtension(pattern))
-            {
-                return string.Equals(assemblyFileName, pattern, StringComparison.OrdinalIgnoreCase);
-            }
-
-            return string.Equals(assemblyName, pattern, StringComparison.OrdinalIgnoreCase);
-        }
-
-        private static bool WildcardMatch(string value, string pattern)
-        {
-            string regexPattern = "^"
-                + Regex.Escape(pattern)
-                    .Replace("\\*", ".*")
-                    .Replace("\\?", ".")
-                + "$";
-
-            return Regex.IsMatch(value, regexPattern, RegexOptions.IgnoreCase);
+            return fileName;
         }
     }
+
 }

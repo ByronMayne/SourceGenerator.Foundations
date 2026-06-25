@@ -17,34 +17,35 @@
     <SgfAddInitPropertyPolyfill Condition="'$(SgfAddInitPropertyPolyfill)' == ''">true</SgfAddInitPropertyPolyfill>
     <SgfAddRequiredMemberPolyfill Condition="'$(SgfAddRequiredMemberPolyfill)' == ''">true</SgfAddRequiredMemberPolyfill>
     <SgfLogLevel Condition="'$(SgfLogLevel)' == ''">Information</SgfLogLevel>
-    <SGFEmbedCodeAnalysis Condition="'$(SGFEmbedCodeAnalysis)' == ''">false</SGFEmbedCodeAnalysis>
   </PropertyGroup>
   <ItemGroup>
-    <SGFDefaultExcludedAssembly Include="Microsoft.CSharp.dll" />
-    <SGFDefaultExcludedAssembly Include="Microsoft.Win32.Primitives.dll" />
-    <SGFDefaultExcludedAssembly Include="mscorlib.dll" />
-    <SGFDefaultExcludedAssembly Include="netstandard.dll" />
-    <SGFDefaultExcludedAssembly Include="System.AppContext.dll" />
-    <SGFDefaultExcludedAssembly Include="System.Buffers.dll" />
-    <SGFDefaultExcludedAssembly Include="System.CodeDom.dll" />
-    <SGFDefaultExcludedAssembly Include="System.Collections.Immutable.dll" />
-    <SGFDefaultExcludedAssembly Include="System.Collections.dll" />
-    <SGFDefaultExcludedAssembly Include="System.Console.dll" />
-    <SGFDefaultExcludedAssembly Include="System.Diagnostics.dll" />
-    <SGFDefaultExcludedAssembly Include="System.dll" />
-    <SGFDefaultExcludedAssembly Include="System.Memory.dll" />
-    <SGFDefaultExcludedAssembly Include="System.Numerics.Vectors.dll" />
-    <SGFDefaultExcludedAssembly Include="System.ObjectModel.dll" />
-    <SGFDefaultExcludedAssembly Include="System.Reflection.Metadata.dll" />
-    <SGFDefaultExcludedAssembly Include="System.Runtime.CompilerServices.Unsafe.dll" />
-    <SGFDefaultExcludedAssembly Include="System.ServiceModel.dll" />
-    <SGFDefaultExcludedAssembly Include="System.Text.Encoding.CodePages.dll" />
-    <SGFDefaultExcludedAssembly Include="System.Threading.Tasks.Extensions.dll" />
-    <SGFDefaultExcludedAssembly Include="System.Transactions.dll" />
-    <SGFDefaultExcludedAssembly Include="System.ValueTuple.dll" />
-    <SGFDefaultExcludedAssembly Include="System.Web.dll" />
-    <SGFDefaultExcludedAssembly Include="System.Windows.dll" />
-    <SGFDefaultExcludedAssembly Include="Microsoft.CodeAnalysis*" Condition="'$(SGFEmbedCodeAnalysis)' != 'true'" />
+    <SGFExcludeAssemblyName Include="Microsoft.CSharp.dll" />
+    <SGFExcludeAssemblyName Include="Microsoft.Win32.Primitives.dll" />
+    <SGFExcludeAssemblyName Include="mscorlib.dll" />
+    <SGFExcludeAssemblyName Include="netstandard.dll" />
+    <SGFExcludeAssemblyName Include="System.AppContext.dll" />
+    <SGFExcludeAssemblyName Include="System.Buffers.dll" />
+    <SGFExcludeAssemblyName Include="System.CodeDom.dll" />
+    <SGFExcludeAssemblyName Include="System.Collections.Immutable.dll" />
+    <SGFExcludeAssemblyName Include="System.Collections.dll" />
+    <SGFExcludeAssemblyName Include="System.Console.dll" />
+    <SGFExcludeAssemblyName Include="System.Diagnostics.dll" />
+    <SGFExcludeAssemblyName Include="System.dll" />
+    <SGFExcludeAssemblyName Include="System.Memory.dll" />
+    <SGFExcludeAssemblyName Include="System.Numerics.Vectors.dll" />
+    <SGFExcludeAssemblyName Include="System.ObjectModel.dll" />
+    <SGFExcludeAssemblyName Include="System.Reflection.Metadata.dll" />
+    <SGFExcludeAssemblyName Include="System.Runtime.CompilerServices.Unsafe.dll" />
+    <SGFExcludeAssemblyName Include="System.ServiceModel.dll" />
+    <SGFExcludeAssemblyName Include="System.Text.Encoding.CodePages.dll" />
+    <SGFExcludeAssemblyName Include="System.Threading.Tasks.Extensions.dll" />
+    <SGFExcludeAssemblyName Include="System.Transactions.dll" />
+    <SGFExcludeAssemblyName Include="System.ValueTuple.dll" />
+    <SGFExcludeAssemblyName Include="System.Web.dll" />
+    <SGFExcludeAssemblyName Include="System.Windows.dll" />
+    <SGFExcludeAssemblyName Include="Microsoft.CodeAnalysis.dll" />
+    <SGFExcludeAssemblyName Include="Microsoft.CodeAnalysis.CSharp.dll" />
+    <SGFExcludeAssemblyName Include="Microsoft.CodeAnalysis.CSharp.dll" />
   </ItemGroup>
   <ItemGroup>
     <CompilerVisibleProperty Include="RootNamespace" />
