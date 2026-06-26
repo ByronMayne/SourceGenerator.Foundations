@@ -2,11 +2,15 @@
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using System;
+using System.Collections.Generic;
 
 namespace SGF.Analyzer.Rules
 {
     internal abstract class AnalyzerRule
     {
+        protected readonly static Dictionary<Type, string> s_ruleToDescriptorMap;
+
+
         /// <summary>
         /// Gets the descriptor that this rule creates
         /// </summary>
@@ -17,9 +21,15 @@ namespace SGF.Analyzer.Rules
         /// </summary>
         protected SyntaxNodeAnalysisContext Context { get; private set; }
 
+        static AnalyzerRule()
+        {
+            s_ruleToDescriptorMap = new Dictionary<Type, string>();
+        }
+
         public AnalyzerRule(DiagnosticDescriptor descriptor)
         {
             Descriptor = descriptor;
+            s_ruleToDescriptorMap[GetType()] = descriptor.Id;
         }
 
         /// <summary>
@@ -36,6 +46,17 @@ namespace SGF.Analyzer.Rules
             {
                 Context = default;
             }
+        }
+
+
+        /// <summary>
+        /// Gets the rule id for the given rule type
+        /// </summary>
+        /// <typeparam name="T">The type of the rule</typeparam>
+        /// <returns>The descriptor id for the given rule type</returns>
+        public static string GetDescriptorId<T>() where T : AnalyzerRule
+        {
+            return s_ruleToDescriptorMap[typeof(T)];
         }
 
         /// <summary>
