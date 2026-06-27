@@ -20,6 +20,13 @@ namespace SGF.Analyzer.Rules
                 .OfType<ConstructorDeclarationSyntax>()
                 .ToArray();
 
+            if(classDeclaration.Modifiers.Any(m => m.IsKind(Microsoft.CodeAnalysis.CSharp.SyntaxKind.AbstractKeyword)))
+            {
+                // Abstract classes do not need a default constructor, so we can skip this check
+                // Fix: https://github.com/ByronMayne/SourceGenerator.Foundations/issues/67
+                return;
+            }
+
             if(constructors.Length == 0)
             {
                 // Already a compiler error since you need to call the base class constructor

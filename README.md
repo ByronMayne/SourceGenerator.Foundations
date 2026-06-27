@@ -373,7 +373,7 @@ driver = driver.RunGenerators(compilation);
 GeneratorDriverRunResult runResult = driver.GetRunResult();
 Assert.NotEmpty(runResult.GeneratedTrees);
 ```
-The only unique feature is the wrapper class `{YourGeneratorName}Host`. This class is an internal feature of `SGF` and is used to make sure all dependencies are resolved before calling into your source generator. 
+The only unique feature is the wrapper class `{YourGeneratorName}Hoist`. This class is an internal feature of `SGF` and is used to make sure all dependencies are resolved before calling into your source generator. 
 
 
 ## Advanced Features
