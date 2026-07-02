@@ -6,10 +6,11 @@
     won't exist.
    ==================================================-->
   <!-- TaskFactory is set to 'TaskHostFactory' so that we don't get the 'dll' is locked error -->
-  <UsingTask TaskName="FilterAssembliesTask" AssemblyFile="$(SGFMsBuildPath)" TaskFactory="TaskHostFactory"/>
+  <Import Project="$(MSBuildThisFileDirectory)FilterAssembliesTask.targets"/>
   <Target Name="SGF_EmbedDependencies" AfterTargets="ResolveAssemblyReferences">
-    <FilterAssembliesTask Assemblies="@(ReferencePath->'%(RootDir)%(Directory)%(Filename)%(Extension)')"
-                          IgnoredAssemblies="@(SGFDefaultExcludedAssembly);@(SGFExcludedAssembly)">
+    <FilterAssembliesTask
+      Assemblies="@(ReferencePath->'%(RootDir)%(Directory)%(Filename)%(Extension)')"
+      ExcludedAssemblyNames="@(SGFExcludeAssemblyName)">
       <Output TaskParameter="FilteredAssemblies" ItemName="SGF_FilteredAssembly" />
     </FilterAssembliesTask>
     <!-- Embedded Assemblies -->
@@ -62,5 +63,5 @@
       Condition="!$(IsNamedVersion) AND $([MSBuild]::VersionGreaterThan('$(MinLangVersion)', '$(LangVersion)'))"
       Text="[SourceGenerator.Foundations] The project $(MSBuildProjectName) is currently using the language version $(LangVersion) which does not meet the minimum required of $(MinLangVersion). Read how to change it here https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/configure-language-version" />
   </Target>
-  
+
 </Project>

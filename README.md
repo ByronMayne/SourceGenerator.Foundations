@@ -62,7 +62,7 @@ This works well but requires a lot of boilerplate. Even worse is this is just fo
 
 *Source.Generator foundations automates this all for you. Just add your NuGet references and nothing else*
 
-By default, SGF does **not** embed `Microsoft.CodeAnalysis.*` assemblies. Roslyn is provided by the compiler/IDE host at runtime, so embedding those assemblies can cause type identity conflicts and broken design-time behavior.
+By default, SGF does **not** embed `Microsoft.CodeAnalysis.*` assemblies. Roslyn is provided by the compiler/IDE host at runtime, so embedding those assemblies can cause type identity conflicts and broken design-time behavior. This behavior is controlled through the `SGFExcludeAssemblyName` MSBuild item.
 
 ## Logging Framework
 Source generator run in the background and it can be very hard to debug. If you want to make a log you have to write the files to disk and open to read them. 
@@ -214,20 +214,23 @@ When your source generator runs it needs to find it's dependencies and this is o
 
 You can embed any assemblies you want by adding them to `<SGF_EmbeddedAssembly Include="Your Assembly Path"/>`.
 
-`Microsoft.CodeAnalysis.*` assemblies are excluded from SGF dependency embedding by default. If you need the previous behavior, opt in explicitly:
+`Microsoft.CodeAnalysis.*` assemblies are excluded from SGF dependency embedding by default using `SGFExcludeAssemblyName`.
 
-```xml
-<PropertyGroup>
-  <SGFEmbedCodeAnalysis>true</SGFEmbedCodeAnalysis>
-</PropertyGroup>
-```
-
-You can also exclude additional assemblies by name (with optional wildcard support):
+To exclude additional assemblies from embedding, add to `SGFExcludeAssemblyName`:
 
 ```xml
 <ItemGroup>
-  <SGFExcludedAssembly Include="My.Host.Provided.Dependency" />
-  <SGFExcludedAssembly Include="Company.Shared.*" />
+    <SGFExcludeAssemblyName Include="My.Host.Provided.Dependency" />
+    <SGFExcludeAssemblyName Include="Company.Shared.Utility.dll" />
+</ItemGroup>
+```
+
+If you want to embed Roslyn assemblies anyway, remove the default exclusions in your project:
+
+```xml
+<ItemGroup>
+    <SGFExcludeAssemblyName Remove="Microsoft.CodeAnalysis" />
+    <SGFExcludeAssemblyName Remove="Microsoft.CodeAnalysis.CSharp" />
 </ItemGroup>
 ```
 
