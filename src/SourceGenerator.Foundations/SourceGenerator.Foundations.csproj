@@ -22,10 +22,6 @@
     <PropertyGroup>
       <MSBuildOutputDir>$(MSBuildThisFileDirectory)bin/$(Configuration)/$(TargetFramework)/MSBuild/</MSBuildOutputDir>
     </PropertyGroup>
-    
-    <Message Text="Building SourceGenerator.Foundations.MSBuild project to $(MSBuildOutputDir)" Importance="high" />
-    <MSBuild Projects="$(SGFSourceDir)SourceGenerator.Foundations.MSBuild\SourceGenerator.Foundations.MSBuild.csproj" Targets="Build" Properties="Configuration=$(Configuration);OutDir=$(MSBuildOutputDir)" />
-
     <ItemGroup>
       <TfmSpecificPackageFile Include="$(SGFMsBuildPath)">
         <PackagePath>build/</PackagePath>
