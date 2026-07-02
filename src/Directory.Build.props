@@ -15,9 +15,10 @@
     <!-- Paths | SGF Core -->
     <SGFProjectDir>$(SGFSourceDir)SourceGenerator.Foundations\</SGFProjectDir>
     <SGFProjectPath>$(SGFProjectDir)SourceGenerator.Foundations.csproj</SGFProjectPath>
-    <SGFTargetsPath>$(SGFProjectDir)SourceGenerator.Foundations.targets</SGFTargetsPath>
-    <SGFPropsPath>$(SGFProjectDir)SourceGenerator.Foundations.props</SGFPropsPath>
+    <SGFTargetsPath>$(SGFProjectDir)Build\SourceGenerator.Foundations.targets</SGFTargetsPath>
+    <SGFPropsPath>$(SGFProjectDir)Build\SourceGenerator.Foundations.props</SGFPropsPath>
     <!-- Paths | SGF Shared -->
+    
     <SGFSharedProjectDir>$(SGFSourceDir)SourceGenerator.Foundations.Shared\</SGFSharedProjectDir>
     <SGFSharedProjectItemsPath>$(SGFSharedProjectDir)SourceGenerator.Foundations.Shared.projitems</SGFSharedProjectItemsPath>
     <!-- Paths | SGF Contracts -->

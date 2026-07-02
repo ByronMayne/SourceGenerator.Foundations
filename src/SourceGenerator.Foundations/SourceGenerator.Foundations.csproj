@@ -11,13 +11,12 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="all" />
-    <None Update="SourceGenerator.Foundations.props" Pack="True" PackagePath="build/$(AssemblyName).props" />
-    <None Update="SourceGenerator.Foundations.targets" Pack="True" PackagePath="build/$(AssemblyName).targets" />
     <ProjectReference Include="$(SGFContractsProjectPath)" PrivateAssets="All" />
     <ProjectReference Include="$(SGFWindowsPluginProjectPath)" PrivateAssets="All" />
     <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
   </ItemGroup>
   <Import Project="$(SGFTargetsPath)" />
+  
 
   <Target Name="CustomNugetPack">
     <PropertyGroup>
@@ -25,9 +24,7 @@
     </PropertyGroup>
     
     <Message Text="Building SourceGenerator.Foundations.MSBuild project to $(MSBuildOutputDir)" Importance="high" />
-    <MSBuild Projects="$(SGFSourceDir)SourceGenerator.Foundations.MSBuild\SourceGenerator.Foundations.MSBuild.csproj" 
-      Targets="Build" 
-      Properties="Configuration=$(Configuration);OutDir=$(MSBuildOutputDir)" />
+    <MSBuild Projects="$(SGFSourceDir)SourceGenerator.Foundations.MSBuild\SourceGenerator.Foundations.MSBuild.csproj" Targets="Build" Properties="Configuration=$(Configuration);OutDir=$(MSBuildOutputDir)" />
 
     <ItemGroup>
       <TfmSpecificPackageFile Include="$(SGFMsBuildPath)">
@@ -38,6 +35,9 @@
       </TfmSpecificPackageFile>
       <TfmSpecificPackageFile Include="$(SGFWindowsPluginProjectDir)bin\$(Configuration)\netstandard2.0\SourceGenerator.Foundations.Windows.dll">
         <PackagePath>lib/netstandard2.0/SourceGenerator.Foundations.Windows.dll</PackagePath>
+      </TfmSpecificPackageFile>
+      <TfmSpecificPackageFile Include="Build/*">
+        <PackagePath>Build/</PackagePath>
       </TfmSpecificPackageFile>
       <TfmSpecificPackageFile Include="$(MSBuildOutputDir)*.*">
         <PackagePath>sgf/injector/</PackagePath>

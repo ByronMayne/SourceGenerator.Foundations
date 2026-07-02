@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" ?>
+  <!-- ===================== Note =====================
+   This file is include in all projects that reference 
+   the NuGet packages. Don't reference variables 
+   from Directory.Build.[props|targets] as these files
+   won't exist.
+  ==================================================-->
+<Project>
+  <PropertyGroup>
+    <SgfShowImports Condition="'$(SgfShowImports)' == ''">false</SgfShowImports>
+    <IsRoslynComponent>true</IsRoslynComponent>
+    <IsNuGetPackage>false</IsNuGetPackage>
+    <IsNuGetPackage Condition="Exists('$(MSBuildThisFileDirectory)..\.nupkg.metadata')">true</IsNuGetPackage>
+    <SgfMsBuildPath Condition="$(SgfMsBuildPath) == ''">$(MSBuildThisFileDirectory)SourceGenerator.Foundations.MSBuild.dll</SgfMsBuildPath>
+    <SgfInjectorPath Condition="$(SgfInjectorPath) == ''">$(MSBuildThisFileDirectory)SourceGenerator.Foundations.Injector.exe</SgfInjectorPath>
+    <SgfAddNullablePolyfill Condition="'$(SgfAddNullablePolyfill)' == ''">true</SgfAddNullablePolyfill>
+    <SgfAddInitPropertyPolyfill Condition="'$(SgfAddInitPropertyPolyfill)' == ''">true</SgfAddInitPropertyPolyfill>
+    <SgfAddRequiredMemberPolyfill Condition="'$(SgfAddRequiredMemberPolyfill)' == ''">true</SgfAddRequiredMemberPolyfill>
+    <SgfLogLevel Condition="'$(SgfLogLevel)' == ''">Information</SgfLogLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <SGFExcludeAssemblyName Include="Microsoft.CSharp.dll" />
+    <SGFExcludeAssemblyName Include="Microsoft.Win32.Primitives.dll" />
+    <SGFExcludeAssemblyName Include="mscorlib.dll" />
+    <SGFExcludeAssemblyName Include="netstandard.dll" />
+    <SGFExcludeAssemblyName Include="System.AppContext.dll" />
+    <SGFExcludeAssemblyName Include="System.Buffers.dll" />
+    <SGFExcludeAssemblyName Include="System.CodeDom.dll" />
+    <SGFExcludeAssemblyName Include="System.Collections.Immutable.dll" />
+    <SGFExcludeAssemblyName Include="System.Collections.dll" />
+    <SGFExcludeAssemblyName Include="System.Console.dll" />
+    <SGFExcludeAssemblyName Include="System.Diagnostics.dll" />
+    <SGFExcludeAssemblyName Include="System.dll" />
+    <SGFExcludeAssemblyName Include="System.Memory.dll" />
+    <SGFExcludeAssemblyName Include="System.Numerics.Vectors.dll" />
+    <SGFExcludeAssemblyName Include="System.ObjectModel.dll" />
+    <SGFExcludeAssemblyName Include="System.Reflection.Metadata.dll" />
+    <SGFExcludeAssemblyName Include="System.Runtime.CompilerServices.Unsafe.dll" />
+    <SGFExcludeAssemblyName Include="System.ServiceModel.dll" />
+    <SGFExcludeAssemblyName Include="System.Text.Encoding.CodePages.dll" />
+    <SGFExcludeAssemblyName Include="System.Threading.Tasks.Extensions.dll" />
+    <SGFExcludeAssemblyName Include="System.Transactions.dll" />
+    <SGFExcludeAssemblyName Include="System.ValueTuple.dll" />
+    <SGFExcludeAssemblyName Include="System.Web.dll" />
+    <SGFExcludeAssemblyName Include="System.Windows.dll" />
+    <SGFExcludeAssemblyName Include="Microsoft.CodeAnalysis.dll" />
+    <SGFExcludeAssemblyName Include="Microsoft.CodeAnalysis.CSharp.dll" />
+    <SGFExcludeAssemblyName Include="Microsoft.CodeAnalysis.CSharp.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <CompilerVisibleProperty Include="RootNamespace" />
+    <CompilerVisibleProperty Include="AssemblyName" />
+    <CompilerVisibleProperty Include="BaseOutputPath "/>
+    <CompilerVisibleProperty Include="SgfLogLevel" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(IsNuGetPackage.ToLower())' == 'true'">
+    <SGF_EmbeddedAssembly Include="$(MSBuildThisFileDirectory)..\sgf\embedded\assemblies\*.*"/>
+    <!-- Core -->
+    <Compile Include="$(MSBuildThisFileDirectory)..\sgf\src\Core\**\*.cs" Visible="$(SgfShowImports)">
+      <Link>SGF/%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Compile>
+    <!-- Polyfills: Nullable-->
+    <Compile 
+        Include="$(MSBuildThisFileDirectory)..\sgf\src\Polyfills\Nullable\**\*.cs" 
+        Condition="'$(SgfAddNullablePolyfill.ToLower())' == 'true'" 
+        Visible="$(SgfShowImports)">
+      <Link>SGF/Polyfills/Nullable/%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Compile>
+    <!-- Polyfills: Init Properties-->
+    <Compile 
+        Include="$(MSBuildThisFileDirectory)..\sgf\src\Polyfills\InitProperties\**\*.cs"
+        Condition="'$(SgfAddInitPropertyPolyfill.ToLower())' == 'true'"     
+        Visible="$(SgfShowImports)">
+      <Link>SGF/Polyfills/InitProperties/%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Compile>
+    <!-- Polyfills: Required Member -->
+    <Compile
+    Include="$(MSBuildThisFileDirectory)..\sgf\src\Polyfills\RequiredMembers\**\*.cs"
+    Condition="'$(SgfAddRequiredMemberPolyfill.ToLower())' == 'true'"
+    Visible="$(SgfShowImports)">
+      <Link>SGF/Polyfills/RequiredMembers/%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Compile>
+  </ItemGroup>
+</Project>
