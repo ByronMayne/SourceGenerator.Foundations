@@ -15,23 +15,19 @@
     <!-- Paths | SGF Core -->
     <SGFProjectDir>$(SGFSourceDir)SourceGenerator.Foundations\</SGFProjectDir>
     <SGFProjectPath>$(SGFProjectDir)SourceGenerator.Foundations.csproj</SGFProjectPath>
-    <SGFTargetsPath>$(SGFProjectDir)SourceGenerator.Foundations.targets</SGFTargetsPath>
-    <SGFPropsPath>$(SGFProjectDir)SourceGenerator.Foundations.props</SGFPropsPath>
+    <SGFTargetsPath>$(SGFProjectDir)Build\SourceGenerator.Foundations.targets</SGFTargetsPath>
+    <SGFPropsPath>$(SGFProjectDir)Build\SourceGenerator.Foundations.props</SGFPropsPath>
     <!-- Paths | SGF Shared -->
+    
     <SGFSharedProjectDir>$(SGFSourceDir)SourceGenerator.Foundations.Shared\</SGFSharedProjectDir>
     <SGFSharedProjectItemsPath>$(SGFSharedProjectDir)SourceGenerator.Foundations.Shared.projitems</SGFSharedProjectItemsPath>
     <!-- Paths | SGF Contracts -->
     <SGFContractsProjectDir>$(SGFSourceDir)SourceGenerator.Foundations.Contracts\</SGFContractsProjectDir>
     <SGFContractsProjectPath>$(SGFContractsProjectDir)SourceGenerator.Foundations.Contracts.csproj</SGFContractsProjectPath>
-    <!-- Paths | SGF MSBuild -->
-    <SGFMSBuildProjectDir>$(SGFSourceDir)SourceGenerator.Foundations.MSBuild\</SGFMSBuildProjectDir>
-    <SGFMSBuildProjectPath>$(SGFMSBuildProjectDir)SourceGenerator.Foundations.MSBuild.csproj</SGFMSBuildProjectPath>
     <!-- Paths | SGF Plugin Window -->
     <SGFWindowsPluginProjectDir>$(SGFSourceDir)Plugins\SourceGenerator.Foundations.Windows\</SGFWindowsPluginProjectDir>
     <SGFWindowsPluginProjectPath>$(SGFWindowsPluginProjectDir)SourceGenerator.Foundations.Windows.csproj</SGFWindowsPluginProjectPath>
-    
     <!-- Local Path Overrides | Both a local build and the nuget package use the same logic. This is used to override the paths when building locally -->
-    <SGFMsBuildPath>$(LibsDir)SourceGenerator.Foundations.MSBuild\SourceGenerator.Foundations.MSBuild.dll</SGFMsBuildPath>
   </PropertyGroup>
   <!-- Debug Targets -->
   <Target Name="PrintSGFPaths">
