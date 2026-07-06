@@ -23,9 +23,6 @@
       <MSBuildOutputDir>$(MSBuildThisFileDirectory)bin/$(Configuration)/$(TargetFramework)/MSBuild/</MSBuildOutputDir>
     </PropertyGroup>
     <ItemGroup>
-      <TfmSpecificPackageFile Include="$(SGFMsBuildPath)">
-        <PackagePath>build/</PackagePath>
-      </TfmSpecificPackageFile>
       <TfmSpecificPackageFile Include="$(SGFContractsProjectDir)bin\$(Configuration)\netstandard2.0\SourceGenerator.Foundations.Contracts.dll">
         <PackagePath>lib/netstandard2.0/SourceGenerator.Foundations.Contracts.dll</PackagePath>
       </TfmSpecificPackageFile>
