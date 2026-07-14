@@ -12,6 +12,13 @@ namespace SGF.Analyzer.Rules
 
         protected override void Analyze(ClassDeclarationSyntax classDeclaration)
         {
+            if(classDeclaration.Modifiers.Any(m => m.IsKind(Microsoft.CodeAnalysis.CSharp.SyntaxKind.AbstractKeyword)))
+            {
+                // Abstract classes do not need the attribute, so we can skip this check
+                // Fix: https://github.com/ByronMayne/SourceGenerator.Foundations/issues/70
+                return;
+            }
+            
 #pragma warning disable CS0618 // Type or member is obsolete
             if ( !HasAttribute(classDeclaration, nameof(IncrementalGeneratorAttribute)) &&
                 !HasAttribute(classDeclaration, nameof(SgfGeneratorAttribute)))
