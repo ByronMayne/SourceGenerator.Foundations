@@ -139,6 +139,27 @@ namespace {{@namespace}}
                 return assembly;
             }
 
+            // No exact version: the newest one loaded that still satisfies the request, as the runtime binds a
+            // reference to a newer version. Never an older one: it can lack what the caller was built against.
+            Assembly? newest = null;
+            Version newestVersion = new(0, 0);
+            foreach (KeyValuePair<AssemblyName, Assembly> loaded in s_loadedAssemblies)
+            {
+                Version version = loaded.Key.Version ?? new Version(0, 0);
+                bool sameName = string.Equals(loaded.Key.Name, assemblyName.Name);
+                bool satisfies = assemblyName.Version == null || version >= assemblyName.Version;
+                if (sameName && satisfies && (newest == null || version > newestVersion))
+                {
+                    newest = loaded.Value;
+                    newestVersion = version;
+                }
+            }
+
+            if (newest != null)
+            {
+                return newest;
+            }
+
             foreach (Assembly loadedAssembly in s_assembliesWithResources)
             {
                 string resourceName = $"SGF.Assembly::{assemblyName.Name}.dll";

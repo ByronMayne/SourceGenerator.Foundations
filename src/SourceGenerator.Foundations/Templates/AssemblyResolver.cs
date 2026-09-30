@@ -17,7 +17,10 @@ using System.Runtime.CompilerServices;
 namespace {{@namespace}}
 {
     /// <summary>
-    /// Used to compare two <see cref="AssemblyName"/> to pull them out of the dictionary of types
+    /// Used to compare two <see cref="AssemblyName"/> to pull them out of the dictionary of types. Compares
+    /// name and version: one process (a compiler server, an IDE) hosts several generators, and several builds
+    /// of one, side by side. By name alone the first one loaded shadows the rest, and a generator gets a
+    /// dependency it was not built against, or none at all.
     /// </summary>
     internal class AssemblyNameComparer : IEqualityComparer<AssemblyName>
     {
@@ -36,7 +39,7 @@ namespace {{@namespace}}
                 return false;
             }
 
-            return string.Equals(GetName(x!), GetName(y!));
+            return string.Equals(GetName(x!), GetName(y!)) && x!.Version == y!.Version;
         }
 
         public int GetHashCode(AssemblyName obj)
