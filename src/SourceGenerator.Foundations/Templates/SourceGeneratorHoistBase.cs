@@ -15,6 +15,7 @@ using System.Text;
 using System.Reflection;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Runtime.InteropServices;
 using SGF.Environments;
 using SGF.Diagnostics;
@@ -30,8 +31,8 @@ namespace {{@namespace}}
     internal abstract class SourceGeneratorHoist
     {
         private static bool s_isInitialized;
-        private static readonly List<Assembly> s_assembliesWithResources;
-        private static readonly Dictionary<AssemblyName, Assembly> s_loadedAssemblies;
+        private static readonly ConcurrentBag<Assembly> s_assembliesWithResources;
+        private static readonly ConcurrentDictionary<AssemblyName, Assembly> s_loadedAssemblies;
 
         static SourceGeneratorHoist()
         {
@@ -44,8 +45,8 @@ namespace {{@namespace}}
 #pragma warning restore RS1035 // Do not use APIs banned for analyzers
 
 
-            s_assembliesWithResources = new List<Assembly>();
-            s_loadedAssemblies = new Dictionary<AssemblyName, Assembly>(new AssemblyNameComparer());
+            s_assembliesWithResources = new ConcurrentBag<Assembly>();
+            s_loadedAssemblies = new ConcurrentDictionary<AssemblyName, Assembly>(new AssemblyNameComparer());
             Initialize();
         }
 
@@ -99,11 +100,10 @@ namespace {{@namespace}}
         {
             AssemblyName assemblyName = assembly.GetName();
 
-            if (s_loadedAssemblies.ContainsKey(assemblyName))
+            if (!s_loadedAssemblies.TryAdd(assemblyName, assembly))
             {
                 return;
             }
-            s_loadedAssemblies.Add(assemblyName, assembly);
 
             if (assembly.IsDynamic) return;
 
@@ -112,6 +112,10 @@ namespace {{@namespace}}
                 .ToArray();
 
             if (resources.Length == 0) return;
+
+            // remember assemblies that contain embedded resources so the resolver can
+            // search them later as a fallback
+            s_assembliesWithResources.Add(assembly);
 
             foreach (string resource in resources)
             {
