@@ -32,6 +32,8 @@ namespace {{@namespace}}
         private static bool s_isInitialized;
         private static readonly List<Assembly> s_assembliesWithResources;
         private static readonly Dictionary<AssemblyName, Assembly> s_loadedAssemblies;
+        private static readonly object s_loadedAssembliesLock;
+        private static readonly object s_assembliesWithResourcesLock;
 
         static SourceGeneratorHoist()
         {
@@ -46,6 +48,8 @@ namespace {{@namespace}}
 
             s_assembliesWithResources = new List<Assembly>();
             s_loadedAssemblies = new Dictionary<AssemblyName, Assembly>(new AssemblyNameComparer());
+            s_loadedAssembliesLock = new object();
+            s_assembliesWithResourcesLock = new object();
             Initialize();
         }
 
@@ -99,11 +103,15 @@ namespace {{@namespace}}
         {
             AssemblyName assemblyName = assembly.GetName();
 
-            if (s_loadedAssemblies.ContainsKey(assemblyName))
+            lock (s_loadedAssembliesLock)
             {
-                return;
+                if (s_loadedAssemblies.ContainsKey(assemblyName))
+                {
+                    return;
+                }
+
+                s_loadedAssemblies.Add(assemblyName, assembly);
             }
-            s_loadedAssemblies.Add(assemblyName, assembly);
 
             if (assembly.IsDynamic) return;
 
@@ -112,6 +120,13 @@ namespace {{@namespace}}
                 .ToArray();
 
             if (resources.Length == 0) return;
+
+            // remember assemblies that contain embedded resources so the resolver can
+            // search them later as a fallback
+            lock (s_assembliesWithResourcesLock)
+            {
+                s_assembliesWithResources.Add(assembly);
+            }
 
             foreach (string resource in resources)
             {
@@ -134,16 +149,23 @@ namespace {{@namespace}}
         {
             AssemblyName assemblyName = new(args.Name);
 
-            if (s_loadedAssemblies.TryGetValue(assemblyName, out Assembly? assembly))
+            Assembly? alreadyLoaded;
+            KeyValuePair<AssemblyName, Assembly>[] loadedSnapshot;
+            lock (s_loadedAssembliesLock)
             {
-                return assembly;
+                if (s_loadedAssemblies.TryGetValue(assemblyName, out Assembly? assembly))
+                {
+                    return assembly;
+                }
+
+                loadedSnapshot = s_loadedAssemblies.ToArray();
             }
 
             // No exact version: the newest one loaded that still satisfies the request, as the runtime binds a
             // reference to a newer version. Never an older one: it can lack what the caller was built against.
             Assembly? newest = null;
             Version newestVersion = new(0, 0);
-            foreach (KeyValuePair<AssemblyName, Assembly> loaded in s_loadedAssemblies)
+            foreach (KeyValuePair<AssemblyName, Assembly> loaded in loadedSnapshot)
             {
                 Version version = loaded.Key.Version ?? new Version(0, 0);
                 bool sameName = string.Equals(loaded.Key.Name, assemblyName.Name);
@@ -160,7 +182,13 @@ namespace {{@namespace}}
                 return newest;
             }
 
-            foreach (Assembly loadedAssembly in s_assembliesWithResources)
+            Assembly[] resourceSnapshot;
+            lock (s_assembliesWithResourcesLock)
+            {
+                resourceSnapshot = s_assembliesWithResources.ToArray();
+            }
+
+            foreach (Assembly loadedAssembly in resourceSnapshot)
             {
                 string resourceName = $"SGF.Assembly::{assemblyName.Name}.dll";
                 if (TryExtractingAssembly(loadedAssembly, resourceName, out Assembly? extractedAssembly))
