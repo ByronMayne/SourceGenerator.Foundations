@@ -1,7 +1,6 @@
 ﻿using SGF;
 using SGF.Analyzer;
 using SGF.Analyzer.Rules;
-using Xunit.Abstractions;
 
 namespace SourceGenerator.Foundations.Tests
 {
