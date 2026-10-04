@@ -38,4 +38,11 @@
     <Message Importance="high" Text="SGFMSBuildProjectDir: $(SGFMSBuildProjectDir)"/>
     <Message Importance="high" Text="SGFWindowsPluginProjectDir: $(SGFWindowsPluginProjectDir)"/>
   </Target>
+	<PropertyGroup Condition="$(MSBuildProjectName.EndsWith('.Tests'))">
+        <IsPackable>false</IsPackable>
+		<TargetFramework>net10.0</TargetFramework>
+		<IsPackable>false</IsPackable>
+		<IsTestProject>true</IsTestProject>
+		<ImplicitUsings>true</ImplicitUsings>
+	</PropertyGroup>
 </Project>

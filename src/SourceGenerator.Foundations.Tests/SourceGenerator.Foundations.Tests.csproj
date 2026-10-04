@@ -1,30 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <LangVersion>12</LangVersion>
-    <Nullable>enable</Nullable>
-
-    <IsPackable>false</IsPackable>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="Newtonsoft.Json" />
-    <PackageReference Include="System.Net.Http"/>
-    <PackageReference Include="System.Text.RegularExpressions"/>
-    <PackageReference Include="xunit"/>
-    <PackageReference Include="xunit.runner.visualstudio">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="coverlet.collector">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
 
     <!-- ==== Referencing Analyzers ====
       Normally you never actually reference the analyzer they just get used by the compiler internally.
@@ -32,6 +11,7 @@
       to reference the type, so that is this weird workaround of using the path and navigating to the dll
     -->
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" GeneratePathProperty="true" />
+    <PackageReference Include="xunit.v3" />
     <Reference Include="$(PkgMicrosoft_CodeAnalysis_Analyzers)\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
     <Reference Include="$(PkgMicrosoft_CodeAnalysis_Analyzers)\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
   </ItemGroup>

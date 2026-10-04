@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.Text;
 using System.Collections.Immutable;
 using System.Reflection;
 using System.Text;
-using Xunit.Abstractions;
+using Xunit.Sdk;
 
 namespace SGF
 {
@@ -39,7 +39,7 @@ namespace SGF
             ITest? test = testField?.GetValue(outputHelper) as ITest;
             if (test != null)
             {
-                TestMethodName = test.TestCase.TestMethod.ToString()!;
+                TestMethodName = test.TestCase.TestMethod?.ToString()!;
             }
 
             AddAssemblyReference("System.Runtime");

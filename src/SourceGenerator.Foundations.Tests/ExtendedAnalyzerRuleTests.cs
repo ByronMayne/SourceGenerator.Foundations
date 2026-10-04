@@ -1,6 +1,5 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Analyzers;
 using SGF;
-using Xunit.Abstractions;
 
 namespace SourceGenerator.Foundations.Tests
 {
