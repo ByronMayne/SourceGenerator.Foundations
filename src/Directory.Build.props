@@ -44,5 +44,6 @@
 		<IsPackable>false</IsPackable>
 		<IsTestProject>true</IsTestProject>
 		<ImplicitUsings>true</ImplicitUsings>
+		<OutputType>Exe</OutputType>
 	</PropertyGroup>
 </Project>
