@@ -32,6 +32,9 @@ namespace {{@namespace}}
         private static bool s_isInitialized;
         private static readonly List<Assembly> s_assembliesWithResources;
         private static readonly Dictionary<AssemblyName, Assembly> s_loadedAssemblies;
+        private static readonly object s_loadedAssembliesLock;
+        private static readonly object s_assembliesWithResourcesLock;
+        private static readonly HashSet<string> s_extractedResources;
 
         static SourceGeneratorHoist()
         {
@@ -46,6 +49,9 @@ namespace {{@namespace}}
 
             s_assembliesWithResources = new List<Assembly>();
             s_loadedAssemblies = new Dictionary<AssemblyName, Assembly>(new AssemblyNameComparer());
+            s_loadedAssembliesLock = new object();
+            s_assembliesWithResourcesLock = new object();
+            s_extractedResources = new HashSet<string>();
             Initialize();
         }
 
@@ -99,11 +105,15 @@ namespace {{@namespace}}
         {
             AssemblyName assemblyName = assembly.GetName();
 
-            if (s_loadedAssemblies.ContainsKey(assemblyName))
+            lock (s_loadedAssembliesLock)
             {
-                return;
+                if (s_loadedAssemblies.ContainsKey(assemblyName))
+                {
+                    return;
+                }
+
+                s_loadedAssemblies.Add(assemblyName, assembly);
             }
-            s_loadedAssemblies.Add(assemblyName, assembly);
 
             if (assembly.IsDynamic) return;
 
@@ -113,8 +123,19 @@ namespace {{@namespace}}
 
             if (resources.Length == 0) return;
 
+            // remember assemblies that contain embedded resources so the resolver can
+            // search them later as a fallback
+            lock (s_assembliesWithResourcesLock)
+            {
+                s_assembliesWithResources.Add(assembly);
+            }
+
             foreach (string resource in resources)
             {
+                if (!TryMarkExtracted(assembly, resource))
+                {
+                    continue;
+                }
 
 #pragma warning disable RS1035 // Do not use APIs banned for analyzers
                 System.Console.WriteLine($"Extracting {resource} assembly from {assemblyName.Name}'s resources.");
@@ -134,21 +155,25 @@ namespace {{@namespace}}
         {
             AssemblyName assemblyName = new(args.Name);
 
-            if (s_loadedAssemblies.TryGetValue(assemblyName, out Assembly? assembly))
+            KeyValuePair<AssemblyName, Assembly>[] loadedSnapshot;
+            lock (s_loadedAssembliesLock)
             {
-                return assembly;
+                if (s_loadedAssemblies.TryGetValue(assemblyName, out Assembly? assembly))
+                {
+                    return assembly;
+                }
+
+                loadedSnapshot = s_loadedAssemblies.ToArray();
             }
 
             // No exact version: the newest one loaded that still satisfies the request, as the runtime binds a
             // reference to a newer version. Never an older one: it can lack what the caller was built against.
             Assembly? newest = null;
             Version newestVersion = new(0, 0);
-            foreach (KeyValuePair<AssemblyName, Assembly> loaded in s_loadedAssemblies)
+            foreach (KeyValuePair<AssemblyName, Assembly> loaded in loadedSnapshot)
             {
                 Version version = loaded.Key.Version ?? new Version(0, 0);
-                bool sameName = string.Equals(loaded.Key.Name, assemblyName.Name);
-                bool satisfies = assemblyName.Version == null || version >= assemblyName.Version;
-                if (sameName && satisfies && (newest == null || version > newestVersion))
+                if (Satisfies(loaded.Key, assemblyName) && (newest == null || version > newestVersion))
                 {
                     newest = loaded.Value;
                     newestVersion = version;
@@ -160,17 +185,56 @@ namespace {{@namespace}}
                 return newest;
             }
 
-            foreach (Assembly loadedAssembly in s_assembliesWithResources)
+            Assembly[] resourceSnapshot;
+            lock (s_assembliesWithResourcesLock)
             {
-                string resourceName = $"SGF.Assembly::{assemblyName.Name}.dll";
+                resourceSnapshot = s_assembliesWithResources.ToArray();
+            }
+
+            // Reaches a resource AddAssembly has not unpacked yet (generators initialise concurrently). Same version
+            // rule as above: a copy that does not satisfy the request is skipped, so an older one is never returned.
+            // A resource is unpacked once: Assembly.Load(byte[]) loads a new copy on every call, and none unloads.
+            string resourceName = $"SGF.Assembly::{assemblyName.Name}.dll";
+            foreach (Assembly loadedAssembly in resourceSnapshot)
+            {
+                if (!TryMarkExtracted(loadedAssembly, resourceName))
+                {
+                    continue;
+                }
+
                 if (TryExtractingAssembly(loadedAssembly, resourceName, out Assembly? extractedAssembly))
                 {
                     AddAssembly(extractedAssembly!);
-                    return extractedAssembly!;
+                    if (Satisfies(extractedAssembly!.GetName(), assemblyName))
+                    {
+                        return extractedAssembly;
+                    }
                 };
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Claims a resource of an assembly for extraction. False if it was claimed before.
+        /// </summary>
+        private static bool TryMarkExtracted(Assembly assembly, string resourceName)
+        {
+            lock (s_assembliesWithResourcesLock)
+            {
+                return s_extractedResources.Add($"{assembly.FullName}|{resourceName}");
+            }
+        }
+
+        /// <summary>
+        /// True if <paramref name="candidate"/> can stand in for <paramref name="requested"/>: same name, and at least
+        /// the requested version when there is one.
+        /// </summary>
+        private static bool Satisfies(AssemblyName candidate, AssemblyName requested)
+        {
+            Version version = candidate.Version ?? new Version(0, 0);
+            return string.Equals(candidate.Name, requested.Name)
+                && (requested.Version == null || version >= requested.Version);
         }
 
 

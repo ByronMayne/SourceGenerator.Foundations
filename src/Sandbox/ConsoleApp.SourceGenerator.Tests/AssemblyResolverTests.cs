@@ -77,6 +77,54 @@ namespace ConsoleApp.SourceGenerator.Tests
             Assert.Throws<FileNotFoundException>(() => Assembly.Load(new AssemblyName("OutdatedDependency, Version=2.0.0.0")));
         }
 
+        [Fact]
+        public void Unsatisfied_Request_Does_Not_Load_The_Embedded_Assembly_Again()
+        {
+            byte[] dependency = Emit("ReloadedDependency", "1.0.0.0");
+            LoadInOwnContext(Emit("ReloadingGenerator", "1.0.0.0", ("SGF.Assembly::ReloadedDependency.dll", dependency)));
+
+            for (int i = 0; i < 3; i++)
+            {
+                Assert.Throws<FileNotFoundException>(() => Assembly.Load(new AssemblyName("ReloadedDependency, Version=2.0.0.0")));
+            }
+
+            Assert.Single(AppDomain.CurrentDomain.GetAssemblies(), a => a.GetName().Name == "ReloadedDependency");
+        }
+
+        [Fact]
+        public void Resource_Fallback_Unpacks_An_Embedded_Assembly_Not_Unpacked_Yet()
+        {
+            byte[] dependency = Emit("LateDependency", "1.0.0.0");
+            Assembly generator = LoadInOwnContext(Emit("LateGenerator", "1.0.0.0", ("SGF.Assembly::LateDependency.dll", dependency)));
+            ForgetUnpacking(generator, "LateDependency, Version=1.0.0.0");
+
+            Assembly resolved = Assembly.Load(new AssemblyName("LateDependency, Version=1.0.0.0"));
+
+            Assert.Equal(new Version(1, 0, 0, 0), resolved.GetName().Version);
+        }
+
+        [Fact]
+        public void Resource_Fallback_Does_Not_Resolve_To_An_Older_Version()
+        {
+            byte[] dependency = Emit("LateOutdatedDependency", "1.0.0.0");
+            Assembly generator = LoadInOwnContext(Emit("LateOutdatedGenerator", "1.0.0.0", ("SGF.Assembly::LateOutdatedDependency.dll", dependency)));
+            ForgetUnpacking(generator, "LateOutdatedDependency, Version=1.0.0.0");
+
+            Assert.Throws<FileNotFoundException>(() => Assembly.Load(new AssemblyName("LateOutdatedDependency, Version=2.0.0.0")));
+        }
+
+        // Puts the resolver back in the window between registering an assembly with resources and unpacking them,
+        // which another generator initialising on another thread can hit. Only the resource fallback covers it.
+        private static void ForgetUnpacking(Assembly generator, string dependency)
+        {
+            Type hoist = typeof(ConsoleAppSourceGeneratorHoist).BaseType!;
+            T Field<T>(string name) => (T)hoist.GetField(name, BindingFlags.NonPublic | BindingFlags.Static)!.GetValue(null)!;
+
+            AssemblyName name = new(dependency);
+            Field<HashSet<string>>("s_extractedResources").Remove($"{generator.FullName}|SGF.Assembly::{name.Name}.dll");
+            Field<Dictionary<AssemblyName, Assembly>>("s_loadedAssemblies").Remove(name);
+        }
+
         private static byte[] Emit(string name, string version, params (string Name, byte[] Content)[] resources)
         {
             CSharpCompilation compilation = CSharpCompilation.Create(
@@ -94,7 +142,7 @@ namespace ConsoleApp.SourceGenerator.Tests
         }
 
         // Roslyn loads each analyzer directory in a context of its own; the resolver sees them all through the AppDomain.
-        private static void LoadInOwnContext(byte[] image)
+        private static Assembly LoadInOwnContext(byte[] image)
             => new AssemblyLoadContext(name: null).LoadFromStream(new MemoryStream(image));
     }
 }
