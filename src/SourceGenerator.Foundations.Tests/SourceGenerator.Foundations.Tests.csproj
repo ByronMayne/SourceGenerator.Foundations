@@ -12,6 +12,10 @@
       to reference the type, so that is this weird workaround of using the path and navigating to the dll
     -->
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" GeneratePathProperty="true" />
+    <PackageReference Include="xunit.runner.visualstudio">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="xunit.v3" />
     <Reference Include="$(PkgMicrosoft_CodeAnalysis_Analyzers)\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
     <Reference Include="$(PkgMicrosoft_CodeAnalysis_Analyzers)\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
